@@ -12,8 +12,8 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "c:/Users/Utilisateur/Documents/UdeS/S1/Projet/template/build/megaatmega2560/firmware.elf",
-            "toolchainBinDir": "C:/Users/Utilisateur/.platformio/packages/toolchain-atmelavr/bin",
+            "executable": "d:/_PC/Documents/__Education/_Universite/_Session 1/_Projet/GitHub/IngenierieDaVinci/LeornadUS/build/megaatmega2560/firmware.elf",
+            "toolchainBinDir": "C:/SPB_Data/.platformio/packages/toolchain-atmelavr/bin",
             "preLaunchTask": {
                 "type": "PlatformIO",
                 "task": "Pre-Debug"
@@ -24,8 +24,8 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "c:/Users/Utilisateur/Documents/UdeS/S1/Projet/template/build/megaatmega2560/firmware.elf",
-            "toolchainBinDir": "C:/Users/Utilisateur/.platformio/packages/toolchain-atmelavr/bin",
+            "executable": "d:/_PC/Documents/__Education/_Universite/_Session 1/_Projet/GitHub/IngenierieDaVinci/LeornadUS/build/megaatmega2560/firmware.elf",
+            "toolchainBinDir": "C:/SPB_Data/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]
