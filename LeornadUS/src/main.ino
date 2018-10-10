@@ -12,6 +12,7 @@ Date: 10 octobre 2018
 #define DROITE 1
 #define speed0 0
 #define speed1 0.4
+#define speed2 0.25
 #define speed3 0.3
 #define speed4 0.35
 
@@ -133,6 +134,34 @@ int tourner(int direction, float angle)
   return 0;
 }
 
+//TEST SEB
+void tournerCentre(int direction, float angle)
+{
+  float anglePulse;//Variable en pulse selon l'angle
+  anglePulse = angle_degree_a_pulse(angle);//détermine le nombre de pulse pour arriver à l'angle demandé
+
+  if(direction == GAUCHE)
+  {
+    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,-speed2);
+        MOTOR_SetSpeed(DROITE,speed2);
+    }
+  }
+  else if(direction == DROITE)
+  {
+    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,speed2);
+        MOTOR_SetSpeed(DROITE,-speed2);
+    }
+  }
+  MOTOR_SetSpeed(GAUCHE,speed0);
+  MOTOR_SetSpeed(DROITE,speed0);
+  transition();
+  return 0;
+}
+
 float distance_mm_pulse(float distance_mm)
 {
    // déterminer la circonference d'une roue en mm et en pulse
@@ -146,7 +175,7 @@ void avancer(float distance_mm)
 {
   float distance_pulse,distgauche1,distdroite1;
   float k;
-  float speed2= speed1;
+  float speed= speed1;
   int counter=0;
   distance_pulse = distance_mm_pulse(distance_mm);
 
@@ -164,10 +193,10 @@ void avancer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed3+k;
+      speed = speed3+k;
     
       MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
       counter=2;
     }
@@ -177,10 +206,10 @@ void avancer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed1+k;
+      speed = speed1+k;
 
       MOTOR_SetSpeed(GAUCHE,speed1);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
     }
 
@@ -197,7 +226,7 @@ void reculer(float distance_mm)
   float distance_pulse,distgauche1,distdroite1;
   float k;
   float accel;
-  float speed2= -speed1;
+  float speed= -speed1;
   distance_pulse = distance_mm_pulse(distance_mm);
   while(ENCODER_Read(GAUCHE)>=-distance_pulse)
   {
@@ -213,10 +242,10 @@ void reculer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed3+k;
+      speed = speed3+k;
     
       MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
       counter=2;
     }
@@ -226,9 +255,9 @@ void reculer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = -speed1+k;
+      speed = -speed1+k;
       MOTOR_SetSpeed(GAUCHE,-speed1);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
     }
   }
@@ -360,6 +389,5 @@ void loop()
   tourner_reculer(GAUCHE,90);
 
   reculer(2020);
-  //allo
  }
 }
