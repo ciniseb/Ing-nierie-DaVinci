@@ -22,9 +22,9 @@ Variables globales et defines
 #define GAUCHE 0
 #define DROITE 1
 #define speed0 0
-#define speed1 0.45
+#define speed1 0.4
 #define speed3 0.3
-#define speed4 0.5
+#define speed4 0.35
 
 
 
@@ -38,11 +38,9 @@ float dPICalc(float distancegauche1, float distancedroite1)
   float dIntgral;
   float dPout = 0;
   float dIout = 0;
-  float dKp = 0.035;
+  float dKp = 0.03;
   float dKi = 0; 
   float dPIout = 0;
-
-  dNbEssais++; // compte le nb d'essai (pour le I)
 
   // Calcul de l'erreur.
   dErreur = distancegauche1 - distancedroite1;
@@ -63,28 +61,29 @@ float dPICalc(float distancegauche1, float distancedroite1)
   Serial.println(" ");
   return (dPIout);
 }
-void accel()
+void accel_avancer()
 {
   float accel=0;
-      while(accel<=0.4)
+      while(accel<=0.35)
       {     
         accel = accel + 0.01;
         MOTOR_SetSpeed(GAUCHE,accel);
         MOTOR_SetSpeed(DROITE,accel);
-        delay(25);
+        delay(35);
       }
 }
 void accel_reculer()
 {
   float accel=0;
-      while(accel<=0.4)
+      while(accel<=0.35)
       {     
         accel = accel + 0.01;
         MOTOR_SetSpeed(GAUCHE,-accel);
         MOTOR_SetSpeed(DROITE,-accel);
-        delay(15);
+        delay(35);
       }
 }
+
 int reset_encodeur()
 {
   ENCODER_Reset(GAUCHE);
@@ -122,6 +121,7 @@ float angle_degree_a_pulse(float angle)
 int tourner(int direction, float angle)
 {
   float angle_pulse;
+ 
   //détermine le nombre de pulse pour arriver à l'angle demandé
   angle_pulse = angle_degree_a_pulse(angle);
 
@@ -133,14 +133,13 @@ int tourner(int direction, float angle)
         MOTOR_SetSpeed(GAUCHE,speed0);
         MOTOR_SetSpeed(DROITE,speed4);
     }
-  
   }
   if(direction == DROITE)
   {
     while(ENCODER_Read(GAUCHE)<=angle_pulse)
     {
-        MOTOR_SetSpeed(GAUCHE,speed4);
-        MOTOR_SetSpeed(DROITE,speed0);
+      MOTOR_SetSpeed(GAUCHE,speed4);
+      MOTOR_SetSpeed(DROITE,speed0);
     }
   }
     MOTOR_SetSpeed(GAUCHE,speed0);
@@ -171,7 +170,7 @@ void avancer(float distance_mm)
     //accel
     if(counter==0)
     {
-      accel();
+      accel_avancer();
       counter=1;
     }
     //deccel
@@ -351,27 +350,27 @@ void loop()
 
   tourner_reculer(DROITE,45);
 
-  reculer(550);
+  reculer(520);
 
   tourner_reculer(GAUCHE,85);
 
-  reculer(290);
+  reculer(310);
   
-  tourner_reculer(DROITE,45);
+  tourner_reculer(DROITE,42);
   
   reculer(100);
 
-  tourner_reculer(GAUCHE,85);
+  tourner_reculer(GAUCHE,90);
   
   reculer(320);
 
   tourner_reculer(DROITE,90);
 
-  reculer(270);
+  reculer(250);
 
   tourner_reculer(DROITE,90);
 
-  reculer(280);
+  reculer(260);
 
   tourner_reculer(GAUCHE,90);
 
