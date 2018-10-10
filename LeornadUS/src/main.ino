@@ -1,24 +1,15 @@
-/*
-Projet: Le nom du script
-Equipe: Votre numero d'equipe
-Auteurs: Les membres auteurs du script
-Description: Breve description du script
-Date: Derniere date de modification
-*/
+/*===================================================
+Projet: Main du parcours
+Equipe: P14
+Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc
+Description: Parcours du robot LéonardUS
+Date: 10 octobre 2018
+=====================================================*/
 
-/* ****************************************************************************
-Inclure les librairies de functions que vous voulez utiliser
-**************************************************************************** */
-
+//Inclure les librairies de functions que vous voulez utiliser
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
-
-
-/* ****************************************************************************
-Variables globales et defines
-**************************************************************************** */
-// -> defines...
-// L'ensemble des fonctions y ont acces
+//Variables globales et defines
 #define GAUCHE  0
 #define DROITE  1
 #define speed0  0
@@ -26,10 +17,7 @@ Variables globales et defines
 #define ACCEL   1
 #define DECCEL  0
 
-
-/* ****************************************************************************
-Vos propres fonctions sont creees ici
-**************************************************************************** */
+//Vos propres fonctions sont creees ici
 float dPICalc(float distancegauche1, float distancedroite1)
 {
   float dErreur = 0;
@@ -41,21 +29,21 @@ float dPICalc(float distancegauche1, float distancedroite1)
   float dKi = 0; 
   float dPIout = 0;
 
-  dNbEssais++; // compte le nb d'essai (pour le I)
+  dNbEssais++; //Compte le nb d'essai (pour le I)
 
-  // Calcul de l'erreur.
+  //Calcul de l'erreur.
   dErreur = distancegauche1 - distancedroite1;
 
-  // P.
+  //P.
   dPout = dErreur * dKp;
   
-  // I.,
+  //I.
   dIntgral = dIntgral+(dErreur * 0.1);
   dIout = dIntgral * dKi;
 
-  // P=20, I=20
-  // PI = 40 -> 40 tick de plus a faire.
-  // Calcul PI en pulse.
+  //P=20, I=20
+  //PI = 40 -> 40 tick de plus a faire.
+  //Calcul PI en pulse.
   dPIout = (dPout+dIout)/100;
   //Serial.print("PIOUT: ");
   //Serial.println(dPIout);
