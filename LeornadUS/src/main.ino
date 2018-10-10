@@ -370,7 +370,7 @@ void loop()
 
   tourner_reculer(DROITE,90);
 
-  reculer(260);
+  reculer(20);
 
   tourner_reculer(GAUCHE,90);
 
