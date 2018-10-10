@@ -1,24 +1,13 @@
-/*
-Projet: Le nom du script
-Equipe: Votre numero d'equipe
-Auteurs: Les membres auteurs du script
-Description: Breve description du script
-Date: Derniere date de modification
-*/
-
-/* ****************************************************************************
-Inclure les librairies de functions que vous voulez utiliser
-**************************************************************************** */
-
+/*============================================
+Projet: Main
+Equipe: P14
+Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc
+Description: Parcours de LéonardUS
+Date: 10 octobre 2018
+============================================*/
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
-
-
-/* ****************************************************************************
-Variables globales et defines
-**************************************************************************** */
-// -> defines...
-// L'ensemble des fonctions y ont acces
+//Variables globales et defines
 #define GAUCHE 0
 #define DROITE 1
 #define speed0 0
@@ -26,11 +15,7 @@ Variables globales et defines
 #define speed3 0.3
 #define speed4 0.35
 
-
-
-/* ****************************************************************************
-Vos propres fonctions sont creees ici
-**************************************************************************** */
+//Fonctions
 float dPICalc(float distancegauche1, float distancedroite1)
 {
   float dErreur = 0;
