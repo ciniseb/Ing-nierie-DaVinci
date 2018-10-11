@@ -132,7 +132,6 @@ int tourner(int direction, float angle)
     transition();
   return 0;
 }
-
 void tournerCentre(int direction, float angle)
 {
   float anglePulse;//Variable en pulse selon l'angle
@@ -293,6 +292,21 @@ int tourner_reculer(int direction, float angle)
     transition();
   return 0;
 }
+void danse()
+{
+  float anglePulse;//Variable en pulse selon l'angle
+  float dVitesse = 0.40;
+  anglePulse = angle_degree_a_pulse(1440);//détermine le nombre de pulse pour arriver à l'angle demandé
+
+  while(ENCODER_Read(GAUCHE) <= anglePulse/2 && dVitesse > 0)
+  {
+      MOTOR_SetSpeed(GAUCHE,speed2);
+      MOTOR_SetSpeed(DROITE,dVitesse - speed2);
+      dVitesse = dVitesse - 0.05;
+  }
+  MOTOR_SetSpeed(GAUCHE,speed0);
+  MOTOR_SetSpeed(DROITE,speed0);
+}
 
 /* ****************************************************************************
 Fonctions d'initialisation (setup)
@@ -363,6 +377,8 @@ void loop()
   reculer(20);
   tourner_reculer(GAUCHE,90);
   reculer(2020);
+
+  danse();
 
   /*======================
     Retour centré
