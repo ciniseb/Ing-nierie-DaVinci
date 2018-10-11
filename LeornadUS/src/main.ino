@@ -134,8 +134,7 @@ int tourner(int direction, float angle)
 }
 void tournerCentre(int direction, float angle)
 {
-  float anglePulse;//Variable en pulse selon l'angle
-  anglePulse = angle_degree_a_pulse(angle);//détermine le nombre de pulse pour arriver à l'angle demandé
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
   if(direction == GAUCHE)
   {
@@ -157,6 +156,18 @@ void tournerCentre(int direction, float angle)
   MOTOR_SetSpeed(DROITE,speed0);
   transition();
   return 0;
+}
+void danse(float angle)
+{
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  for(float dVitesse = 0.4f; dVitesse > -0.4f ; dVitesse = dVitesse-0.05f)
+  {
+    MOTOR_SetSpeed(GAUCHE, 0.4f);
+    MOTOR_SetSpeed(DROITE, dVitesse);
+  }
+  MOTOR_SetSpeed(GAUCHE, speed0);
+  MOTOR_SetSpeed(DROITE, speed0);
+  transition();
 }
 
 float distance_mm_pulse(float distance_mm)
@@ -292,21 +303,6 @@ int tourner_reculer(int direction, float angle)
     transition();
   return 0;
 }
-void danse()
-{
-  float anglePulse;//Variable en pulse selon l'angle
-  float dVitesse = 0.40;
-  anglePulse = angle_degree_a_pulse(1440);//détermine le nombre de pulse pour arriver à l'angle demandé
-
-  while(ENCODER_Read(GAUCHE) <= anglePulse/2 && dVitesse > 0)
-  {
-      MOTOR_SetSpeed(GAUCHE,speed2);
-      MOTOR_SetSpeed(DROITE,dVitesse - speed2);
-      dVitesse = dVitesse - 0.05;
-  }
-  MOTOR_SetSpeed(GAUCHE,speed0);
-  MOTOR_SetSpeed(DROITE,speed0);
-}
 
 /* ****************************************************************************
 Fonctions d'initialisation (setup)
@@ -328,6 +324,9 @@ void loop()
   delay(10);// Delais pour décharger le CPU
   if(ROBUS_IsBumper(3))
  {
+  danse(2000);
+
+   /*
   //ALLER
   //a-b
   avancer(2030);
@@ -376,9 +375,7 @@ void loop()
   tourner_reculer(DROITE,90);
   reculer(20);
   tourner_reculer(GAUCHE,90);
-  reculer(2020);
-
-  danse();
+  reculer(2020);*/
 
   /*======================
     Retour centré
