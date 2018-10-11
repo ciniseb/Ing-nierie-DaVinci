@@ -1,9 +1,9 @@
 /*============================================
-Projet: Main
+Projet: Code source
 Equipe: P14
-Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc
+Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc, Sébastien St-Denis
 Description: Parcours de LéonardUS
-Date: 10 octobre 2018
+Date: 11 octobre 2018
 ============================================*/
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
@@ -28,19 +28,19 @@ float dPICalc(float distancegauche1, float distancedroite1)
   float dKi = 0; 
   float dPIout = 0;
 
-  // Calcul de l'erreur.
+  //Calcul de l'erreur
   dErreur = distancegauche1 - distancedroite1;
 
-  // P.
+  //P
   dPout = dErreur * dKp;
   
-  // I.,
+  //I
   dIntgral = dIntgral+(dErreur * 0.1);
   dIout = dIntgral * dKi;
 
-  // P=20, I=20
-  // PI = 40 -> 40 tick de plus a faire.
-  // Calcul PI en pulse.
+  //P=20, I=20
+  //PI=40 -> 40 tick de plus a faire
+  //Calcul PI en pulse
   dPIout = (dPout+dIout)/100;
   Serial.print("PIOUT: ");
   Serial.println(dPIout);
@@ -111,7 +111,6 @@ int tourner(int direction, float angle)
   //détermine le nombre de pulse pour arriver à l'angle demandé
   angle_pulse = angle_degree_a_pulse(angle);
 
-  
   if(direction == GAUCHE)
   {
     while(ENCODER_Read(DROITE)<=angle_pulse)
@@ -134,7 +133,6 @@ int tourner(int direction, float angle)
   return 0;
 }
 
-//TEST SEB
 void tournerCentre(int direction, float angle)
 {
   float anglePulse;//Variable en pulse selon l'angle
@@ -302,92 +300,95 @@ Fonctions d'initialisation (setup)
 // -> Se fait appeler au debut du programme
 // -> Se fait appeler seulement un fois
 // -> Generalement on y initilise les varibales globales
-
 void setup(){
   BoardInit();
 }
-
 
 /* ****************************************************************************
 Fonctions de boucle infini (loop())
 **************************************************************************** */
 // -> Se fait appeler perpetuellement suite au "setup"
-
 void loop()
  {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
   if(ROBUS_IsBumper(3))
  {
+  //ALLER
   //a-b
   avancer(2030);
   tourner(GAUCHE,90);
   //b-c
   avancer(280);
-
   tourner(DROITE,90);
   //c-d
   avancer(270);
-
   tourner(DROITE,90);
   //d-e
   avancer(320);
-
   tourner(GAUCHE,85);
   //e-f
   avancer(100);
-
   tourner(DROITE,45);
   //f-g
   avancer(290);
-  
   tourner(GAUCHE,85);
   //g-h
   avancer(580);
-
   tourner(DROITE,45);
   //h-i
   avancer(250);
-
   tourner(DROITE,20);
-
+  //i-Fin
   avancer(900);
-//aller compléter
 
+  //TRANSITION
   delay(300);
 
+  //RETOUR
   reculer(880);
-
   tourner_reculer(DROITE,15);
-
   reculer(250);
-
   tourner_reculer(DROITE,45);
-
   reculer(520);
-
   tourner_reculer(GAUCHE,85);
-
   reculer(310);
-  
   tourner_reculer(DROITE,42);
-  
   reculer(100);
-
   tourner_reculer(GAUCHE,90);
-  
   reculer(320);
-
   tourner_reculer(DROITE,90);
-
   reculer(250);
-
   tourner_reculer(DROITE,90);
-
   reculer(20);
-
   tourner_reculer(GAUCHE,90);
-
   reculer(2020);
+
+  /*======================
+    Retour centré
+  ========================
+  //TRANSITION
+  delay(300);
+  tournerCentre(DROITE, 180);
+
+  //RETOUR
+  avancer(800);
+  tourner(GAUCHE,20);
+  avancer(250);
+  tourner(GAUCHE,45);
+  avancer(580);
+  tourner(DROITE,85);
+  avancer(290);
+  tourner(GAUCHE,45);
+  avancer(100);
+  tourner(DROITE,85);
+  avancer(320);
+  tourner(GAUCHE,90);
+  avancer(270);
+  tourner(GAUCHE,90);
+  avancer(280);
+  tourner(DROITE,90);
+  avancer(2030);
+  =====================*/
  }
 }
