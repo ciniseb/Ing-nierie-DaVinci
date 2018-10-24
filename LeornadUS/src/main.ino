@@ -1,9 +1,9 @@
 /*============================================
-Projet: Main
+Projet: Code source
 Equipe: P14
-Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc
+Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc, Sébastien St-Denis
 Description: Parcours de LéonardUS
-Date: 10 octobre 2018
+Date: 11 octobre 2018
 ============================================*/
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 
@@ -12,6 +12,7 @@ Date: 10 octobre 2018
 #define DROITE 1
 #define speed0 0
 #define speed1 0.4
+#define speed2 0.25
 #define speed3 0.3
 #define speed4 0.35
 
@@ -27,19 +28,19 @@ float dPICalc(float distancegauche1, float distancedroite1)
   float dKi = 0; 
   float dPIout = 0;
 
-  // Calcul de l'erreur.
+  //Calcul de l'erreur
   dErreur = distancegauche1 - distancedroite1;
 
-  // P.
+  //P
   dPout = dErreur * dKp;
   
-  // I.,
+  //I
   dIntgral = dIntgral+(dErreur * 0.1);
   dIout = dIntgral * dKi;
 
-  // P=20, I=20
-  // PI = 40 -> 40 tick de plus a faire.
-  // Calcul PI en pulse.
+  //P=20, I=20
+  //PI=40 -> 40 tick de plus a faire
+  //Calcul PI en pulse
   dPIout = (dPout+dIout)/100;
   Serial.print("PIOUT: ");
   Serial.println(dPIout);
@@ -110,7 +111,6 @@ int tourner(int direction, float angle)
   //détermine le nombre de pulse pour arriver à l'angle demandé
   angle_pulse = angle_degree_a_pulse(angle);
 
-  
   if(direction == GAUCHE)
   {
     while(ENCODER_Read(DROITE)<=angle_pulse)
@@ -132,6 +132,43 @@ int tourner(int direction, float angle)
     transition();
   return 0;
 }
+void tournerCentre(int direction, float angle)
+{
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+
+  if(direction == GAUCHE)
+  {
+    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,-speed2);
+        MOTOR_SetSpeed(DROITE,speed2);
+    }
+  }
+  else if(direction == DROITE)
+  {
+    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,speed2);
+        MOTOR_SetSpeed(DROITE,-speed2);
+    }
+  }
+  MOTOR_SetSpeed(GAUCHE,speed0);
+  MOTOR_SetSpeed(DROITE,speed0);
+  transition();
+  return 0;
+}
+void danse(float angle)
+{
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  for(float dVitesse = 0.4f; dVitesse > -0.4f ; dVitesse = dVitesse-0.05f)
+  {
+    MOTOR_SetSpeed(GAUCHE, 0.4f);
+    MOTOR_SetSpeed(DROITE, dVitesse);
+  }
+  MOTOR_SetSpeed(GAUCHE, speed0);
+  MOTOR_SetSpeed(DROITE, speed0);
+  transition();
+}
 
 float distance_mm_pulse(float distance_mm)
 {
@@ -146,7 +183,7 @@ void avancer(float distance_mm)
 {
   float distance_pulse,distgauche1,distdroite1;
   float k;
-  float speed2= speed1;
+  float speed= speed1;
   int counter=0;
   distance_pulse = distance_mm_pulse(distance_mm);
 
@@ -164,10 +201,10 @@ void avancer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed3+k;
+      speed = speed3+k;
     
       MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
       counter=2;
     }
@@ -177,10 +214,10 @@ void avancer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed1+k;
+      speed = speed1+k;
 
       MOTOR_SetSpeed(GAUCHE,speed1);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
     }
 
@@ -197,7 +234,7 @@ void reculer(float distance_mm)
   float distance_pulse,distgauche1,distdroite1;
   float k;
   float accel;
-  float speed2= -speed1;
+  float speed= -speed1;
   distance_pulse = distance_mm_pulse(distance_mm);
   while(ENCODER_Read(GAUCHE)>=-distance_pulse)
   {
@@ -213,10 +250,10 @@ void reculer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = speed3+k;
+      speed = speed3+k;
     
       MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
       counter=2;
     }
@@ -226,9 +263,9 @@ void reculer(float distance_mm)
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
       k=dPICalc(distgauche1,distdroite1);
-      speed2 = -speed1+k;
+      speed = -speed1+k;
       MOTOR_SetSpeed(GAUCHE,-speed1);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(DROITE,speed);
       delay(100);
     }
   }
@@ -273,40 +310,39 @@ Fonctions d'initialisation (setup)
 // -> Se fait appeler au debut du programme
 // -> Se fait appeler seulement un fois
 // -> Generalement on y initilise les varibales globales
-
 void setup(){
   BoardInit();
 }
-
 
 /* ****************************************************************************
 Fonctions de boucle infini (loop())
 **************************************************************************** */
 // -> Se fait appeler perpetuellement suite au "setup"
-
 void loop()
  {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
   if(ROBUS_IsBumper(3))
  {
+  danse(2000);
+
+   /*
+  //ALLER
   //a-b
   avancer(2030);
   tourner(GAUCHE,90);
   //b-c
   avancer(280);
-
   tourner(DROITE,90);
   //c-d
   avancer(270);
-
   tourner(DROITE,90);
   //d-e
   avancer(320);
-
   tourner(GAUCHE,85);
   //e-f
   avancer(100);
+<<<<<<< HEAD
 
   tourner(DROITE,43);
   //f-g
@@ -324,42 +360,79 @@ void loop()
 
   avancer(950);
 //aller compléter
+=======
+  tourner(DROITE,45);
+  //f-g
+  avancer(290);
+  tourner(GAUCHE,85);
+  //g-h
+  avancer(580);
+  tourner(DROITE,45);
+  //h-i
+  avancer(250);
+  tourner(DROITE,20);
+  //i-Fin
+  avancer(900);
+>>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
 
+  //TRANSITION
   delay(300);
 
+<<<<<<< HEAD
   reculer(930);
 
+=======
+  //RETOUR
+  reculer(880);
+>>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
   tourner_reculer(DROITE,15);
-
   reculer(250);
+<<<<<<< HEAD
 
   tourner_reculer(DROITE,43);
 
+=======
+  tourner_reculer(DROITE,45);
+>>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
   reculer(520);
-
   tourner_reculer(GAUCHE,85);
-
   reculer(310);
-  
   tourner_reculer(DROITE,42);
-  
   reculer(100);
-
   tourner_reculer(GAUCHE,90);
-  
   reculer(320);
-
   tourner_reculer(DROITE,90);
-
   reculer(250);
-
   tourner_reculer(DROITE,90);
-
   reculer(20);
-
   tourner_reculer(GAUCHE,90);
+  reculer(2020);*/
 
-  reculer(2020);
-  //allo
+  /*======================
+    Retour centré
+  ========================
+  //TRANSITION
+  delay(300);
+  tournerCentre(DROITE, 180);
+
+  //RETOUR
+  avancer(800);
+  tourner(GAUCHE,20);
+  avancer(250);
+  tourner(GAUCHE,45);
+  avancer(580);
+  tourner(DROITE,85);
+  avancer(290);
+  tourner(GAUCHE,45);
+  avancer(100);
+  tourner(DROITE,85);
+  avancer(320);
+  tourner(GAUCHE,90);
+  avancer(270);
+  tourner(GAUCHE,90);
+  avancer(280);
+  tourner(DROITE,90);
+  avancer(2030);
+  =====================*/
  }
 }
