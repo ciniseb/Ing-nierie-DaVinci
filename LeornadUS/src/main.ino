@@ -6,6 +6,7 @@ Description: Parcours de LéonardUS
 Date: 11 octobre 2018
 ============================================*/
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
+#include <ADJDS311.h>
 
 //Variables globales et defines
 #define GAUCHE 0
@@ -322,117 +323,6 @@ void loop()
  {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-  if(ROBUS_IsBumper(3))
- {
-  danse(2000);
-
-   /*
-  //ALLER
-  //a-b
-  avancer(2030);
-  tourner(GAUCHE,90);
-  //b-c
-  avancer(280);
-  tourner(DROITE,90);
-  //c-d
-  avancer(270);
-  tourner(DROITE,90);
-  //d-e
-  avancer(320);
-  tourner(GAUCHE,85);
-  //e-f
-  avancer(100);
-<<<<<<< HEAD
-
-  tourner(DROITE,43);
-  //f-g
-  avancer(270);
   
-  tourner(GAUCHE,85);
-  //g-h
-  avancer(640);
-
-  tourner(DROITE,43);
-  //h-i
-  avancer(250);
-
-  tourner(DROITE,15);
-
-  avancer(950);
-//aller compléter
-=======
-  tourner(DROITE,45);
-  //f-g
-  avancer(290);
-  tourner(GAUCHE,85);
-  //g-h
-  avancer(580);
-  tourner(DROITE,45);
-  //h-i
-  avancer(250);
-  tourner(DROITE,20);
-  //i-Fin
-  avancer(900);
->>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
-
-  //TRANSITION
-  delay(300);
-
-<<<<<<< HEAD
-  reculer(930);
-
-=======
-  //RETOUR
-  reculer(880);
->>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
-  tourner_reculer(DROITE,15);
-  reculer(250);
-<<<<<<< HEAD
-
-  tourner_reculer(DROITE,43);
-
-=======
-  tourner_reculer(DROITE,45);
->>>>>>> 3219f4cf767b54819dfe360dd488d3acaf7a9a3e
-  reculer(520);
-  tourner_reculer(GAUCHE,85);
-  reculer(310);
-  tourner_reculer(DROITE,42);
-  reculer(100);
-  tourner_reculer(GAUCHE,90);
-  reculer(320);
-  tourner_reculer(DROITE,90);
-  reculer(250);
-  tourner_reculer(DROITE,90);
-  reculer(20);
-  tourner_reculer(GAUCHE,90);
-  reculer(2020);*/
-
-  /*======================
-    Retour centré
-  ========================
-  //TRANSITION
-  delay(300);
-  tournerCentre(DROITE, 180);
-
-  //RETOUR
-  avancer(800);
-  tourner(GAUCHE,20);
-  avancer(250);
-  tourner(GAUCHE,45);
-  avancer(580);
-  tourner(DROITE,85);
-  avancer(290);
-  tourner(GAUCHE,45);
-  avancer(100);
-  tourner(DROITE,85);
-  avancer(320);
-  tourner(GAUCHE,90);
-  avancer(270);
-  tourner(GAUCHE,90);
-  avancer(280);
-  tourner(DROITE,90);
-  avancer(2030);
-  =====================*/
- }
+  
 }
