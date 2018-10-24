@@ -308,32 +308,32 @@ void loop()
   //e-f
   avancer(100);
 
-  tourner(DROITE,45);
+  tourner(DROITE,43);
   //f-g
-  avancer(290);
+  avancer(270);
   
   tourner(GAUCHE,85);
   //g-h
-  avancer(580);
+  avancer(640);
 
-  tourner(DROITE,45);
+  tourner(DROITE,43);
   //h-i
   avancer(250);
 
-  tourner(DROITE,20);
+  tourner(DROITE,15);
 
-  avancer(900);
+  avancer(950);
 //aller compléter
 
   delay(300);
 
-  reculer(880);
+  reculer(930);
 
   tourner_reculer(DROITE,15);
 
   reculer(250);
 
-  tourner_reculer(DROITE,45);
+  tourner_reculer(DROITE,43);
 
   reculer(520);
 
