@@ -80,6 +80,7 @@ int reset_encodeur()
 
 int transition()
 {
+  
   reset_encodeur();
   delay(150);
   return 0;
@@ -323,6 +324,4 @@ void loop()
  {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-  
-  
 }
