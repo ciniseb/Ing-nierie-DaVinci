@@ -1,23 +1,28 @@
 /*============================================
 Projet: Code source
 Equipe: P14
-Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc, Sébastien St-Denis, Cédric Richard, Samuel croteau
-Description: Robot de défense
+Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc, Sébastien St-Denis
+Description: Robot d'attaque de l'octogone
 Date: 24 octobre 2018
 ============================================*/
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
-//#include <ADJDS311.h>
+#include <ADJDS311.h>
 
 //Variables globales et defines
 #define GAUCHE 0
 #define DROITE 1
 #define speed0 0
-#define speed1 0.8
+#define speed1 0.6
 #define speed2 0.25
-#define speed3 0.50
+#define speed3 0.25
 #define speed4 0.35
+#define speed5 0.9
+#define speed6 0.8
 #define SEUILDEBUT 410
-#define DISTNOIRE 500
+#define DISTNOIRE 150
+ int counter_1 = 0;
+ int counter_2 = 0;
+ int essai = 0;
 //Fonctions
 float dPICalc(float distancegauche1, float distancedroite1)
 {
@@ -54,11 +59,11 @@ void accel_avancer()
   float accel=0;
       while(accel<=0.35)
       { 
-        vprobeFreq();  
-        ////vzoneNoire();  
+        vprobeFreq();   
         accel = accel + 0.01;
         MOTOR_SetSpeed(GAUCHE,accel);
         MOTOR_SetSpeed(DROITE,accel);
+        marteau();
         delay(35);
       }
 }
@@ -67,8 +72,7 @@ void accel_reculer()
   float accel=0;
       while(accel<=0.35)
       {  
-        vprobeFreq(); 
-        ////vzoneNoire();  
+        vprobeFreq();   
         accel = accel + 0.01;
         MOTOR_SetSpeed(GAUCHE,-accel);
         MOTOR_SetSpeed(DROITE,-accel);
@@ -125,7 +129,6 @@ int tourner(int direction, float angle)
     while(ENCODER_Read(DROITE)<=angle_pulse)
     {
         vprobeFreq();
-        ////vzoneNoire();
         MOTOR_SetSpeed(GAUCHE,speed0);
         MOTOR_SetSpeed(DROITE,speed4);
     }
@@ -135,7 +138,6 @@ int tourner(int direction, float angle)
     while(ENCODER_Read(GAUCHE)<=angle_pulse)
     {
       vprobeFreq();
-      ////vzoneNoire();
       MOTOR_SetSpeed(GAUCHE,speed4);
       MOTOR_SetSpeed(DROITE,speed0);
     }
@@ -155,9 +157,8 @@ void tournerCentre(int direction, float angle)
     while(ENCODER_Read(DROITE) <= anglePulse/2)
     {
         vprobeFreq();
-        ////vzoneNoire();
-        MOTOR_SetSpeed(GAUCHE,-speed2);
-        MOTOR_SetSpeed(DROITE,speed2);
+        MOTOR_SetSpeed(GAUCHE,-speed6);
+        MOTOR_SetSpeed(DROITE,speed6);
     }
   }
   else if(direction == DROITE)
@@ -165,13 +166,13 @@ void tournerCentre(int direction, float angle)
     while(ENCODER_Read(GAUCHE) <= anglePulse/2)
     {
         vprobeFreq();
-        ////vzoneNoire();
-        MOTOR_SetSpeed(GAUCHE,speed2);
-        MOTOR_SetSpeed(DROITE,-speed2);
+        MOTOR_SetSpeed(GAUCHE,speed6);
+        MOTOR_SetSpeed(DROITE,-speed6);
     }
   }
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
+  transition();
 }
 void danse(float angle)
 {
@@ -186,6 +187,7 @@ void danse(float angle)
   transition();
 }
 
+
 float distance_mm_pulse(float distance_mm)
 {
    // déterminer la circonference d'une roue en mm et en pulse
@@ -195,13 +197,33 @@ float distance_mm_pulse(float distance_mm)
   float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
   return distance_pulse;
 }
+
+float marteau()
+{
+
+  //détection compteur < 3
+  if(ROBUS_ReadIR(3) >= 250 && counter_1<3)
+  {
+    transition();
+    avance_attaque(130);
+    reculer(150);
+    counter_1 = counter_1 +1;
+  }
+  //détection compteur =4
+  if(ROBUS_ReadIR(3) >=250 && counter_1==3)
+  {
+    tournerCentre(GAUCHE,1170);
+    essai = 1;
+    counter_1 = 0;
+  }
+  
+}
 void avancer(float distance_mm)
 {
   float distance_pulse,distgauche1,distdroite1;
   float k;
   float speed= speed1;
   int counter=0;
-  float encodeur_gauche = ENCODER_Read(GAUCHE);
  
   distance_pulse = distance_mm_pulse(distance_mm);
 
@@ -211,40 +233,25 @@ void avancer(float distance_mm)
     if(counter==0)
     {
        vprobeFreq();
-       ////vzoneNoire();
-      accel_avancer();
+       accel_avancer();
+       //suiveur();
       counter=1;
     }
-    //deccel
-    if(ENCODER_Read(GAUCHE)>=(distance_pulse/1.3))
-    {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k=dPICalc(distgauche1,distdroite1);
-      speed = speed3+k;
-      vprobeFreq();
-      //vzoneNoire();
-      MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed);
-      delay(100);
-      counter=2;
-    }
-    //vitesse intermédiaire
+    //vitesse croisière
     if(counter==1)
     {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k=dPICalc(distgauche1,distdroite1);
-      speed = speed1+k;
       vprobeFreq();
-      //vzoneNoire();
+      //essaie marteau
+      marteau();
       MOTOR_SetSpeed(GAUCHE,speed1);
-      MOTOR_SetSpeed(DROITE,speed);
+      MOTOR_SetSpeed(DROITE,speed1);
+      //suiveur();
       delay(100);
     }
 
   }
-  
+  counter_1 = 0;
+  essai = 0;
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
   transition();
@@ -257,31 +264,25 @@ void avancer_def(float distance_mm)
    float encodeur_gauche = ENCODER_Read(GAUCHE);
  
   distance_pulse = distance_mm_pulse(distance_mm);
-Serial.println(ROBUS_ReadIR(3));
+
   while(ENCODER_Read(GAUCHE)<=distance_pulse+encodeur_gauche)
   {
-      Serial.println(" ");
-      Serial.print("capteur dist: ");
-      Serial.println(ROBUS_ReadIR(3));
-      Serial.println(" ");
-    if(ROBUS_ReadIR(3)>600)
+    if(ROBUS_ReadIR(3)>100)
     {
       vprobeFreq();
-      //vzoneNoire();
+      vzoneNoire_def();
       MOTOR_SetSpeed(GAUCHE,0);
       MOTOR_SetSpeed(DROITE,0);
       delay(1000);
-      Serial.println(ROBUS_ReadIR(3));
     }
     vprobeFreq();
-    //vzoneNoire();
+    vzoneNoire_def();
     MOTOR_SetSpeed(GAUCHE,speed3);
     MOTOR_SetSpeed(DROITE,speed3);
     
   }
       MOTOR_SetSpeed(GAUCHE,0);
       MOTOR_SetSpeed(DROITE,0);
-      vprobeFreq(); 
       transition();
 }
 void reculer_def(float distance_mm)
@@ -296,39 +297,52 @@ void reculer_def(float distance_mm)
     if(ROBUS_ReadIR(3)>100)
     {
       vprobeFreq();
-      //vzoneNoire();
+      vzoneNoire_def();
       MOTOR_SetSpeed(GAUCHE,0);
       MOTOR_SetSpeed(DROITE,0);
-      Serial.println(ROBUS_ReadIR(3));
       delay(1000);
     }
     vprobeFreq();
-    //vzoneNoire();
+    vzoneNoire_def();
     MOTOR_SetSpeed(GAUCHE,-speed3);
     MOTOR_SetSpeed(DROITE,-speed3);
     
   }
       MOTOR_SetSpeed(GAUCHE,0);
       MOTOR_SetSpeed(DROITE,0);
-      vprobeFreq(); 
+}
+void avance_attaque(float distance_mm)
+{
+   float distance_pulse,distgauche1,distdroite1;
+
+  int counter=0;
+ 
+  distance_pulse = distance_mm_pulse(distance_mm);
+
+  while(ENCODER_Read(GAUCHE)<=distance_pulse)
+  {
+      vprobeFreq();
+      MOTOR_SetSpeed(GAUCHE,speed5);
+      MOTOR_SetSpeed(DROITE,speed5);
+      delay(100);
+  }
+  MOTOR_SetSpeed(GAUCHE,0);
+  MOTOR_SetSpeed(DROITE,0);
+  transition();
+
 }
 void reculer(float distance_mm)
 {
   int counter=0;
   float distance_pulse,distgauche1,distdroite1;
-  float k;
-  float accel;
-  float speed= -speed1;
-  float encodeur_gauche = ENCODER_Read(GAUCHE);
   
-  distance_pulse = distance_mm_pulse(distance_mm);
-  while(ENCODER_Read(GAUCHE)>=-distance_pulse)
+  distance_pulse = -distance_mm_pulse(distance_mm);
+  while(ENCODER_Read(GAUCHE)>= distance_pulse)
   {
       vprobeFreq();
-      //vzoneNoire();
       MOTOR_SetSpeed(GAUCHE,-speed3);
       MOTOR_SetSpeed(DROITE,-speed3);
-      
+      delay(100);
   }
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
@@ -346,7 +360,6 @@ int tourner_reculer(int direction, float angle)
     while(ENCODER_Read(DROITE)>=-angle_pulse)
     {
         vprobeFreq();
-        //vzoneNoire();
         MOTOR_SetSpeed(GAUCHE,speed0);
         MOTOR_SetSpeed(DROITE,-speed4);
     }
@@ -357,7 +370,6 @@ int tourner_reculer(int direction, float angle)
     while(ENCODER_Read(GAUCHE)>=-angle_pulse)
     {
         vprobeFreq();
-        //vzoneNoire();
         MOTOR_SetSpeed(GAUCHE,-speed4);
         MOTOR_SetSpeed(DROITE,speed0);
     }
@@ -381,85 +393,105 @@ void vprobeFreq(void)
 
   if(analogRead(A9) < analogRead(A10) && analogRead(A10) >= SEUILDEBUT)
   {
-    delay(100);
+    delay(1000);
      if(analogRead(A9) < analogRead(A10) && analogRead(A10) >= SEUILDEBUT)
     {
       MOTOR_SetSpeed(GAUCHE,0);
       MOTOR_SetSpeed(DROITE,0);
       delay(10000);
-      Serial.print("Delai 5s");
+      Serial.print("Delai 10s");
     // Activer le programme ici.
     }
   }
 }
-void vzoneNoire()
+void suiveur()
 {
+  int icaptarriere = analogRead(A5);
   int icaptgauche = analogRead(A6);
-  int icaptmilieu = analogRead(A7);
-  int icaptdroit = analogRead(A8);
-  Serial.println("capteur de gauche: ");
+  Serial.println("capt gauche");
   Serial.println(icaptgauche);
-
-  Serial.println("capteur de milieu: ");
-  Serial.println(icaptmilieu);  
-
-  Serial.println("capteur de droite: ");
+  int icaptmilieu = analogRead(A7);
+  Serial.print("capt milieu");
+  Serial.println(icaptmilieu);
+  int icaptdroit = analogRead(A8);
+  Serial.print("capt droit");
   Serial.println(icaptdroit);
-
-  delay(50);
-  while (icaptdroit > DISTNOIRE)
-    {
-      tournerCentre(DROITE, 90);
-      delay(50);
-      vprobeFreq(); 
-      avancer(75);
-      delay(50);
-      vprobeFreq(); 
-    }
-  // Milieux:
-  /*if(icaptmilieu < DISTNOIRE /*&& icaptgauche < DISTNOIRE*/
-  /*{
-    tournerCentre(DROITE,35);
-    while(icaptmilieu < DISTNOIRE)
-    {
-    avancer(25);
-    }
-    
+  if( icaptmilieu < DISTNOIRE && icaptdroit < DISTNOIRE)
+  {
+    MOTOR_SetSpeed(DROITE,speed1+0.01);
   }
+    if( icaptmilieu < DISTNOIRE && icaptgauche < DISTNOIRE)
+  {
+    MOTOR_SetSpeed(GAUCHE,speed1+0.01);
+  }
+  if(icaptarriere < DISTNOIRE && icaptdroit < DISTNOIRE)
+  {
+    MOTOR_SetSpeed(DROITE,speed1+0.02);
+  }
+  if(icaptarriere < DISTNOIRE && icaptgauche < DISTNOIRE)
+  {
+    MOTOR_SetSpeed(GAUCHE,speed1+0.02);
+  }
+}
+void vzoneNoire_def()
+{
+  int icaptarriere = analogRead(A5);
+  int icaptgauche = analogRead(A6);
+  Serial.println("capt gauche");
+  Serial.println(icaptgauche);
+  int icaptmilieu = analogRead(A7);
+  Serial.print("capt milieu");
+  Serial.println(icaptmilieu);
+  int icaptdroit = analogRead(A8);
+  Serial.print("capt droit");
+  Serial.println(icaptdroit);
+  delay(1000);
 
-  // GAUCHE:
-  if((icaptgauche < DISTNOIRE) /*|| (icaptgauche < DISTNOIRE && icaptmilieu < DISTNOIRE)*/
-  /*
-    tournerCentre(DROITE,35);
+  // Milieux:
+  if(icaptmilieu < DISTNOIRE && icaptgauche < DISTNOIRE)
+  {
+    tournerCentre(GAUCHE,90);
     while(icaptgauche < DISTNOIRE)
     {
     avancer(25);
     }
   }
 
-  // DROIT:
-  if((icaptdroit > DISTNOIRE) /*|| (icaptdroit < DISTNOIRE && icaptmilieu < DISTNOIRE)*/
-  /*{
+  // GAUCHE:
+  if((icaptgauche < DISTNOIRE) || (icaptgauche < DISTNOIRE && icaptmilieu < DISTNOIRE))
+  {
     tournerCentre(DROITE,90);
-     while(icaptdroit > DISTNOIRE)
+     while(icaptdroit < DISTNOIRE)
     {
     avancer(25);
     }
-    tourner(GAUCHE,90);
   }
-  
-  //GAUCHE-MILIEU-DROITE
-  /*if(icaptgauche < DISTNOIRE && icaptmilieu < DISTNOIRE && icaptdroit < DISTNOIRE)
+
+  // DROIT:
+  if((icaptdroit < DISTNOIRE) || (icaptdroit < DISTNOIRE && icaptmilieu < DISTNOIRE))
   {
-    tournerCentre(DROITE,35);
-    /*avancer(1500);
-  }*/
+    tournerCentre(GAUCHE,90);
+     while(icaptdroit < DISTNOIRE)
+    {
+    avancer(25);
+    }
+  }
+  //GAUCHE-MILIEU-DROITE
+  if(icaptgauche < DISTNOIRE && icaptmilieu < DISTNOIRE && icaptdroit < DISTNOIRE)
+  {
+    tournerCentre(GAUCHE,180);
+    avancer(1500);
+  }
 }
+  
 
 
-/* **********************************************************************
+uint8_t ledPin = 38;
+ADJDS311 color(ledPin);
+
+/* ************************************************************************
 Fonctions d'initialisation (setup)
-********************************************************************** */
+************************************************************************ */
 // -> Se fait appeler au debut du programme
 // -> Se fait appeler seulement un fois
 // -> Generalement on y initilise les varibales globales
@@ -474,18 +506,18 @@ void setup(){
     // You can also use ::setintegrationtime() and ::setcapacitor() to adjust the sensor manually
 
     //color.calibrate();  // first make sure the sensor faces a white surface at the focal point
-    pinMode(A10,INPUT);
-    pinMode(A9,INPUT);
+    
+    pinMode(A5,INPUT);
     pinMode(A6,INPUT);
     pinMode(A7,INPUT);
     pinMode(A8,INPUT);
-
-    delay(5000);
+    pinMode(A9,INPUT);
+    pinMode(A10,INPUT);
 }
 
-/* **********************************************************************
+/* ************************************************************************
 Fonctions de boucle infini (loop())
-********************************************************************** */
+************************************************************************ */
 // -> Se fait appeler perpetuellement suite au "setup"
 void loop()
  {
@@ -500,14 +532,16 @@ void loop()
   color.ledOff();
   delay(250);
 */
+  if(counter_2==0)
+  {
+    delay(5000);
+    counter_2 =1;
+  }
 
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  MOTOR_SetSpeed(0,1);
-  avancer_def(320);
-  delay(100);
-  reculer_def(320);
-  delay(100);
-
-
-}
+   avancer(1000);
+   tournerCentre(GAUCHE,90);
+   avancer(1000);
+   tournerCentre(GAUCHE,180);
+    
+ 
+ }
