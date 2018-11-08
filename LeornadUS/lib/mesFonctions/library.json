@@ -1,0 +1,8 @@
+{
+    "name" : "mesFonctions",
+    "version" : "1.0.0",
+    "build" :
+    {
+        "extraScript" : "extraScript.py"
+    }
+}
