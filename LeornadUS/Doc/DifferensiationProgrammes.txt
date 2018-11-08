@@ -1,0 +1,22 @@
+//#define ROBOTAUTONOME
+//#define ROBOTMANUEL
+
+// Si 2 code definie, dedefini les deux code.
+#ifdef ROBOTAUTONOME
+  #define ROBOTMANUEL
+    #undefine ROBOTAUTONOME
+    #undefine ROBOTMANUEL
+  #endif
+#endif
+
+// ----- A U T O N O M E ------
+#ifdef ROBOTAUTONOME
+  
+
+#endif
+
+// ----- M A N U E L -----
+#ifdef ROBOTMANUEL
+  
+
+#endif
