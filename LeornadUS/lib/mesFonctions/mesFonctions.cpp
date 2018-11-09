@@ -233,3 +233,13 @@ void tournerCrayon(int direction, float angle)
   reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
+
+//Formes
+void polygone(int nbSommets, int lngrArete)
+{
+  for(int tournant = 0 ; tournant < nbSommets ; tournant++)
+  {
+    avancer(lngrArete);
+    tournerCrayon(GAUCHE, 360/nbSommets);
+  }
+}

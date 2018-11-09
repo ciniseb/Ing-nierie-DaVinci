@@ -10,6 +10,10 @@
     #define DROITE 1
     #define DEVANT 1
     #define DERRIERE -1
+
+    #define CONTENT 0
+    #define TRISTE 1
+
     #define speed0 0
     #define speed1 0.4
     #define speed2 0.25
@@ -33,7 +37,8 @@
     void tournerCrayon(int direction, float angle);
 
     //Formes
-    void polygone(int nbSommets, int distanceTotale);
+    void polygone(int nbSommets, int lngrArete);
+    void emotion(int emotion, int rayon);
 
     //DÉCOMMENTEZ LE #define du robot que vous voulez utiliser SEULEMENT
     //#define ROBOTAUTONOME
