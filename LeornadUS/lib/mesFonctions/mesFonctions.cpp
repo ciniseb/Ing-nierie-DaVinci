@@ -19,12 +19,23 @@ float PICalcul(float distanceGauche, float distanceDroite)
 }
 void acceleration(float *v, float vVoulue, float distance)
 {
-  //float pulses = distance_mm_pulse(distance);
-  while(*v != vVoulue)
+  float distanceAvantFrein = distance - ((-((*v)*(*v)))/(2*(0.01f/0.035f)));
+  while(*v != vVoulue && ENCODER_Read(GAUCHE) < distance_mm_pulse(distanceAvantFrein))
   {
     if(*v < vVoulue)
       *v = *v + 0.01f;
     else if(*v > vVoulue)
+      *v = *v - 0.01f;
+    
+    MOTOR_SetSpeed(GAUCHE,*v);
+    MOTOR_SetSpeed(DROITE,*v);
+    delay(35);
+  }
+  while(*v != 0)
+  {
+    if(*v < 0)
+      *v = *v + 0.01f;
+    else if(*v > 0)
       *v = *v - 0.01f;
     
     MOTOR_SetSpeed(GAUCHE,*v);
@@ -58,53 +69,6 @@ float angle_degree_a_pulse(float angle)
   pulses_pour_angle_x = angle * pulses_par_degre_2_roues;
 
   return pulses_pour_angle_x;
-}
-void tourner(int direction, float angle)
-{
-  float angle_pulse;
- 
-  //détermine le nombre de pulse pour arriver à l'angle demandé
-  angle_pulse = angle_degree_a_pulse(angle);
-
-  if(direction == GAUCHE)
-  {
-    while(ENCODER_Read(DROITE)<=angle_pulse)
-    {
-        MOTOR_SetSpeed(GAUCHE,speed0);
-        MOTOR_SetSpeed(DROITE,speed4);
-    }
-  }
-  if(direction == DROITE)
-  {
-    while(ENCODER_Read(GAUCHE)<=angle_pulse)
-    {
-      MOTOR_SetSpeed(GAUCHE,speed4);
-      MOTOR_SetSpeed(DROITE,speed0);
-    }
-  }
-  MOTORS_reset();
-}
-void tournerCentre(int direction, float angle)
-{
-  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-
-  if(direction == GAUCHE)
-  {
-    while(ENCODER_Read(DROITE) <= anglePulse/2)
-    {
-        MOTOR_SetSpeed(GAUCHE,-speed2);
-        MOTOR_SetSpeed(DROITE,speed2);
-    }
-  }
-  else if(direction == DROITE)
-  {
-    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
-    {
-        MOTOR_SetSpeed(GAUCHE,speed2);
-        MOTOR_SetSpeed(DROITE,-speed2);
-    }
-  }
-  MOTORS_reset();
 }
 void danse(/*float angle*/)
 {
@@ -214,28 +178,58 @@ void reculer(float distance_mm)
   }
   MOTORS_reset();
 }
-void tourner_reculer(int direction, float angle)
+void tourner(int direction, float angle, int sens)
 {
   float angle_pulse;
+ 
   //détermine le nombre de pulse pour arriver à l'angle demandé
   angle_pulse = angle_degree_a_pulse(angle);
 
-  if(direction == GAUCHE)
+  if(direction == GAUCHE && sens == DEVANT || direction == DROITE && sens == DERRIERE)
   {
-    while(ENCODER_Read(DROITE)>=-angle_pulse)
+    while(ENCODER_Read(DROITE)<=angle_pulse)
     {
         MOTOR_SetSpeed(GAUCHE,speed0);
-        MOTOR_SetSpeed(DROITE,-speed4);
+        MOTOR_SetSpeed(DROITE,sens*speed4);
     }
-  
   }
-  if(direction == DROITE)
+  if(direction == DROITE && sens == DEVANT || direction == GAUCHE && sens == DERRIERE)
   {
-    while(ENCODER_Read(GAUCHE)>=-angle_pulse)
+    while(ENCODER_Read(GAUCHE)<=angle_pulse)
     {
-        MOTOR_SetSpeed(GAUCHE,-speed4);
-        MOTOR_SetSpeed(DROITE,speed0);
+      MOTOR_SetSpeed(GAUCHE,sens*speed4);
+      MOTOR_SetSpeed(DROITE,speed0);
     }
   }
   MOTORS_reset();
+}
+void tournerCentre(int direction, float angle)
+{
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+
+  if(direction == GAUCHE)
+  {
+    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,-speed2);
+        MOTOR_SetSpeed(DROITE,speed2);
+    }
+  }
+  else if(direction == DROITE)
+  {
+    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    {
+        MOTOR_SetSpeed(GAUCHE,speed2);
+        MOTOR_SetSpeed(DROITE,-speed2);
+    }
+  }
+  MOTORS_reset();
+}
+void tournerCrayon(int direction, float angle)
+{
+  //LEVER LE CRAYON
+  avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  tournerCentre(direction, angle);
+  reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  //BAISSER LE CRAYON
 }

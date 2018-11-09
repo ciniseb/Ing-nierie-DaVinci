@@ -8,6 +8,8 @@
     //Defines
     #define GAUCHE 0
     #define DROITE 1
+    #define DEVANT 1
+    #define DERRIERE -1
     #define speed0 0
     #define speed1 0.4
     #define speed2 0.25
@@ -22,13 +24,16 @@
     void acceleration(float v, float vMax, float distance);
     void MOTORS_reset();
     float angle_degree_a_pulse(float angle);
-    void tourner(int direction, float angle);
-    void tournerCentre(int direction, float angle);
     void danse(/*float angle*/);
     float distance_mm_pulse(float distance_mm);
     void avancer(float distance_mm);
     void reculer(float distance_mm);
-    void tourner_reculer(int direction, float angle);
+    void tourner(int direction, float angle, int sens);
+    void tournerCentre(int direction, float angle);
+    void tournerCrayon(int direction, float angle);
+
+    //Formes
+    void polygone(int nbSommets, int distanceTotale);
 
     //DÉCOMMENTEZ LE #define du robot que vous voulez utiliser SEULEMENT
     //#define ROBOTAUTONOME
