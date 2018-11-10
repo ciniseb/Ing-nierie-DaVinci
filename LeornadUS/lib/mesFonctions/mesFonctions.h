@@ -35,10 +35,6 @@
     void tournerCentre(int direction, float angle);
     void tournerCrayon(int direction, float angle);
 
-    //Formes
-    void polygone(int nbSommets, int lngrArete);
-    void emotion(int emotion, int rayon);
-
     //DÉCOMMENTEZ LE #define du robot que vous voulez utiliser SEULEMENT
     //#define ROBOTAUTONOME
     //#define ROBOTMANUEL

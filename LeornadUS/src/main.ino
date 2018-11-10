@@ -38,11 +38,6 @@ Defines globales & robots
 #define DEVANT 1
 #define DERRIERE -1
 
-#define SOURIRE 0
-#define TRISTE 1
-#define BLAZE 2
-//AUTRE ÉMOTIONS
-
 #define speed0 0
 #define speed1 0.4
 #define speed2 0.25
@@ -68,9 +63,6 @@ void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
 
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
-//Formes
-void polygone(int nbSommets, int lngrArete);
-void emotion(int emotion, int rayon);
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
 
@@ -86,7 +78,7 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
-  polygone(3, 100);//Test
+
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
@@ -330,37 +322,10 @@ void tournerCrayon(int direction, float angle)
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
-  //Formes
-  void polygone(int nbSommets, int lngrArete)
-  {
-    for(int tournant = 0 ; tournant < nbSommets ; tournant++)
-    {
-      avancer(lngrArete);
-      tournerCrayon(GAUCHE, 360/nbSommets);
-    }
-  }
-  void emotion(int emotion, int rayon)
-  {
-    //FAIRE CERCLE
-    switch(emotion)
-    {
-      case SOURIRE:
-      //
-      break;
-      case TRISTE:
-      //
-      break;
-      case TRISTE:
-      //
-      break;
-      default:
-      //ERREUR
-      break;
-    }
-  }
+  //
 #endif
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
-  //Formes
+  //
 #endif
