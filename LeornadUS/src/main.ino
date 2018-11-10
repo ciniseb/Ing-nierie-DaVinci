@@ -1,10 +1,22 @@
-/*============================================
-Projet: Code source
-Equipe: P14
-Auteurs: Simon St-Onge, Philippe B-L, Éric Leduc, Sébastien St-Denis
-Description: Parcours de LéonardUS
-Date: 11 octobre 2018
-============================================*/
+/*================================================================================================
+Fichier:            main.ino
+  Projet:             Résolution de problème et conception en génie
+
+  Equipe:             Ingénierie Da Vinci / P14
+  Auteurs:            
+                      Simon St-Onge (Fonctions de mouvements)
+                      Philippe B-L (Normes)
+                      Sébastien St-Denis (Fonctions de mouvements, normes & formes)
+                      Éric Leduc (???)
+
+  Date:               04-10-2018
+  Révision:           
+  Compilateur:        Arduino IDE
+  Description:        Code source du programme des robots LéonardUS.
+                      Robots artistes, un robot contrôlé et un robot automatisé pour dessiner.
+
+  Modification:      10-11-2018
+=================================================================================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
 /*===========================================================================
 Defines globales & robots
@@ -26,8 +38,10 @@ Defines globales & robots
 #define DEVANT 1
 #define DERRIERE -1
 
-#define CONTENT 0
+#define SOURIRE 0
 #define TRISTE 1
+#define BLAZE 2
+//AUTRE ÉMOTIONS
 
 #define speed0 0
 #define speed1 0.4
@@ -79,6 +93,7 @@ void loop()
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
+// ----- 2  R O B O T S ------
 float PICalcul(float distanceGauche, float distanceDroite)
 {
   float erreur = 0;
@@ -312,6 +327,7 @@ void tournerCrayon(int direction, float angle)
   //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
+
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
   //Formes
@@ -323,7 +339,27 @@ void tournerCrayon(int direction, float angle)
       tournerCrayon(GAUCHE, 360/nbSommets);
     }
   }
+  void emotion(int emotion, int rayon)
+  {
+    //FAIRE CERCLE
+    switch(emotion)
+    {
+      case SOURIRE:
+      //
+      break;
+      case TRISTE:
+      //
+      break;
+      case TRISTE:
+      //
+      break;
+      default:
+      //ERREUR
+      break;
+    }
+  }
 #endif
+
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
   //Formes

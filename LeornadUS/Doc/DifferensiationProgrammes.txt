@@ -1,22 +1,21 @@
-//#define ROBOTAUTONOME
+//DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
+#define ROBOTAUTONOME
 //#define ROBOTMANUEL
 
-// Si 2 code definie, dedefini les deux code.
+//Si 2 robots définis, dé-defini les deux codes
 #ifdef ROBOTAUTONOME
-  #define ROBOTMANUEL
-    #undefine ROBOTAUTONOME
-    #undefine ROBOTMANUEL
+  #ifdef ROBOTMANUEL
+    #undef ROBOTAUTONOME
+    #undef ROBOTMANUEL
   #endif
 #endif
 
-// ----- A U T O N O M E ------
+// ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
-  
-
+  //Formes
 #endif
 
-// ----- M A N U E L -----
+// ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
-  
-
+  //Formes
 #endif
