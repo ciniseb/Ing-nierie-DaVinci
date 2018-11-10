@@ -3,7 +3,6 @@
     #define GENERAL
 
     #include <LibRobus.h>
-    #include <Arduino.h>
 
     //Defines
     #define GAUCHE 0
@@ -25,11 +24,11 @@
     
     //Fonctions
     float PICalcul(float distanceGauche, float distanceDroite);
+    float distance_mm_pulse(float distance_mm);
     void acceleration(float v, float vMax, float distance);
     void MOTORS_reset();
     float angle_degree_a_pulse(float angle);
     void danse(/*float angle*/);
-    float distance_mm_pulse(float distance_mm);
     void avancer(float distance_mm);
     void reculer(float distance_mm);
     void tourner(int direction, float angle, int sens);

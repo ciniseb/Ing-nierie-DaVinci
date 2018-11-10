@@ -1,4 +1,4 @@
-#include <mesFonctions.h>
+#include "mesFonctions.h"
 
 float PICalcul(float distanceGauche, float distanceDroite)
 {
@@ -16,6 +16,15 @@ float PICalcul(float distanceGauche, float distanceDroite)
   Serial.print("PIOUT: ");
   Serial.println(PIresultant);
   return (PIresultant);
+}
+float distance_mm_pulse(float distance_mm)
+{
+   // déterminer la circonference d'une roue en mm et en pulse
+  float diametre_roue_mm = 75;
+  float circonference_roue_mm = 3.1416*diametre_roue_mm;
+  float circonference_roue_pulse = 3200;
+  float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
+  return distance_pulse;
 }
 void acceleration(float *v, float vVoulue, float distance)
 {
@@ -82,15 +91,6 @@ void danse(/*float angle*/)
   }
   delay(3000);
   MOTORS_reset();
-}
-float distance_mm_pulse(float distance_mm)
-{
-   // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
-  float circonference_roue_mm = 3.1416*diametre_roue_mm;
-  float circonference_roue_pulse = 3200;
-  float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
-  return distance_pulse;
 }
 void avancer(float distance_mm)
 {
@@ -185,7 +185,7 @@ void tourner(int direction, float angle, int sens)
   //détermine le nombre de pulse pour arriver à l'angle demandé
   angle_pulse = angle_degree_a_pulse(angle);
 
-  if(direction == GAUCHE && sens == DEVANT || direction == DROITE && sens == DERRIERE)
+  if((direction == GAUCHE && sens == DEVANT) || (direction == DROITE && sens == DERRIERE))
   {
     while(ENCODER_Read(DROITE)<=angle_pulse)
     {
@@ -193,7 +193,7 @@ void tourner(int direction, float angle, int sens)
         MOTOR_SetSpeed(DROITE,sens*speed4);
     }
   }
-  if(direction == DROITE && sens == DEVANT || direction == GAUCHE && sens == DERRIERE)
+  if((direction == DROITE && sens == DEVANT) || (direction == GAUCHE && sens == DERRIERE))
   {
     while(ENCODER_Read(GAUCHE)<=angle_pulse)
     {
@@ -228,9 +228,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   //LEVER LE CRAYON
-  avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  //avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   tournerCentre(direction, angle);
-  reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
 
