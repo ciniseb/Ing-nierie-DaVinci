@@ -6,10 +6,22 @@ Description: Parcours de LéonardUS
 Date: 11 octobre 2018
 ============================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
-
 /*===========================================================================
-Defines globales
-===========================================================================*/#define GAUCHE 0
+Defines globales & robots
+===========================================================================*/
+//DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
+#define ROBOTAUTONOME
+//#define ROBOTMANUEL
+
+//Si 2 robots définis, dé-defini les deux codes
+#ifdef ROBOTAUTONOME
+  #ifdef ROBOTMANUEL
+    #undef ROBOTAUTONOME
+    #undef ROBOTMANUEL
+  #endif
+#endif
+
+#define GAUCHE 0
 #define DROITE 1
 #define DEVANT 1
 #define DERRIERE -1
@@ -22,30 +34,31 @@ Defines globales
 #define speed2 0.25
 #define speed3 0.3
 #define speed4 0.35
-
 /*===========================================================================
 Variables globales
 ===========================================================================*/
 float vitesse;
-
 /*===========================================================================
-Appel des Fonctions
+Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
+float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
 float angle_degree_a_pulse(float angle);
 void danse(/*float angle*/);
-float distance_mm_pulse(float distance_mm);
 void avancer(float distance_mm);
 void reculer(float distance_mm);
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
 
+// ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
 void emotion(int emotion, int rayon);
+
+// ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
 
 /*===========================================================================
 Lancement
@@ -54,17 +67,15 @@ void setup()
 {
   BoardInit();
 }
-
 /*===========================================================================
 Boucle infinie
 ===========================================================================*/
 void loop()
 {
-  
+  polygone(3, 100);//Test
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
-
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
@@ -301,13 +312,19 @@ void tournerCrayon(int direction, float angle)
   //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
-
-//Formes
-void polygone(int nbSommets, int lngrArete)
-{
-  for(int tournant = 0 ; tournant < nbSommets ; tournant++)
+// ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
+#ifdef ROBOTAUTONOME
+  //Formes
+  void polygone(int nbSommets, int lngrArete)
   {
-    avancer(lngrArete);
-    tournerCrayon(GAUCHE, 360/nbSommets);
+    for(int tournant = 0 ; tournant < nbSommets ; tournant++)
+    {
+      avancer(lngrArete);
+      tournerCrayon(GAUCHE, 360/nbSommets);
+    }
   }
-}
+#endif
+// ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
+#ifdef ROBOTMANUEL
+  //Formes
+#endif
