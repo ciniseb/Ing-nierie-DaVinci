@@ -350,7 +350,7 @@ void tournerCrayon(int direction, float angle)
       case TRISTE:
       //
       break;
-      case TRISTE:
+      case BLAZE:
       //
       break;
       default:

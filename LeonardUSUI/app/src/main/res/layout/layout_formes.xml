@@ -6,6 +6,95 @@
     android:layout_height="match_parent"
     tools:context=".Formes">
 
+    <Button
+        android:id="@+id/boutonPolygones"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/boutonEllipses"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/boutonParallelogrammes"
+        android:text="@string/polygones" />
+
+    <Button
+        android:id="@+id/boutonEllipses"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@+id/boutonPolygones"
+        app:layout_constraintRight_toLeftOf="@+id/boutonSpirales"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/boutonEmoji"
+        android:text="@string/ellipses" />
+
+    <Button
+        android:id="@+id/boutonSpirales"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/boutonEllipses"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button6"
+        android:text="@string/spirales" />
+
+    <Button
+        android:id="@+id/boutonParallelogrammes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/boutonEmoji"
+        app:layout_constraintTop_toBottomOf="@id/boutonPolygones"
+        app:layout_constraintBottom_toBottomOf="@id/button7"
+        android:text="@string/parallelogrammes" />
+
+    <Button
+        android:id="@+id/boutonEmoji"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@+id/boutonParallelogrammes"
+        app:layout_constraintRight_toLeftOf="@id/button6"
+        app:layout_constraintTop_toBottomOf="@id/boutonEllipses"
+        app:layout_constraintBottom_toBottomOf="@id/boutonAutres"
+        android:text="@string/emoji" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/boutonEmoji"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/boutonSpirales"
+        app:layout_constraintBottom_toBottomOf="@id/boutonAVenir"
+        android:text="@string/pipipi" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/boutonAutres"
+        app:layout_constraintTop_toBottomOf="@id/boutonParallelogrammes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/pipipi" />
+
+    <Button
+        android:id="@+id/boutonAutres"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@+id/button7"
+        app:layout_constraintRight_toLeftOf="@id/boutonAVenir"
+        app:layout_constraintTop_toBottomOf="@id/boutonEmoji"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/autres" />
+
+    <Button
+        android:id="@+id/boutonAVenir"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/boutonAutres"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/a_venir" />
 
 
 </android.support.constraint.ConstraintLayout>

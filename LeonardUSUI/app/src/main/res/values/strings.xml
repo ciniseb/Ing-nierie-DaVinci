@@ -1,6 +1,17 @@
 <resources>
+    <!-- Main -->
     <string name="app_name">LeonardUS UI</string>
     <string name="leonardus">LéonardUS</string>
     <string name="ingenierie_da_vinci">Ingénierie Da Vinci</string>
     <string name="allons_y">Allons-y</string>
+
+    <!-- Formes -->
+    <string name="polygones">Polygones</string>
+    <string name="ellipses">Ellipses</string>
+    <string name="spirales">Spirales</string>
+    <string name="parallelogrammes">Parallélogrammes</string>
+    <string name="emoji">Emoji</string>
+    <string name="pipipi">\???</string>
+    <string name="autres">Autres</string>
+    <string name="a_venir">À venir...</string>
 </resources>
