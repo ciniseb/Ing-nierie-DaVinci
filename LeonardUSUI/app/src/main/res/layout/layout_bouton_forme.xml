@@ -21,6 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/imageForme"
         android:layout_centerVertical="true"
-        android:gravity="end"
+        android:gravity="center"
         android:textSize="18sp" />
 </RelativeLayout>

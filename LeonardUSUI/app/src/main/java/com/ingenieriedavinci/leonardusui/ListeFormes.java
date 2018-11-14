@@ -54,17 +54,17 @@ public class ListeFormes extends AppCompatActivity
         {
             case POLYGONES:
                 formes = new Forme[11];//De 2 à 12 inclu
-                formes[0] = new Forme("Ligne","");
-                formes[1] = new Forme("Triangle","");
-                formes[2] = new Forme("Carré","");
-                formes[3] = new Forme("Pentagone","");
-                formes[4] = new Forme("Hexagone","");
-                formes[5] = new Forme("Heptagone","");
-                formes[6] = new Forme("Octogone","");
-                formes[7] = new Forme("Ennéagone","");
-                formes[8] = new Forme("Décagone","");
-                formes[9] = new Forme("Hendécagone","");
-                formes[10] = new Forme("Dodécagone","");
+                formes[0] = new Forme("Digone","forme_polygone_digone");
+                formes[1] = new Forme("Triangle","forme_polygone_triangle");
+                formes[2] = new Forme("Carré","forme_polygone_carre");
+                formes[3] = new Forme("Pentagone","forme_polygone_pentagone");
+                formes[4] = new Forme("Hexagone","forme_polygone_hexagone");
+                formes[5] = new Forme("Heptagone","forme_polygone_heptagone");
+                formes[6] = new Forme("Octogone","forme_polygone_octogone");
+                formes[7] = new Forme("Ennéagone","forme_polygone_enneagone");
+                formes[8] = new Forme("Décagone","forme_polygone_decagone");
+                formes[9] = new Forme("Hendécagone","forme_polygone_hendecagone");
+                formes[10] = new Forme("Dodécagone","forme_polygone_dodecagone");
 
                 break;
             case ELLIPSES:
@@ -140,12 +140,10 @@ public class ListeFormes extends AppCompatActivity
             TextView nom = (TextView) view.findViewById(R.id.typeForme);
             ImageViewCarre imageForme = view.findViewById(R.id.imageForme);
 
+            nom.setText(formes[position].getNom());
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
-            bitmap = getBitmapGrandeur(bitmap, 70);
+            bitmap = getBitmapGrandeur(bitmap, 180);
             imageForme.setImageBitmap(bitmap);
-
-            //view.setBackgroundColor(Color.WHITE);
-            //view.setClickable(false);
 
             return view;
         }

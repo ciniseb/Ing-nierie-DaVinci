@@ -50,6 +50,84 @@ public class Formes extends AppCompatActivity
                 }
             });
         }
+        boutonsFormes[0].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(0, getApplicationContext());
+            }
+        });
+        boutonsFormes[1].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(1, getApplicationContext());
+            }
+        });
+        boutonsFormes[2].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(2, getApplicationContext());
+            }
+        });
+        boutonsFormes[3].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(3, getApplicationContext());
+            }
+        });
+        boutonsFormes[4].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(4, getApplicationContext());
+            }
+        });
+        boutonsFormes[5].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                listeFormes.startActivity(5, getApplicationContext());
+            }
+        });
+        boutonsFormes[6].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
+            }
+        });
+        boutonsFormes[7].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
+            }
+        });
+        boutonsFormes[8].setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
+            }
+        });
 
         //Comportements
         /*debut.setOnClickListener(new View.OnClickListener()
