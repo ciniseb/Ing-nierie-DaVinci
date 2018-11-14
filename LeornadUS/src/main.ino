@@ -70,7 +70,7 @@ void tournerCrayon(int direction, float angle);
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
-void cercle(int rayon, int t);
+void arc(int rayon, float angle, int t);
 void ellipse(int longeur, int hauteur, int t);
 void emotion(int emotion, int rayon);
 
@@ -89,6 +89,7 @@ Boucle infinie
 void loop()
 {
   polygone(3, 100);//Test
+  emotion(SOURIRE, 400);//Test
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
@@ -341,12 +342,18 @@ void tournerCrayon(int direction, float angle)
       tournerCrayon(GAUCHE, ((nbSommets-2)*180)/nbSommets);
     }
   }
-  void cercle(int rayon, int t)
+  void arc(int rayon, float angle, int t)
   {
-    float vG = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
-    float vD = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
-    MOTOR_SetSpeed(GAUCHE, vG);
-    MOTOR_SetSpeed(DROITE, vD);
+    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+
+    float vG = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    float vD = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+
+    while(ENCODER_Read(DROITE) <= anglePulse)
+    {
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
+    }
   }
   void ellipse(int longeur, int hauteur, int t)
   {
@@ -381,11 +388,28 @@ void tournerCrayon(int direction, float angle)
   }
   void emotion(int emotion, int rayon)
   {
-    //FAIRE CERCLE
+    arc(rayon, 360, 200);//1
+    tournerCrayon(GAUCHE, 90);//2
     switch(emotion)
     {
       case SOURIRE:
-      //
+      //Yeux
+      avancer(rayon/3);//3
+      tournerCrayon(DROITE, 90);//4
+      avancer(rayon/3);//5
+      tournerCrayon(GAUCHE, 90);//6
+      avancer(rayon/3);//7
+      arc(rayon/6, 360, 200/6);//8
+      avancer(rayon*2/3);//9
+      arc(rayon/6, 360, 200/6);//10
+      avancer(rayon/3);//11
+      tournerCrayon(GAUCHE, 90);//12
+      avancer(rayon/3);//13
+      //Bouche
+      arc(rayon*2/3, 180, 100);//14
+      tournerCrayon(DROITE, 90);//15
+      avancer(rayon/3);//16
+      tournerCrayon(GAUCHE, 90);//17
       break;
       case TRISTE:
       //

@@ -32,24 +32,9 @@ public class Formes extends AppCompatActivity
             final String boutonID = "bouton" + typeFormes;//String de la référence du bouton xml
             int resID = getResources().getIdentifier(boutonID, "id", getPackageName());//Créer l'ID
             boutonsFormes[typeFormes] = ((Button) findViewById(resID));//Passage de l'ID
-
-            //Comportements
-            boutonsFormes[typeFormes].setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    if(typeFormes < 7)
-                        listeFormes.startActivity(/*ICI*/typeFormes, getApplicationContext());
-                    else
-                    {
-                        Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
-                        message.setGravity(Gravity.CENTER, 0, 0);
-                        message.show();
-                    }
-                }
-            });
         }
+
+        //Comportements
         boutonsFormes[0].setOnClickListener(new View.OnClickListener()
         {
             @Override

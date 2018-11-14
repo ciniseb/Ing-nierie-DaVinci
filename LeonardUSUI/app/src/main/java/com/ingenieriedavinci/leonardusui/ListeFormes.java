@@ -18,10 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-//import static daynight.daynnight.MainActivity.SurChangementActivity;
-//import static daynight.daynnight.MainActivity.joueur;
-
 public class ListeFormes extends AppCompatActivity
 {
     //Statics - Types de formes
@@ -68,18 +64,31 @@ public class ListeFormes extends AppCompatActivity
 
                 break;
             case ELLIPSES:
+                formes = new Forme[1];
+                formes[0] = new Forme("Cercle", "");
 
                 break;
             case SPIRALES:
+                formes = new Forme[1];
+                formes[0] = new Forme("À venir", "");
 
                 break;
             case PARALLELOGRAMMES:
+                formes = new Forme[1];
+                formes[0] = new Forme("À venir", "");
 
                 break;
             case EMOJI:
+                formes = new Forme[3];
+                formes[0] = new Forme("Content", "");
+                formes[1] = new Forme("Triste", "");
+                formes[2] = new Forme("Blazé", "");
 
                 break;
             case AUTRES:
+                formes = new Forme[2];
+                formes[0] = new Forme("Informatique", "forme_autre_informatique");
+                formes[1] = new Forme("Électrique", "forme_autre_electrique");
 
                 break;
             default:
