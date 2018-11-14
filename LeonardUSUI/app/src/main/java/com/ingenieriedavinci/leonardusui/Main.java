@@ -17,7 +17,7 @@ public class Main extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main);
 
-        //Attribution
+        //Attributions
         debut = (Button) findViewById(R.id.debut);
 
         //Comportements

@@ -70,6 +70,8 @@ void tournerCrayon(int direction, float angle);
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
+void cercle(int rayon, int t);
+void ellipse(int longeur, int hauteur, int t);
 void emotion(int emotion, int rayon);
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
@@ -305,16 +307,16 @@ void tournerCentre(int direction, float angle)
   {
     while(ENCODER_Read(DROITE) <= anglePulse/2)
     {
-        MOTOR_SetSpeed(GAUCHE,-speed2);
-        MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(GAUCHE,-speed2);
+      MOTOR_SetSpeed(DROITE,speed2);
     }
   }
   else if(direction == DROITE)
   {
     while(ENCODER_Read(GAUCHE) <= anglePulse/2)
     {
-        MOTOR_SetSpeed(GAUCHE,speed2);
-        MOTOR_SetSpeed(DROITE,-speed2);
+      MOTOR_SetSpeed(GAUCHE,speed2);
+      MOTOR_SetSpeed(DROITE,-speed2);
     }
   }
   MOTORS_reset();
@@ -336,7 +338,45 @@ void tournerCrayon(int direction, float angle)
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, 360/nbSommets);
+      tournerCrayon(GAUCHE, ((nbSommets-2)*180)/nbSommets);
+    }
+  }
+  void cercle(int rayon, int t)
+  {
+    float vG = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    float vD = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    MOTOR_SetSpeed(GAUCHE, vG);
+    MOTOR_SetSpeed(DROITE, vD);
+  }
+  void ellipse(int longeur, int hauteur, int t)
+  {
+    float vG = 2*PI*(hauteur/2)/t;
+    float vD = 2*PI*(hauteur/2)/t;
+    
+    for(int i = 0 ; i < t/4 ; i = i++)
+    {
+      //vG = vG + ???;
+      //r = sqrt(pow(hauteur/2,2) + pow(longueur/2,2));
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
+    }
+    for(int i = 0 ; i < t/4 ; i = i++)
+    {
+      //vG = vG - ???;
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
+    }
+    for(int i = 0 ; i < t/4 ; i = i++)
+    {
+      //vG = vG + ???;
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
+    }
+    for(int i = 0 ; i < t/4 ; i = i++)
+    {
+      //vG = vG - ???;
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
     }
   }
   void emotion(int emotion, int rayon)
