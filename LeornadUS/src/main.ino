@@ -71,13 +71,14 @@ void tournerCrayon(int direction, float angle);
 //Formes
 void polygone(int nbSommets, int lngrArete);
 void parallelogramme(int base, int hauteur, float angle);
-//Polygone étoilé
+void polygoneEtoile(int nbSommets, int lngrArete);
 void arc(int rayon, float angle, int t);
+void croix(int lngrArete);
 void ellipse(int longeur, int largeur, int t);
 //Spirale
 void emotion(int emotion, int rayon);
-//Électirque
-//Informatique
+void electrique();
+void informatique();
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
 
@@ -357,6 +358,32 @@ void tournerCrayon(int direction, float angle)
       tournerCrayon(GAUCHE, angle);
     }
   }
+  void polygoneEtoile(int nbSommets, int lngrArete)
+  {
+    //Options disponibles pour nbSommets : 3-6 
+    float angleExterne = 180*(1-(2/nbSommets));
+    float angleInterne = 180 - angleExterne;
+    tournerCrayon(DROITE, 90);
+    for(int i = 0; i < nbSommets ; i++)
+    {
+      avancer(lngrArete);
+      tournerCrayon(DROITE, angleInterne);
+      avancer(lngrArete);
+      tournerCrayon(GAUCHE, angleExterne);
+    }
+    tournerCentre(GAUCHE, 90);
+    reculer(/*Distance entre crayon et roues*/100);
+  }
+  void croix(int lngrArete)
+  {
+    for(int i=0; i<6;i++)
+    {
+      avancer(lngrArete);
+      tournerCentre(DROITE, 90);
+      avancer(lngrArete);
+      tournerCentre(GAUCHE, 90);
+    }
+  }
   void arc(int rayon, float angle, int t)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
@@ -375,26 +402,26 @@ void tournerCrayon(int direction, float angle)
     float vG = 2*PI*(largeur/2)/t;
     float vD = 2*PI*(largeur/2)/t;
     
-    for(int i = 0 ; i < t/4 ; i = i++)
+    for(int i = 0 ; i < t/4 ; i++)
     {
       //vG = vG + ???;
-      //r = sqrt(pow(largeur/2,2) + pow(longueur/2,2));
+      //r = sqrt(pow(largeur/2,2) + pow(lngrArete/2,2));
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
-    for(int i = 0 ; i < t/4 ; i = i++)
+    for(int i = 0 ; i < t/4 ; i++)
     {
       //vG = vG - ???;
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
-    for(int i = 0 ; i < t/4 ; i = i++)
+    for(int i = 0 ; i < t/4 ; i++)
     {
       //vG = vG + ???;
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
-    for(int i = 0 ; i < t/4 ; i = i++)
+    for(int i = 0 ; i < t/4 ; i++)
     {
       //vG = vG - ???;
       MOTOR_SetSpeed(GAUCHE, vG);
@@ -486,68 +513,39 @@ void tournerCrayon(int direction, float angle)
       break;
     }
   }
-  void GEbetterThanGI ()
+  void electrique()
   {
 	  float P=40; //distance en mm des petits côtés
-      tournerCrayon(GAUCHE, 55);
-      avancer(85.81);
-      tournerCrayon(DROITE, 90);
-      avancer(P);
-      tournerCrayon(GAUCHE, 90);
-      avancer(66.65);
-      tournerCrayon(DROITE, 90);
-      avancer(P);
-      tournerCrayon(GAUCHE, 95);
-      avancer(60);
-      tournerCrayon(GAUCHE, 52);
-      avancer(70);
-      tournerCrayon(GAUCHE, 125);
-      avancer(50);
-      tournerCrayon(DROITE,90);
-      avancer(P);
-      tournerCrayon(GAUCHE, 90);
-      avancer(62.72);
-      tournerCrayon(DROITE, 90);
-      avancer(P);
-      tournerCrayon(GAUCHE, 115);
-      avancer(152,36);
-      //permet de reset le robot à la position ini.
-      tournerCentre(DROITE, 149);
-      reculer(/*distance entre crayon et roues*/);
-    }
-    void etoile(int longueur, int nbPointes)
-    //Options disponibles pour nbPointes : 3-6 
-    {
-      float angleExterne = 180*(1-(2/nbPointes));
-      float angleInterne = 180 - angleExterne;
-      tournerCrayon(DROITE, 90);
-      for(int i = 0; i<nbPointes; i++)
-      {
-        avancer(longueur);
-        tournerCrayon(DROITE, angleInterne);
-        avancer(longueur);
-        tournerCrayon(GAUCHE, angleExterne);
-      }
-      tournerCentre(GAUCHE, 90);
-      reculer(/*Distance entre crayon et roues*/);
+    tournerCrayon(GAUCHE, 55);
+    avancer(85.81);
+    tournerCrayon(DROITE, 90);
+    avancer(P);
+    tournerCrayon(GAUCHE, 90);
+    avancer(66.65);
+    tournerCrayon(DROITE, 90);
+    avancer(P);
+    tournerCrayon(GAUCHE, 95);
+    avancer(60);
+    tournerCrayon(GAUCHE, 52);
+    avancer(70);
+    tournerCrayon(GAUCHE, 125);
+    avancer(50);
+    tournerCrayon(DROITE,90);
+    avancer(P);
+    tournerCrayon(GAUCHE, 90);
+    avancer(62.72);
+    tournerCrayon(DROITE, 90);
+    avancer(P);
+    tournerCrayon(GAUCHE, 115);
+    avancer(152.36);
+    //permet de reset le robot à la position ini.
+    tournerCentre(DROITE, 149);
+    reculer(/*distance entre crayon et roues*/100);
+  }
+  void informatique()
+  {
 
-    }
-    
-    void jesusmedieval(int longueur)
-    {
-        for(int i=0; i<6;i++)
-        {
-            avancer(longueur);
-            tournerCentre(DROITE, 90);
-            avancer(longueur);
-            tournerCentre(GAUCHE, 90)
-        }
-    }
-
-    void souris()
-    {
-
-    }
+  }
 #endif
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
