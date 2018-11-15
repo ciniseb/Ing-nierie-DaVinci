@@ -70,9 +70,14 @@ void tournerCrayon(int direction, float angle);
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
+void parallelogramme(int base, int hauteur, float angle);
+//Polygone étoilé
 void arc(int rayon, float angle, int t);
-void ellipse(int longeur, int hauteur, int t);
+void ellipse(int longeur, int largeur, int t);
+//Spirale
 void emotion(int emotion, int rayon);
+//Électirque
+//Informatique
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
 
@@ -342,6 +347,16 @@ void tournerCrayon(int direction, float angle)
       tournerCrayon(GAUCHE, ((nbSommets-2)*180)/nbSommets);
     }
   }
+  void parallelogramme(int base, int hauteur, float angle)
+  {
+    for(int diagonale = 0 ; diagonale < 2 ; diagonale++)
+    {
+      avancer(base);
+      tournerCrayon(GAUCHE, 180 - angle);
+      avancer(hauteur/cos(angle - 90));
+      tournerCrayon(GAUCHE, angle);
+    }
+  }
   void arc(int rayon, float angle, int t)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
@@ -355,15 +370,15 @@ void tournerCrayon(int direction, float angle)
       MOTOR_SetSpeed(DROITE, vD);
     }
   }
-  void ellipse(int longeur, int hauteur, int t)
+  void ellipse(int longeur, int largeur, int t)
   {
-    float vG = 2*PI*(hauteur/2)/t;
-    float vD = 2*PI*(hauteur/2)/t;
+    float vG = 2*PI*(largeur/2)/t;
+    float vD = 2*PI*(largeur/2)/t;
     
     for(int i = 0 ; i < t/4 ; i = i++)
     {
       //vG = vG + ???;
-      //r = sqrt(pow(hauteur/2,2) + pow(longueur/2,2));
+      //r = sqrt(pow(largeur/2,2) + pow(longueur/2,2));
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
@@ -388,40 +403,151 @@ void tournerCrayon(int direction, float angle)
   }
   void emotion(int emotion, int rayon)
   {
+    //Contour
     arc(rayon, 360, 200);//1
     tournerCrayon(GAUCHE, 90);//2
     switch(emotion)
     {
       case SOURIRE:
-      //Yeux
+      //Transition
       avancer(rayon/3);//3
       tournerCrayon(DROITE, 90);//4
       avancer(rayon/3);//5
       tournerCrayon(GAUCHE, 90);//6
       avancer(rayon/3);//7
+      //Yeux
       arc(rayon/6, 360, 200/6);//8
       avancer(rayon*2/3);//9
       arc(rayon/6, 360, 200/6);//10
+      //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12
       avancer(rayon/3);//13
       //Bouche
       arc(rayon*2/3, 180, 100);//14
+      //Transition
       tournerCrayon(DROITE, 90);//15
       avancer(rayon/3);//16
       tournerCrayon(GAUCHE, 90);//17
       break;
       case TRISTE:
-      //
+      //Transition
+      avancer(rayon/3);//3
+      tournerCrayon(DROITE, 90);//4
+      avancer(rayon/3);//5
+      tournerCrayon(GAUCHE, 90);//6
+      avancer(rayon/3);//7
+      //Yeux
+      arc(rayon/6, 360, 200/6);//8
+      avancer(rayon*2/3);//9
+      arc(rayon/6, 360, 200/6);//10
+      //Transition
+      avancer(rayon/3);//11
+      tournerCrayon(GAUCHE, 90);//12
+      avancer(rayon);//13
+      tournerCrayon(GAUCHE, 90);//14
+      avancer(rayon*4/3);//15
+      tournerCrayon(GAUCHE, 90);//16
+      //Bouche
+      arc(rayon*2/3, 180, 100);//17
+      //Transition
+      tournerCrayon(GAUCHE, 90);//18
+      avancer(rayon*4/3);//19
+      tournerCrayon(GAUCHE, 90);//20
+      avancer(rayon*2/3);//21
+      tournerCrayon(DROITE, 90);//22
+      avancer(rayon/3);//23
+      tournerCrayon(GAUCHE, 90);//24
       break;
       case BLAZE:
-      //
+      //Transition
+      avancer(rayon/3);//3
+      tournerCrayon(DROITE, 90);//4
+      avancer(rayon/3);//5
+      tournerCrayon(GAUCHE, 90);//6
+      avancer(rayon/3);//7
+      //Yeux
+      arc(rayon/6, 360, 200/6);//8
+      avancer(rayon*2/3);//9
+      arc(rayon/6, 360, 200/6);//10
+      //Transition
+      avancer(rayon/3);//11
+      tournerCrayon(GAUCHE, 90);//12
+      avancer(rayon/3);//13
+      //Bouche
+      arc(rayon*2/3, 180, 100);//14
+      //Transition
+      tournerCrayon(DROITE, 90);//15
+      avancer(rayon/3);//16
+      tournerCrayon(GAUCHE, 90);//17
       break;
       default:
       //ERREUR
       break;
     }
   }
+  void GEbetterThanGI ()
+  {
+	  float P=40; //distance en mm des petits côtés
+      tournerCrayon(GAUCHE, 55);
+      avancer(85.81);
+      tournerCrayon(DROITE, 90);
+      avancer(P);
+      tournerCrayon(GAUCHE, 90);
+      avancer(66.65);
+      tournerCrayon(DROITE, 90);
+      avancer(P);
+      tournerCrayon(GAUCHE, 95);
+      avancer(60);
+      tournerCrayon(GAUCHE, 52);
+      avancer(70);
+      tournerCrayon(GAUCHE, 125);
+      avancer(50);
+      tournerCrayon(DROITE,90);
+      avancer(P);
+      tournerCrayon(GAUCHE, 90);
+      avancer(62.72);
+      tournerCrayon(DROITE, 90);
+      avancer(P);
+      tournerCrayon(GAUCHE, 115);
+      avancer(152,36);
+      //permet de reset le robot à la position ini.
+      tournerCentre(DROITE, 149);
+      reculer(/*distance entre crayon et roues*/);
+    }
+    void etoile(int longueur, int nbPointes)
+    //Options disponibles pour nbPointes : 3-6 
+    {
+      float angleExterne = 180*(1-(2/nbPointes));
+      float angleInterne = 180 - angleExterne;
+      tournerCrayon(DROITE, 90);
+      for(int i = 0; i<nbPointes; i++)
+      {
+        avancer(longueur);
+        tournerCrayon(DROITE, angleInterne);
+        avancer(longueur);
+        tournerCrayon(GAUCHE, angleExterne);
+      }
+      tournerCentre(GAUCHE, 90);
+      reculer(/*Distance entre crayon et roues*/);
+
+    }
+    
+    void jesusmedieval(int longueur)
+    {
+        for(int i=0; i<6;i++)
+        {
+            avancer(longueur);
+            tournerCentre(DROITE, 90);
+            avancer(longueur);
+            tournerCentre(GAUCHE, 90)
+        }
+    }
+
+    void souris()
+    {
+
+    }
 #endif
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
