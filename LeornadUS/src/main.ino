@@ -94,8 +94,17 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
-  polygone(3, 100);//Test
-  emotion(SOURIRE, 400);//Test
+  //Formes
+  polygone(2, 200);
+  //parallelogramme(int base, int hauteur, float angle);
+  //polygoneEtoile(int nbSommets, int lngrArete);
+  //arc(int rayon, float angle, int t);
+  //croix(100);
+  //ellipse(int longeur, int largeur, int t);
+  //Spirale
+  //emotion(SOURIRE, 400);
+  //electrique();
+  //informatique();
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
