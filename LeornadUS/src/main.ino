@@ -61,6 +61,11 @@ void reculer(float distance_mm);
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
+/******************************************/
+/****Code bras du crayon/monter et descendre*************/
+int baissercrayon();
+void levercrayon();
+/*******************************/
 
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 
@@ -72,6 +77,14 @@ Lancement
 void setup()
 {
   BoardInit();
+
+  pinMode(A10,INPUT);
+  pinMode(A9,INPUT);
+  pinMode(A6,INPUT);
+  pinMode(A7,INPUT);
+  pinMode(A8,INPUT);
+
+  delay(5000);
 }
 /*===========================================================================
 Boucle infinie
@@ -319,6 +332,48 @@ void tournerCrayon(int direction, float angle)
   //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
+/******************************************/
+/****Code bras du crayon/monter et descendre*************/
+
+int baissercrayon()
+{
+  int actif = 1;
+  int i = 1;
+  SERVO_Enable(0);
+  SERVO_SetAngle(0,40);
+  delay(100);
+    while (actif = 1)
+    {
+      Serial.println(40+i);
+        SERVO_SetAngle(0, (40 + i));
+        delay(15);
+        if (ROBUS_IsBumper(1))
+        {
+          actif = 0;
+          SERVO_Disable(0);
+          return 0;
+        }
+        if ( i == 160)
+        {
+          actif = 0;
+          SERVO_Disable(0);
+          return 0;
+        }
+        i = i+1;
+    }
+    SERVO_Disable(0);
+    return 0;
+}
+
+void levercrayon()
+{
+  SERVO_Enable(0);
+  delay(100);
+  SERVO_SetAngle(0,40);
+  delay(500);
+  SERVO_Disable(0);
+}
+/*******************************/
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
