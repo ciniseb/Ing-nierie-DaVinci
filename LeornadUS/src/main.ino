@@ -52,15 +52,19 @@ Defines globales & robots
 Variables globales
 ===========================================================================*/
 float vitesse;
+int counter_1;
+int essai;
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
-void acceleration(float v, float vMax, float distance);
+//void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
 float angle_degree_a_pulse(float angle);
 void danse(/*float angle*/);
+void accel_avancer();
+void accel_reculer();
 void avancer(float distance_mm);
 void reculer(float distance_mm);
 void tourner(int direction, float angle, int sens);
@@ -95,7 +99,7 @@ Boucle infinie
 void loop()
 {
   //Formes
-  polygone(2, 200);
+  polygone(2, 100);
   //parallelogramme(int base, int hauteur, float angle);
   //polygoneEtoile(int nbSommets, int lngrArete);
   //arc(int rayon, float angle, int t);
@@ -138,7 +142,7 @@ float distance_mm_pulse(float distance_mm)
   float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
   return distance_pulse;
 }
-void acceleration(float *v, float vVoulue, float distance)
+/*void acceleration(float *v, float vVoulue, float distance)
 {
   float distanceAvantFrein = distance - ((-((*v)*(*v)))/(2*(0.01f/0.035f)));
   while(*v != vVoulue && ENCODER_Read(GAUCHE) < distance_mm_pulse(distanceAvantFrein))
@@ -163,7 +167,7 @@ void acceleration(float *v, float vVoulue, float distance)
     MOTOR_SetSpeed(DROITE,*v);
     delay(35);
   }
-}
+}*/
 void MOTORS_reset()
 {
   MOTOR_SetSpeed(GAUCHE,speed0);
@@ -204,11 +208,38 @@ void danse(/*float angle*/)
   delay(3000);
   MOTORS_reset();
 }
+void accel_avancer()
+{
+  float accel=0;
+      while(accel<=0.35)
+      { 
+        //vprobeFreq();   
+        accel = accel + 0.01;
+        MOTOR_SetSpeed(GAUCHE,accel);
+        MOTOR_SetSpeed(DROITE,accel);
+        //marteau();
+        delay(35);
+      }
+}
+void accel_reculer()
+{
+  float accel=0;
+      while(accel<=0.35)
+      {  
+        //vprobeFreq();   
+        accel = accel + 0.01;
+        MOTOR_SetSpeed(GAUCHE,-accel);
+        MOTOR_SetSpeed(DROITE,-accel);
+        delay(35);
+      }
+}
 void avancer(float distance_mm)
 {
-  float distance_pulse, distgauche1, distdroite1, k;
+  float distance_pulse,distgauche1,distdroite1;
+  float k;
   float speed= speed1;
   int counter=0;
+ 
   distance_pulse = distance_mm_pulse(distance_mm);
 
   while(ENCODER_Read(GAUCHE)<=distance_pulse)
@@ -216,35 +247,26 @@ void avancer(float distance_mm)
     //accel
     if(counter==0)
     {
-      //acceleration(AVANCER);
+       //vprobeFreq();
+       accel_avancer();
+       //suiveur();
       counter=1;
     }
-    //deccel
-    if(ENCODER_Read(GAUCHE)>=(distance_pulse/1.3))
-    {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k=PICalcul(distgauche1,distdroite1);
-      speed = speed3+k;
-    
-      MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed);
-      delay(100);
-      counter=2;
-    }
-    //vitesse intermédiaire
+    //vitesse croisière
     if(counter==1)
     {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k=PICalcul(distgauche1,distdroite1);
-      speed = speed1+k;
-
+      //vprobeFreq();
+      //essaie marteau
+      //marteau();
       MOTOR_SetSpeed(GAUCHE,speed1);
-      MOTOR_SetSpeed(DROITE,speed);
+      MOTOR_SetSpeed(DROITE,speed1);
+      //suiveur();
       delay(100);
     }
+
   }
+  counter_1 = 0;
+  essai = 0;
   MOTORS_reset();
 }
 void reculer(float distance_mm)
