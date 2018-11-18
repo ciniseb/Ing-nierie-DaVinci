@@ -345,6 +345,12 @@ void tournerCrayon(int direction, float angle)
   //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
   //BAISSER LE CRAYON
 }
+void tournerEfface(int direction, float angle)
+{
+  //avancer(distance entre crayon et efface);
+  //reculer(distance entre roues et efface);
+  tournerCentre(direction,angle);
+}
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
@@ -356,6 +362,15 @@ void tournerCrayon(int direction, float angle)
       avancer(lngrArete);
       tournerCrayon(GAUCHE, ((nbSommets-2)*180)/nbSommets);
     }
+     /*-----ZAMBONI------
+    for(int tournant = 0; tournant < nbSommets ; tournant++)
+    {
+      //DESCENDRE EFFACE
+      
+      avancer(lngrArete);
+      tournerEfface(GAUCHE, ((nbSommets-2)*180/nbSommets));
+      reculer(distance entre crayon et roues)
+    }*/
   }
   void parallelogramme(int base, int hauteur, float angle)
   {
