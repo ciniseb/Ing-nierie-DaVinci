@@ -65,6 +65,8 @@ void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
 void reculer(float distance_mm);
+int baisserCrayon();
+void leverCrayon();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
@@ -90,6 +92,14 @@ Lancement
 void setup()
 {
   BoardInit();
+
+  pinMode(A10,INPUT);
+  pinMode(A9,INPUT);
+  pinMode(A6,INPUT);
+  pinMode(A7,INPUT);
+  pinMode(A8,INPUT);
+
+  delay(5000);
 }
 /*===========================================================================
 Boucle infinie
@@ -156,7 +166,7 @@ void loop()
   #endif
   if(ROBUS_IsBumper(3))
   {
-    //BAISSER CRAYON
+    baisserCrayon();
 
     //Formes
     //polygone(5, 70);//FONCTIONNE
@@ -170,7 +180,7 @@ void loop()
     //electrique();
     //informatique();
 
-    //LEVER CRAYON
+    leverCrayon();
   }
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
@@ -371,6 +381,44 @@ void reculer(float distance_mm)
   }
   MOTORS_reset();
 }
+int baisserCrayon()
+{
+  int actif = 1;
+  int i = 1;
+  SERVO_Enable(0);
+  SERVO_SetAngle(0,40);
+  delay(100);
+    while(actif = 1)
+    {
+      Serial.println(40+i);
+        SERVO_SetAngle(0, (40 + i));
+        delay(15);
+        if(ROBUS_IsBumper(1))
+        {
+          actif = 0;
+          SERVO_Disable(0);
+          return 0;
+        }
+        if( i == 160)
+        {
+          actif = 0;
+          SERVO_Disable(0);
+          return 0;
+        }
+        i = i+1;
+    }
+    SERVO_Disable(0);
+    return 0;
+}
+
+void leverCrayon()
+{
+  SERVO_Enable(0);
+  delay(100);
+  SERVO_SetAngle(0,40);
+  delay(500);
+  SERVO_Disable(0);
+}
 void tourner(int direction, float angle, int sens)
 {
   float angle_pulse;
@@ -420,11 +468,11 @@ void tournerCentre(int direction, float angle)
 }
 void tournerCrayon(int direction, float angle)
 {
-  //LEVER LE CRAYON
-  //avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  leverCrayon();
+  avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
   tournerCentre(direction, angle);
-  //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
-  //BAISSER LE CRAYON
+  reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
+  baisserCrayon();
 }
 void tournerEfface(int direction, float angle)
 {
@@ -488,7 +536,7 @@ void tournerEfface(int direction, float angle)
       avancer(lngrArete);
       tournerCrayon(GAUCHE, angleExterne);
     }
-    //LEVER CRAYON
+    leverCrayon();
     tournerCentre(GAUCHE, 90);
     reculer(/*Distance entre crayon et roues*/100);
     /*
@@ -577,7 +625,7 @@ void tournerEfface(int direction, float angle)
       MOTOR_SetSpeed(DROITE, 0.4f);
       delay(50);
     }
-    //LEVER CRAYON
+    leverCrayon();
     avancer(300);
     delay(3000);
     MOTORS_reset();
@@ -752,7 +800,7 @@ void tournerEfface(int direction, float angle)
     tournerEfface(GAUCHE, 115);
     avancer(152.36);
     //permet de reset le robot à la position ini.
-    //LEVER CRAYON
+    leverCrayon();
     tournerCentre(DROITE, 149);
     reculer(/*distance entre crayon et roues100);*/
   }
@@ -770,13 +818,13 @@ void tournerEfface(int direction, float angle)
     //arc(130.23, 57.36, t);
     tournerCrayon(DROITE, 61.1);
     avancer(130);
-    //LEVER CRAYON
+    leverCrayon();
     tournerCentre(GAUCHE, 180);
     //DESCENDRE CRAYON
     //avancer(90.43-2*(/*distance entre crayon et roues*/));
     tournerCrayon(GAUCHE,90);
     avancer(125);
-    //LEVER CRAYON
+    leverCrayon();
     tournerCentre(GAUCHE, 180);
     //DESCENDRE CRAYON
     avancer(125/2);
@@ -784,7 +832,7 @@ void tournerEfface(int direction, float angle)
     avancer(54.33);
     //arc(62.75, 89.77, t);
     //Retour à la position ini.
-    //LEVER CRAYON
+    leverCrayon();
     //avancer(/*Distance entre crayon et roues*//100);
     tournerCentre(DROITE, 90);
     avancer(207.75);
