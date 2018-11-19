@@ -145,7 +145,7 @@ void loop()
         polygone(12, 100);//Dodécagone
       break;
       case 11:
-      
+        polygoneEtoile(, int lngrArete);
       break;
       case 12:
       

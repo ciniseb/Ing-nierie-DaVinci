@@ -15,49 +15,53 @@ import android.view.View;
 
 import java.io.IOException;
 
-/**
- * Created by Antoine Mascolo on 2018-04-04.
- */
+import static java.lang.Math.abs;
+
 //Inspiré par le tutoriel suivant
 //http://www.instructables.com/id/A-Simple-Android-UI-Joystick/
 
-public class Manette extends SurfaceView implements Callback, View.OnTouchListener {
-
-    private float centerX;
-    private float centerY;
-    private float jsBottom;
-    private float jsTop;
+public class Manette extends SurfaceView implements Callback, View.OnTouchListener
+{
+    private float centreX;
+    private float centreY;
+    private float rayonBase;
+    private float rayonCentre;
     private JoystickListener joystickCallback;
-    private Paint color;
+    private Paint couleur;
 
 
     //Constructeurs
-    public Manette(Context context) {
+    public Manette(Context context)
+    {
         super(context);
         getHolder().addCallback(this);
         getHolder().setFormat(PixelFormat.TRANSPARENT);
         setOnTouchListener(this);
-        if(context instanceof JoystickListener){
+        if(context instanceof JoystickListener)
+        {
             joystickCallback = (JoystickListener) context;
         }
-        color = new Paint();
-        color.setARGB(100, 255,0,0);
+        couleur = new Paint();
+        couleur.setARGB(100, 255,0,0);
     }
 
-    public Manette(Context context, AttributeSet attrs) {
+    public Manette(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
         getHolder().addCallback(this);
         getHolder().setFormat(PixelFormat.TRANSPARENT);
         setOnTouchListener(this);
-        if(context instanceof JoystickListener){
+        if(context instanceof JoystickListener)
+        {
             joystickCallback = (JoystickListener) context;
         }
-        color = new Paint();
-        color.setARGB(100, 255,0,0);
+        couleur = new Paint();
+        couleur.setARGB(100, 255,0,0);
 
     }
 
-    public Manette(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Manette(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
         getHolder().addCallback(this);
         getHolder().setFormat(PixelFormat.TRANSPARENT);
@@ -65,98 +69,94 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
         if(context instanceof JoystickListener){
             joystickCallback = (JoystickListener) context;
         }
-        color = new Paint();
-        color.setARGB(100, 255,0,0);
+        couleur = new Paint();
+        couleur.setARGB(100, 255,0,0);
 
     }
 
 
     @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+    public void surfaceCreated(SurfaceHolder surfaceHolder)
+    {
         setDimension();
-        draw(centerX,centerY);
+        draw(centreX, centreY);
 
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2)
+    {
 
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder)
+    {
 
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(View view, MotionEvent motionEvent)
+    {
+        try
+        {
+            if(view.equals(this))
+            {
+                if(motionEvent.getAction() != MotionEvent.ACTION_UP)
+                {
+                    float deplacement = abs(motionEvent.getY() - centreY);
 
-        if(view.equals(this)){
-            float displacement = (float) Math.sqrt(Math.pow(motionEvent.getX() - centerX, 2) + Math.pow(motionEvent.getY() - centerY, 2));
-            try {
-                //Vérifie quel est le type de l'action
-                if(motionEvent.getAction() != MotionEvent.ACTION_UP){
-                    //Si est autre chose que de relacher l'écran
-                    if (displacement < jsBottom){
-                        //si le contact à lieu à l'interieur de la base du joystick
-                        //Affecte les valeurs de direction au joystick
-                        draw(motionEvent.getX(), motionEvent.getY());
-                        joystickCallback.onJoystickMoved((motionEvent.getX() - centerX) / jsBottom, ((motionEvent.getY() - centerY) / jsBottom)*-1, getId());
-
+                    if(deplacement < centreY)
+                    {
+                        draw(centreX, motionEvent.getY());
+                        joystickCallback.onJoystickMoved(0, ((motionEvent.getY() - centreY) / centreY), getId());
                     }
-                    else{
-                        //si le contact à ieu à l'exterieur de la base
-                        //Limite l'affichage du joystick à la limite de la base
-                        float ratio = jsBottom / displacement;
-                        float constrainedX = centerX + (motionEvent.getX() - centerX) * ratio;
-                        float constrainedY = centerY + (motionEvent.getY() - centerY) * ratio;
-                        //Affecte les valeurs de direction au joystick
-                        draw(constrainedX, constrainedY);
-                        joystickCallback.onJoystickMoved((constrainedX - centerX) / jsBottom, ((constrainedY - centerY) / jsBottom) *-1, getId());
-                    }
-                }else{
-                    //Si on relache l'écran
-                    //recentre le joystick
-                    draw(centerX,centerY);
+                }
+                else
+                {
+                    draw(centreX, centreY);
                     joystickCallback.onJoystickMoved(0, 0, getId());
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        }catch(IOException e)
+        {
+            e.printStackTrace();
         }
         return true;
     }
 
-    public void setDimension(){
+    public void setDimension()
+    {
         //Utilise les dimensions du SurfaceView pour placer le centre
-        centerX = getWidth()/2;
-        centerY = getHeight()/2;
+        centreX = getWidth()/2;
+        centreY = getHeight()/2;
         //Utilise les dimensions du SurfaceView pour calculer la grosseur du joystick
-        jsBottom = Math.min(getWidth(), getHeight()) / 3;
-        jsTop = Math.min(getWidth(), getHeight()) / 7;
-
+        rayonBase = Math.min(getWidth(), getHeight()) / 2.25f;
+        rayonCentre = Math.min(getWidth(), getHeight()) / 2.75f;
     }
 
-    private void draw(float x,float y){
-
+    private void draw(float x,float y)
+    {
         //Dessine le joystick dans le SurfaceView
-        if(getHolder().getSurface().isValid()){
+        if(getHolder().getSurface().isValid())
+        {
             Canvas canvas = this.getHolder().lockCanvas();
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            canvas.drawColor(Color.GREEN, PorterDuff.Mode.OVERLAY);
             Paint colorBottom = new Paint();
 
             colorBottom.setARGB(100, 50,50,50);
-            canvas.drawCircle(centerX, centerY, jsBottom, colorBottom);
-            canvas.drawCircle(x, y, jsTop, color);
+            canvas.drawCircle(centreX, centreY, rayonBase, colorBottom);
+            canvas.drawCircle(x, y, rayonCentre, couleur);
+            //canvas.drawRect(x-100,y-50, x+100, y+50, colorBottom);
+            //canvas.drawRect(x-50,y-25, x+50, y+25, couleur);
             getHolder().unlockCanvasAndPost(canvas);
-
         }
-
     }
 
     //Permet de changer la couleur du baton du Joystick
-    public void setColor(int r, int g, int b) {
-        this.color.setARGB(100,r,g,b);
+    public void setColor(int r, int g, int b)
+    {
+        this.couleur.setARGB(100,r,g,b);
     }
 
     public interface JoystickListener

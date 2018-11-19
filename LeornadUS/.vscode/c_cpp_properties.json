@@ -96,5 +96,6 @@
             "cppStandard": "c++11",
             "compilerPath": "/Users/sebastien/.platformio/packages/toolchain-atmelavr/bin/avr-gcc"
         }
-    ]
+    ],
+    "version": 4
 }

@@ -66,7 +66,7 @@ public class ListeFormes extends AppCompatActivity
                 break;
             case ELLIPSES:
                 formes = new Forme[1];
-                formes[0] = new Forme("Cercle", "", Forme.Difficulte.Facile);
+                formes[0] = new Forme("Cercle", "ic_regular_star_polygon_5_2", Forme.Difficulte.Facile);
 
                 break;
             case SPIRALES:
@@ -151,10 +151,11 @@ public class ListeFormes extends AppCompatActivity
             View view = inflater.inflate(R.layout.layout_bouton_forme, null);
             view.setPaddingRelative(20,20,20,20);
 
+            ImageViewCarre imageForme = view.findViewById(R.id.imageForme);
             TextView nom = (TextView) view.findViewById(R.id.typeForme);
             TextView difficulte = (TextView) view.findViewById(R.id.difficulteForme);
-            ImageViewCarre imageForme = view.findViewById(R.id.imageForme);
 
+            imageForme.setImageResource(getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
             nom.setText(formes[position].getNom());
             difficulte.setText(formes[position].getDifficulte().name());
             switch(formes[position].getDifficulte())
@@ -174,10 +175,6 @@ public class ListeFormes extends AppCompatActivity
                 default:
                     break;
             }
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
-            bitmap = getBitmapGrandeur(bitmap, 180);
-            imageForme.setImageBitmap(bitmap);
-
             return view;
         }
 
