@@ -72,7 +72,7 @@ void tournerCrayon(int direction, float angle);
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
-void polygoneEtoile(int nbSommets, int lngrArete);
+void polygoneEtoile(int nbSommets, int lngrArete, int diffSommets);
 void croix(int lngrArete);
 void arc(int rayon, float angle, int t);
 void ellipse(int longeur, int largeur, int t);
@@ -135,16 +135,55 @@ void loop()
         polygone(12, 100);//Dodécagone
       break;
       case 11:
-      
+        polygoneEtoile(5, 50, 2);
       break;
       case 12:
-      
+        polygoneEtoile(7, 50, 2);
       break;
       case 13:
-      
+        polygoneEtoile(7, 50, 3);
       break;
       case 14:
-      
+        polygoneEtoile(8, 50, 3);
+      break;
+      case 15:
+        polygoneEtoile(5, 75, 2);
+      break;
+      case 16:
+        croix(50);
+      break;
+      case 17:
+        croix(75);
+      break;
+      case 18:
+        arc(50, 360, 100);
+      break;
+      case 19:
+        arc(50, 180, 100);
+      break;
+      case 20:
+        arc(100, 180, 100);
+      break;
+      case 21:
+      arc(50, 180, 50);
+      break;
+      case 22:
+        spirale();
+      break;
+      case 23:
+        parallelogramme(50, 75, 90);
+      break;
+      case 24:
+        parallelogramme(50, 75, 120);
+      break;
+      case 25:
+        parallelogramme(75, 50, 80);
+      break;
+      case 26:
+        electrique();
+      break;
+      case 27:
+        informatique();
       break;
       default:
       break;
@@ -432,6 +471,12 @@ void tournerEfface(int direction, float angle)
   //reculer(distance entre roues et efface);
   tournerCentre(direction,angle);
 }
+void tournerEfface2(int direction, float angle)
+{
+  //avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+  tournerCentre(direction, angle);
+  //reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/);
+}
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
 #ifdef ROBOTAUTONOME
@@ -453,7 +498,7 @@ void tournerEfface(int direction, float angle)
     }
     reculer(distance entre crayon et roues);*/
   }
-  void parallelogramme(int base, int hauteur, float angle)
+  /*void parallelogramme(int base, int hauteur, float angle)
   {
     for(int diagonale = 0 ; diagonale < 2 ; diagonale++)
     {
@@ -472,13 +517,12 @@ void tournerEfface(int direction, float angle)
       avancer(hauteur/cos(angle-90));
       tournerEfface(GAUCHE, angle);
     }
-    reculer(distance entre crayon et roues)*/
-  }
-  void polygoneEtoile(int nbSommets, int lngrArete)
+    reculer(distance entre crayon et roues)
+  }*/
+  void polygoneEtoile(int nbSommets, int lngrArete, int diffSommets)
   {
-    //Options disponibles pour nbSommets : 3-6 
-    float angleExterne = 180*(1-(2/nbSommets));
-    float angleInterne = 180 - angleExterne;
+    float angleInterne = (180*(nbSommets-2*diffSommets)/nbSommets);
+    float angleExterne = 180 - angleInterne;
 
     tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
@@ -613,6 +657,38 @@ void tournerEfface(int direction, float angle)
       Serial.print("TOURNE de ");
       Serial.println(angle);
     }
+    /*
+    tournerCentre(DROITE, 180);
+    for(int diagonale = 0 ; diagonale < 2 ; diagonale++)
+    {
+      float angle1 = 180 - angle;
+      float angle2 = angle - 90;
+      float angle3 = 90 - angle;
+      avancer(base);
+      Serial.print("AVANCE de ");
+      Serial.println(base);
+      tournerEfface2(GAUCHE, angle1);
+      Serial.print("TOURNE de ");
+      Serial.println(angle1);
+      if(angle >= 90)
+      {
+        float distance = hauteur/cos(angle2);
+        avancer(distance);
+        Serial.print("AVANCE de ");
+        Serial.println(distance);
+      }
+      else
+      {
+        float distance = hauteur/cos(angle3);
+        avancer(distance);
+        Serial.print("AVANCE de ");
+        Serial.println(distance);
+      }
+      tournerEfface2(GAUCHE, angle);
+      Serial.print("TOURNE de ");
+      Serial.println(angle);
+      tournerCentre(DROITE, 180); */
+
   }
   void emotion(int emotion, int rayon)
   {
