@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="difficulteVert">#3AA655</color>
+    <color name="difficulteJaune">#FBE870</color>
+    <color name="difficulteRouge">#ED0A3F</color>
+    <color name="difficulteMauve">#652DC1</color>
 </resources>

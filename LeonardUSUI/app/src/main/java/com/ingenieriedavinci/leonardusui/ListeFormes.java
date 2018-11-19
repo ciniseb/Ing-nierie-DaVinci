@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -50,45 +51,50 @@ public class ListeFormes extends AppCompatActivity
         {
             case POLYGONES:
                 formes = new Forme[11];//De 2 à 12 inclu
-                formes[0] = new Forme("Digone","forme_polygone_digone");
-                formes[1] = new Forme("Triangle","forme_polygone_triangle");
-                formes[2] = new Forme("Carré","forme_polygone_carre");
-                formes[3] = new Forme("Pentagone","forme_polygone_pentagone");
-                formes[4] = new Forme("Hexagone","forme_polygone_hexagone");
-                formes[5] = new Forme("Heptagone","forme_polygone_heptagone");
-                formes[6] = new Forme("Octogone","forme_polygone_octogone");
-                formes[7] = new Forme("Ennéagone","forme_polygone_enneagone");
-                formes[8] = new Forme("Décagone","forme_polygone_decagone");
-                formes[9] = new Forme("Hendécagone","forme_polygone_hendecagone");
-                formes[10] = new Forme("Dodécagone","forme_polygone_dodecagone");
+                formes[0] = new Forme("Digone","forme_polygone_digone", Forme.Difficulte.Facile);
+                formes[1] = new Forme("Triangle","forme_polygone_triangle", Forme.Difficulte.Normale);
+                formes[2] = new Forme("Carré","forme_polygone_carre", Forme.Difficulte.Facile);
+                formes[3] = new Forme("Pentagone","forme_polygone_pentagone", Forme.Difficulte.Normale);
+                formes[4] = new Forme("Hexagone","forme_polygone_hexagone", Forme.Difficulte.Normale);
+                formes[5] = new Forme("Heptagone","forme_polygone_heptagone", Forme.Difficulte.Difficile);
+                formes[6] = new Forme("Octogone","forme_polygone_octogone", Forme.Difficulte.Difficile);
+                formes[7] = new Forme("Ennéagone","forme_polygone_enneagone", Forme.Difficulte.Difficile);
+                formes[8] = new Forme("Décagone","forme_polygone_decagone", Forme.Difficulte.Impossible);
+                formes[9] = new Forme("Hendécagone","forme_polygone_hendecagone", Forme.Difficulte.Impossible);
+                formes[10] = new Forme("Dodécagone","forme_polygone_dodecagone", Forme.Difficulte.Impossible);
 
                 break;
             case ELLIPSES:
                 formes = new Forme[1];
-                formes[0] = new Forme("Cercle", "");
+                formes[0] = new Forme("Cercle", "", Forme.Difficulte.Facile);
 
                 break;
             case SPIRALES:
                 formes = new Forme[1];
-                formes[0] = new Forme("À venir", "");
+                formes[0] = new Forme("À venir", "", null);
 
                 break;
             case PARALLELOGRAMMES:
-                formes = new Forme[1];
-                formes[0] = new Forme("À venir", "");
+                formes = new Forme[5];
+                formes[0] = new Forme("Carré", "forme_polygone_carre", Forme.Difficulte.Facile);
+                formes[1] = new Forme("Rectangle 80%", "forme_parallelogramme_rectangle_810", Forme.Difficulte.Facile);
+                formes[2] = new Forme("Rectangle 60%", "forme_parallelogramme_rectangle_610", Forme.Difficulte.Facile);
+                formes[3] = new Forme("Rectangle 40%", "forme_parallelogramme_rectangle_410", Forme.Difficulte.Facile);
+                formes[4] = new Forme("Rectangle 20%", "forme_parallelogramme_rectangle_210", Forme.Difficulte.Facile);
+
 
                 break;
             case EMOJI:
                 formes = new Forme[3];
-                formes[0] = new Forme("Content", "");
-                formes[1] = new Forme("Triste", "");
-                formes[2] = new Forme("Blazé", "");
+                formes[0] = new Forme("Content", "", Forme.Difficulte.Difficile);
+                formes[1] = new Forme("Triste", "", Forme.Difficulte.Difficile);
+                formes[2] = new Forme("Blazé", "", Forme.Difficulte.Normale);
 
                 break;
             case AUTRES:
                 formes = new Forme[2];
-                formes[0] = new Forme("Informatique", "forme_autre_informatique");
-                formes[1] = new Forme("Électrique", "forme_autre_electrique");
+                formes[0] = new Forme("Informatique", "forme_autre_informatique", Forme.Difficulte.Impossible);
+                formes[1] = new Forme("Électrique", "forme_autre_electrique", Forme.Difficulte.Difficile);
 
                 break;
             default:
@@ -103,11 +109,10 @@ public class ListeFormes extends AppCompatActivity
         {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                //TODO
-                /*partieActive.getJoueurs().get(position).setCompteBancaire(partieActive.getJoueurs().get(position));
-                adapteur.notifyDataSetChanged();
-                BanqueZirconienne.actualisationComptesBancaires();
-                finish();*/
+                //TODO COMMUNICATION BLUETOOTH !
+                //TODO PASSAGE VERS TÉLÉCOMMANDE
+
+                startActivity(new Intent(ListeFormes.this, Telecommande.class));
             }
         });
 
@@ -147,9 +152,28 @@ public class ListeFormes extends AppCompatActivity
             view.setPaddingRelative(20,20,20,20);
 
             TextView nom = (TextView) view.findViewById(R.id.typeForme);
+            TextView difficulte = (TextView) view.findViewById(R.id.difficulteForme);
             ImageViewCarre imageForme = view.findViewById(R.id.imageForme);
 
             nom.setText(formes[position].getNom());
+            difficulte.setText(formes[position].getDifficulte().name());
+            switch(formes[position].getDifficulte())
+            {
+                case Facile:
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteVert));
+                    break;
+                case Normale:
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteJaune));
+                    break;
+                case Difficile:
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteRouge));
+                    break;
+                case Impossible:
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteMauve));
+                    break;
+                default:
+                    break;
+            }
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
             bitmap = getBitmapGrandeur(bitmap, 180);
             imageForme.setImageBitmap(bitmap);

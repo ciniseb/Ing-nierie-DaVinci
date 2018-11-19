@@ -1,26 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gauche"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     android:paddingBottom="19dp"
-    android:paddingStart="40dp"
-    android:paddingEnd="40dp"
+    android:paddingStart="60dp"
+    android:paddingEnd="60dp"
     android:paddingTop="19dp">
 
     <com.ingenieriedavinci.leonardusui.ImageViewCarre
         android:id="@+id/imageForme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true">
-    </com.ingenieriedavinci.leonardusui.ImageViewCarre>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/typeForme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/imageForme"
-        android:layout_centerVertical="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/imageForme"
+        app:layout_constraintRight_toLeftOf="@id/difficulteForme"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
-        android:textSize="18sp" />
-</RelativeLayout>
+        android:textSize="20sp"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/difficulteForme"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/typeForme"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_gravity="center"
+        android:paddingStart="0dp"
+        android:paddingEnd="50dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+</android.support.constraint.ConstraintLayout>

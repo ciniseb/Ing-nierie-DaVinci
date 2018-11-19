@@ -1,3 +1,6 @@
 # Ingénierie DaVinci - liens
 
 https://www.intorobotics.com/how-to-develop-simple-bluetooth-android-application-to-control-a-robot-remote/
+
+https://en.wikipedia.org/wiki/List_of_regular_polytopes_and_compounds
+
