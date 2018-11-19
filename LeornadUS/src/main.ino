@@ -65,7 +65,7 @@ void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
 /******************************************/
 /****Code bras du crayon/monter et descendre*************/
-int baissercrayon();
+void baissercrayon();
 void levercrayon();
 /*******************************/
 
@@ -85,7 +85,7 @@ void setup()
   pinMode(A6,INPUT);
   pinMode(A7,INPUT);
   pinMode(A8,INPUT);
-  pinMode(50,INPUT);
+  pinMode(48, INPUT_PULLUP);        // Pin bouton bras.
 
   delay(5000);
 }
@@ -93,24 +93,9 @@ void setup()
 Boucle infinie
 ===========================================================================*/
 void loop()
-{ 
-  // Test du bouton
-  if (digitalRead(50) == HIGH)
-  { Serial.println("bouton marche");
-    delay(1000);
-  }
-  else 
-  {
-    Serial.println("bouton marche pas");
-  }
-  // test du bras
-  /*
-   baissercrayon();
-   Serial.println("baisser");
-   delay(3000);
-   levercrayon();
-   Serial.println("lever");
-   delay(3000);*/
+{
+  baissercrayon();
+  delay(5000);
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
@@ -354,29 +339,33 @@ void tournerCrayon(int direction, float angle)
 /******************************************/
 /****Code bras du crayon/monter et descendre*************/
 
-int baissercrayon()
+void baissercrayon()
 {
   int actif = 1;
-  anglecrayon = 1;
+  int angle = 125;
   SERVO_Enable(0);
-  SERVO_SetAngle(0,0);
+  SERVO_SetAngle(0,angle);
   delay(100);
-    while (actif = 1)
+
+  while(actif == 1)
+  {
+    Serial.println(angle);
+    SERVO_SetAngle(0, (angle));
+    delay(0);
+    // ROBUS_IsBumper(1)
+    if (!digitalRead(48))
     {
-      //Serial.println(i);
-        SERVO_SetAngle(0, anglecrayon);
-        delay(15);
-        if ( /*digitalRead(50) == HIGH || */ROBUS_IsBumper(3)|| anglecrayon == 180) 
-        {
-          actif = 0;
-          SERVO_Disable(0);
-          return 0;
-        }
-        delay(20);
-       anglecrayon++;
+      actif = 0;
+      SERVO_Disable(0);
     }
-    SERVO_Disable(0);
-    return 0;
+    angle--;
+    if (angle == 0)
+    {
+      actif = 0;
+      SERVO_Disable(0);
+    }
+  }
+  SERVO_Disable(0);
 }
 
 void levercrayon()
