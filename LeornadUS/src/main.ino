@@ -43,10 +43,12 @@ Defines globales & robots
 #define speed2 0.25
 #define speed3 0.3
 #define speed4 0.35
+
 /*===========================================================================
 Variables globales
 ===========================================================================*/
 float vitesse;
+int anglecrayon;
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -83,6 +85,7 @@ void setup()
   pinMode(A6,INPUT);
   pinMode(A7,INPUT);
   pinMode(A8,INPUT);
+  pinMode(50,INPUT);
 
   delay(5000);
 }
@@ -90,8 +93,24 @@ void setup()
 Boucle infinie
 ===========================================================================*/
 void loop()
-{
-
+{ 
+  // Test du bouton
+  if (digitalRead(50) == HIGH)
+  { Serial.println("bouton marche");
+    delay(1000);
+  }
+  else 
+  {
+    Serial.println("bouton marche pas");
+  }
+  // test du bras
+  /*
+   baissercrayon();
+   Serial.println("baisser");
+   delay(3000);
+   levercrayon();
+   Serial.println("lever");
+   delay(3000);*/
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
@@ -338,28 +357,23 @@ void tournerCrayon(int direction, float angle)
 int baissercrayon()
 {
   int actif = 1;
-  int i = 1;
+  anglecrayon = 1;
   SERVO_Enable(0);
-  SERVO_SetAngle(0,40);
+  SERVO_SetAngle(0,0);
   delay(100);
     while (actif = 1)
     {
-      Serial.println(40+i);
-        SERVO_SetAngle(0, (40 + i));
+      //Serial.println(i);
+        SERVO_SetAngle(0, anglecrayon);
         delay(15);
-        if (ROBUS_IsBumper(1))
+        if ( /*digitalRead(50) == HIGH || */ROBUS_IsBumper(3)|| anglecrayon == 180) 
         {
           actif = 0;
           SERVO_Disable(0);
           return 0;
         }
-        if ( i == 160)
-        {
-          actif = 0;
-          SERVO_Disable(0);
-          return 0;
-        }
-        i = i+1;
+        delay(20);
+       anglecrayon++;
     }
     SERVO_Disable(0);
     return 0;
@@ -368,9 +382,15 @@ int baissercrayon()
 void levercrayon()
 {
   SERVO_Enable(0);
+
   delay(100);
-  SERVO_SetAngle(0,40);
-  delay(500);
+  while (anglecrayon > 0)
+  {
+    anglecrayon--;
+    SERVO_SetAngle(0,anglecrayon);
+    delay(20);
+  }
+  delay(20);
   SERVO_Disable(0);
 }
 /*******************************/
