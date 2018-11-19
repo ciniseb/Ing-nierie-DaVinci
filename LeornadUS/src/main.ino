@@ -723,7 +723,7 @@ void tournerEfface(int direction, float angle)
     tournerCrayon(DROITE, 90);
     avancer(P);
     tournerCrayon(GAUCHE, 115);
-    avancer(152.36+/*distance entre crayon et roues*/);
+    avancer(152.36/*+distance entre crayon et roues*/);
     //permet de reset le robot à la position ini.
     tournerCentre(DROITE, 149);
     reculer(/*distance entre crayon et roues*/100);
@@ -754,26 +754,26 @@ void tournerEfface(int direction, float angle)
     //permet de reset le robot à la position ini.
     //LEVER CRAYON
     tournerCentre(DROITE, 149);
-    reculer(/*distance entre crayon et roues*/100);
+    reculer(/*distance entre crayon et roues100);*/
   }
   void informatique()
   {
-    avancer(/*distance entre crayon et roues*//100);
+    //avancer(/*distance entre crayon et roues*//100);
     tournerCentre(GAUCHE, 70);
-    reculer(/*distance entre crayon et roues*/);
+    //reculer(/*distance entre crayon et roues*/);
     //Descendre crayon
-    arc(67.7, 134.79, t); 
+    //arc(67.7, 134.79, t); 
     tournerCrayon(DROITE, 20);
     avancer(130);
     tournerCrayon(DROITE, 61.44);
-    reculer(/*Distance entre crayon et roues*/);
-    arc(130.23, 57.36, t);
+    //reculer(/*Distance entre crayon et roues*/);
+    //arc(130.23, 57.36, t);
     tournerCrayon(DROITE, 61.1);
     avancer(130);
     //LEVER CRAYON
     tournerCentre(GAUCHE, 180);
     //DESCENDRE CRAYON
-    avancer(90.43-2*(/*distance entre crayon et roues*/));
+    //avancer(90.43-2*(/*distance entre crayon et roues*/));
     tournerCrayon(GAUCHE,90);
     avancer(125);
     //LEVER CRAYON
@@ -782,14 +782,14 @@ void tournerEfface(int direction, float angle)
     avancer(125/2);
     tournerCrayon(GAUCHE, 90);
     avancer(54.33);
-    arc(62.75, 89.77, t);
+    //arc(62.75, 89.77, t);
     //Retour à la position ini.
     //LEVER CRAYON
-    avancer(/*Distance entre crayon et roues*//100);
+    //avancer(/*Distance entre crayon et roues*//100);
     tournerCentre(DROITE, 90);
     avancer(207.75);
     tournerCentre(DROITE, 90);
-    reculer(/*Distance entre crayon et roues*//100);
+    //reculer(/*Distance entre crayon et roues*//100);
     /*
     avancer(distance entre crayon et roues);
     tournerCentre(GAUCHE, 70);
