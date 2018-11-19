@@ -42,17 +42,19 @@ Defines globales & robots
 #define SOURIRE 0
 #define TRISTE 1
 #define BLAZE 2
-//AUTRE ÉMOTIONS
+//AUTRES ÉMOTIONS
 
 #define speed0 0
 #define speed1 0.4
 #define speed2 0.25
 #define speed3 0.3
 #define speed4 0.35
+
 /*===========================================================================
 Variables globales
 ===========================================================================*/
 float vitesse;
+int anglecrayon;
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -65,7 +67,7 @@ void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
 void reculer(float distance_mm);
-int baisserCrayon();
+void baisserCrayon();
 void leverCrayon();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
@@ -98,6 +100,7 @@ void setup()
   pinMode(A6,INPUT);
   pinMode(A7,INPUT);
   pinMode(A8,INPUT);
+  pinMode(48, INPUT_PULLUP);        // Pin bouton bras.
 
   delay(5000);
 }
@@ -145,7 +148,7 @@ void loop()
         polygone(12, 100);//Dodécagone
       break;
       case 11:
-        polygoneEtoile(, int lngrArete);
+        //polygoneEtoile(, int lngrArete);
       break;
       case 12:
       
@@ -381,42 +384,46 @@ void reculer(float distance_mm)
   }
   MOTORS_reset();
 }
-int baisserCrayon()
+void baisserCrayon()
 {
   int actif = 1;
-  int i = 1;
+  int angle = 125;
   SERVO_Enable(0);
-  SERVO_SetAngle(0,40);
+  SERVO_SetAngle(0,angle);
   delay(100);
-    while(actif = 1)
-    {
-      Serial.println(40+i);
-        SERVO_SetAngle(0, (40 + i));
-        delay(15);
-        if(ROBUS_IsBumper(1))
-        {
-          actif = 0;
-          SERVO_Disable(0);
-          return 0;
-        }
-        if( i == 160)
-        {
-          actif = 0;
-          SERVO_Disable(0);
-          return 0;
-        }
-        i = i+1;
-    }
-    SERVO_Disable(0);
-    return 0;
-}
 
+  while(actif == 1)
+  {
+    Serial.println(angle);
+    SERVO_SetAngle(0, (angle));
+    delay(0);
+    // ROBUS_IsBumper(1)
+    if (!digitalRead(48))
+    {
+      actif = 0;
+      SERVO_Disable(0);
+    }
+    angle--;
+    if (angle == 0)
+    {
+      actif = 0;
+      SERVO_Disable(0);
+    }
+  }
+  SERVO_Disable(0);
+}
 void leverCrayon()
 {
   SERVO_Enable(0);
+
   delay(100);
-  SERVO_SetAngle(0,40);
-  delay(500);
+  while (anglecrayon > 0)
+  {
+    anglecrayon--;
+    SERVO_SetAngle(0,anglecrayon);
+    delay(20);
+  }
+  delay(20);
   SERVO_Disable(0);
 }
 void tourner(int direction, float angle, int sens)
