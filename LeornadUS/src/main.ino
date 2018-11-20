@@ -162,16 +162,16 @@ void loop()
         break;
         case 14:
           leverCrayon();
-          avancer(162);
+          avancer(160);
           tournerCentre(GAUCHE, 90);
-          reculer(162);
+          reculer(172);
           baisserCrayon();
         break;
         default:
-          polygone(2, 100);
-          polygone(3, 100);
-          polygone(4, 100);
-          polygone(5, 100);
+          //polygone(2, 100);
+          //polygone(3, 100);
+          //polygone(4, 100);
+          //polygone(5, 100);
           //polygone(6, 100);
           //polygone(7, 100);
           //polygone(8, 100);
@@ -347,44 +347,11 @@ void avancer(float distance_mm)
 }
 void reculer(float distance_mm)
 {
-  int counter = 0;
-  float distance_pulse, distgauche1, distdroite1, k;
-  float speed = -speed1;
-  distance_pulse = distance_mm_pulse(distance_mm);
+  float distance_pulse = distance_mm_pulse(distance_mm);
   while(ENCODER_Read(GAUCHE) >= -distance_pulse)
   {
-     //accel
-    if(counter == 0)
-    {
-      accel_reculer();
-      counter=1;
-    }
-    //deccel
-    if(ENCODER_Read(GAUCHE) >= (distance_pulse/1.3))
-    {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      //k = PICalcul(distgauche1, distdroite1);
-      k = 0;
-      speed = speed3 + k;
-    
-      MOTOR_SetSpeed(GAUCHE, speed3);
-      MOTOR_SetSpeed(DROITE, speed);
-      delay(100);
-      counter = 2;
-    }
-    //vitesse intermédiaire
-    if(counter == 1)
-    {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      //k = PICalcul(distgauche1, distdroite1);
-      k = 0;
-      speed = -speed1 + k;
-      MOTOR_SetSpeed(GAUCHE, -speed1);
-      MOTOR_SetSpeed(DROITE, speed);
-      delay(100);
-    }
+    MOTOR_SetSpeed(GAUCHE, -speed1);
+    MOTOR_SetSpeed(DROITE, -speed1);
   }
   MOTORS_reset();
 }
@@ -482,9 +449,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(162);
+  avancer(172);
   tournerCentre(direction, angle);
-  reculer(162);
+  reculer(172);
   baisserCrayon();
 }
 void tournerEfface(int direction, float angle)
@@ -500,7 +467,7 @@ void tournerEfface(int direction, float angle)
   void polygone(int nbSommets, int lngrArete)
   {
     double sommeAngles = (nbSommets - 2)*180;
-    double angle = 180 - (sommeAngles/nbSommets) - 1;
+    double angle = 180 - (sommeAngles/nbSommets);
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
