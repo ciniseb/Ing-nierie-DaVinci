@@ -62,7 +62,7 @@ float PICalcul(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
-float angle_degree_a_pulse(float angle);
+double angle_degree_a_pulse(float angle);
 void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
@@ -168,6 +168,7 @@ void loop()
           baisserCrayon();
         break;
         default:
+          polygone(2, 100);
           polygone(3, 100);
           polygone(4, 100);
           polygone(5, 100);
@@ -259,20 +260,20 @@ void MOTORS_reset()
   ENCODER_Reset(DROITE);
   delay(150);
 }
-float angle_degree_a_pulse(float angle)
+double angle_degree_a_pulse(float angle)
 {
   // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
-  float circonference_roue_mm = 3.1416*diametre_roue_mm;
-  float circonference_roue_pulse = 3200;
+  double diametre_roue_mm = 75;
+  double circonference_roue_mm = 3.1416*diametre_roue_mm;
+  double circonference_roue_pulse = 3200;
   // déterminer la circonference des 2 roues en mm et en pulse
-  float diametre_2_roues_mm  = 187;
-  float quart_circonference_2_roues_mm = (3.1416*2*diametre_2_roues_mm)/4;
-  float quart_circonference_2_roues_pulse = (quart_circonference_2_roues_mm/circonference_roue_mm)*circonference_roue_pulse;
+  double diametre_2_roues_mm  = 187;
+  double quart_circonference_2_roues_mm = (3.1416*2*diametre_2_roues_mm)/4;
+  double quart_circonference_2_roues_pulse = (quart_circonference_2_roues_mm/circonference_roue_mm)*circonference_roue_pulse;
   // déterminer le rapport pulses par degré
-  float pulses_par_degre_2_roues = quart_circonference_2_roues_pulse/90; 
+  double pulses_par_degre_2_roues = quart_circonference_2_roues_pulse/90; 
   // déterminer le nombre de pulses requis pour arriver à l'angle demandé
-  float pulses_pour_angle_x;
+  double pulses_pour_angle_x;
 
   pulses_pour_angle_x = angle * pulses_par_degre_2_roues;
 
@@ -363,7 +364,8 @@ void reculer(float distance_mm)
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k = PICalcul(distgauche1, distdroite1);
+      //k = PICalcul(distgauche1, distdroite1);
+      k = 0;
       speed = speed3 + k;
     
       MOTOR_SetSpeed(GAUCHE, speed3);
@@ -376,7 +378,8 @@ void reculer(float distance_mm)
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k = PICalcul(distgauche1, distdroite1);
+      //k = PICalcul(distgauche1, distdroite1);
+      k = 0;
       speed = -speed1 + k;
       MOTOR_SetSpeed(GAUCHE, -speed1);
       MOTOR_SetSpeed(DROITE, speed);
@@ -406,9 +409,9 @@ void baisserCrayon()
       Serial.println(anglecrayon);
     }
     anglecrayon--;
-    if(anglecrayon == 26)
+    if(anglecrayon == 27)
     {
-      anglecrayon = 26;
+      anglecrayon = 27;
       SERVO_Disable(0);
       actif = 0; //POUR L'INSTANT
     }
@@ -456,7 +459,7 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
-  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  double anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
   if(direction == GAUCHE)
   {
@@ -496,8 +499,8 @@ void tournerEfface(int direction, float angle)
   //Formes
   void polygone(int nbSommets, int lngrArete)
   {
-    float sommeAngles = (nbSommets - 2)*180;
-    float angle = 180 - (sommeAngles/nbSommets);
+    double sommeAngles = (nbSommets - 2)*180;
+    double angle = 180 - (sommeAngles/nbSommets) - 1;
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
