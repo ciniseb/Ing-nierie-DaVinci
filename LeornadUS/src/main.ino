@@ -109,8 +109,9 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
+  opto();
   // ----- R O B O T  A U T O N O M E ------
-  #ifdef ROBOTAUTONOME
+ /* #ifdef ROBOTAUTONOME
     int noForme = 0;
     switch(noForme)
     {
@@ -188,7 +189,7 @@ void loop()
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-}
+*/}
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
@@ -486,6 +487,20 @@ void tournerEfface(int direction, float angle)
   //avancer(distance entre roues et efface);
   //reculer(distance entre roues et efface);
   tournerCentre(direction,angle);
+}
+
+void opto()
+{
+  if (analogRead(A6) == HIGH )
+  {
+    Serial.println("Surface blanche");
+    delay(1000);
+  }
+  else
+  {
+    Serial.println("Surface pas blanche");
+    delay(1000);
+  }
 }
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
