@@ -76,7 +76,7 @@ void tournerCrayon(int direction, float angle);
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
-void polygoneEtoile(int nbSommets, int lngrArete);
+void polygoneEtoile(int nbSommets,int diffSommets, int lngrArete);
 void croix(int lngrArete);
 void arc(int rayon, float angle, int t);
 void ellipse(int longeur, int largeur, int t);
@@ -533,11 +533,12 @@ void tournerEfface(int direction, float angle)
     }
     reculer(distance entre crayon et roues)*/
   }
-  void polygoneEtoile(int nbSommets, int lngrArete)
+  void polygoneEtoile(int nbSommets, int diffSommets ,int lngrArete)
   {
-    //Options disponibles pour nbSommets : 3-6 
-    float angleExterne = 180*(1-(2/nbSommets));
-    float angleInterne = 180 - angleExterne;
+    
+    float angle = 180*(nbSommets-2*diffSommets)/nbSommets;
+    float angleExterne = 180-angle;
+    float angleInterne = 360*(diffSommets-1)/nbSommets;
 
     //tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
@@ -549,7 +550,7 @@ void tournerEfface(int direction, float angle)
     }
     leverCrayon();
     tournerCentre(GAUCHE, 90);
-    reculer(/*Distance entre crayon et roues*/100);
+    reculer(18);
     /*
     avancer(/distance entre crayon et roues);
     for(int i = 0; i < nbSommets; i++)
@@ -565,25 +566,20 @@ void tournerEfface(int direction, float angle)
   }
   void croix(int lngrArete)
   {
-    for(int i = 0 ; i < 6 ; i++)
+    for(int i = 0 ; i < 4 ; i++)
     {
+      avancer(lngrArete);
+      tournerCrayon(DROITE, 90);
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(DROITE, 90);
+      tournerCrayon(GAUCHE, 90);
     }
-    /*
-    avancer(Distance entre crayon et roues);
-    for(int j=0; j<6; j++)
-    {
-      avancer(lngrArete);
-      tournerEfface(DROITE, 90);
-      avancer(lngrArete);
-      tournerEfface(GAUCHE, 90);
-    }
-    reculer(Distance entre crayon et roues);*/
+    //tournerCrayon(DROITE, 90);
+    //avancer(lngrArete);
+    //tournerCrayon(GAUCHE, 90);
   }
-    void arc(int rayon, float angle, int t)
+  void arc(int rayon, float angle, int t)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
