@@ -45,10 +45,10 @@ Defines globales & robots
 //AUTRES ÉMOTIONS
 
 #define speed0 0
-#define speed1 0.4
-#define speed2 0.25
-#define speed3 0.3
-#define speed4 0.35
+#define speed1 0.20
+#define vitesseTourne 0.15
+#define speed3 0.20
+#define speed4 0.20
 
 /*===========================================================================
 Variables globales
@@ -161,23 +161,27 @@ void loop()
           emotion(SOURIRE, 50);
         break;
         case 14:
-
+          leverCrayon();
+          avancer(162);
+          tournerCentre(GAUCHE, 90);
+          reculer(162);
+          baisserCrayon();
         break;
         default:
           polygone(3, 100);
           polygone(4, 100);
           polygone(5, 100);
-          polygone(6, 100);
-          polygone(7, 100);
-          polygone(8, 100);
-          delay(15000);
-          parallelogramme(100, 60, 90);
-          delay(10000);
-          parallelogramme(100, 20, 90);
-          delay(10000);
-          parallelogramme(100, 60, 120);
-          delay(10000);
-          parallelogramme(100, 100, 80);
+          //polygone(6, 100);
+          //polygone(7, 100);
+          //polygone(8, 100);
+          //delay(15000);
+          //parallelogramme(100, 60, 90);
+          //delay(10000);
+          //parallelogramme(100, 20, 90);
+          //delay(10000);
+          //parallelogramme(100, 60, 120);
+          //delay(10000);
+          //parallelogramme(100, 100, 80);
         break;
       }
       leverCrayon();
@@ -276,28 +280,25 @@ float angle_degree_a_pulse(float angle)
 }
 void accel_avancer()
 {
-  float accel=0;
-      while(accel<=0.35)
-      { 
-        //vprobeFreq();   
-        accel = accel + 0.01;
-        MOTOR_SetSpeed(GAUCHE,accel);
-        MOTOR_SetSpeed(DROITE,accel);
-        //marteau();
-        delay(35);
-      }
+  float accel = 0;
+  while(accel <= speed1)
+  { 
+    accel = accel + 0.01;
+    MOTOR_SetSpeed(GAUCHE, accel);
+    MOTOR_SetSpeed(DROITE, accel);
+    delay(35);
+  }
 }
 void accel_reculer()
 {
-  float accel=0;
-      while(accel<=0.35)
-      {  
-        //vprobeFreq();   
-        accel = accel + 0.01;
-        MOTOR_SetSpeed(GAUCHE,-accel);
-        MOTOR_SetSpeed(DROITE,-accel);
-        delay(35);
-      }
+  float accel = 0;
+  while(accel <= speed1)
+  {  
+    accel = accel + 0.01;
+    MOTOR_SetSpeed(GAUCHE, -accel);
+    MOTOR_SetSpeed(DROITE, -accel);
+    delay(35);
+  }
 }
 void avancer(float distance_mm)
 {
@@ -307,16 +308,16 @@ void avancer(float distance_mm)
   int counter=0;
   distance_pulse = distance_mm_pulse(distance_mm);
 
-  while(ENCODER_Read(GAUCHE)<=distance_pulse)
+  while(ENCODER_Read(GAUCHE) <= distance_pulse)
   {
     //accel
-    if(counter==0)
+    if(counter == 0)
     {
       accel_avancer();
-      counter=1;
+      counter = 1;
     }
     //deccel
-    if(ENCODER_Read(GAUCHE)>=(distance_pulse/1.3))
+    if(ENCODER_Read(GAUCHE) >= (distance_pulse/1.3))
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
@@ -345,42 +346,40 @@ void avancer(float distance_mm)
 }
 void reculer(float distance_mm)
 {
-  int counter=0;
-  float distance_pulse,distgauche1,distdroite1;
-  float k;
-  //float accel;
+  int counter = 0;
+  float distance_pulse, distgauche1, distdroite1, k;
   float speed = -speed1;
   distance_pulse = distance_mm_pulse(distance_mm);
-  while(ENCODER_Read(GAUCHE)>=-distance_pulse)
+  while(ENCODER_Read(GAUCHE) >= -distance_pulse)
   {
      //accel
-    if(counter==0)
+    if(counter == 0)
     {
       accel_reculer();
       counter=1;
     }
     //deccel
-    if(ENCODER_Read(GAUCHE)>=(distance_pulse/1.3))
+    if(ENCODER_Read(GAUCHE) >= (distance_pulse/1.3))
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k=PICalcul(distgauche1,distdroite1);
-      speed = speed3+k;
+      k = PICalcul(distgauche1, distdroite1);
+      speed = speed3 + k;
     
-      MOTOR_SetSpeed(GAUCHE,speed3);
-      MOTOR_SetSpeed(DROITE,speed);
+      MOTOR_SetSpeed(GAUCHE, speed3);
+      MOTOR_SetSpeed(DROITE, speed);
       delay(100);
-      counter=2;
+      counter = 2;
     }
     //vitesse intermédiaire
-    if(counter==1)
+    if(counter == 1)
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k=PICalcul(distgauche1,distdroite1);
-      speed = -speed1+k;
-      MOTOR_SetSpeed(GAUCHE,-speed1);
-      MOTOR_SetSpeed(DROITE,speed);
+      k = PICalcul(distgauche1, distdroite1);
+      speed = -speed1 + k;
+      MOTOR_SetSpeed(GAUCHE, -speed1);
+      MOTOR_SetSpeed(DROITE, speed);
       delay(100);
     }
   }
@@ -399,15 +398,15 @@ void baisserCrayon()
     //Serial.println(anglecrayon);
     SERVO_SetAngle(0, (anglecrayon));
     delay(20);
-    // ROBUS_IsBumper(1)
-    if (!digitalRead(48))
+    //ROBUS_IsBumper(1)
+    if(!digitalRead(48))
     {
       actif = 0;
       SERVO_Disable(0);
       Serial.println(anglecrayon);
     }
     anglecrayon--;
-    if (anglecrayon == 26)
+    if(anglecrayon == 26)
     {
       anglecrayon = 26;
       SERVO_Disable(0);
@@ -463,16 +462,16 @@ void tournerCentre(int direction, float angle)
   {
     while(ENCODER_Read(DROITE) <= anglePulse/2)
     {
-      MOTOR_SetSpeed(GAUCHE,-speed2);
-      MOTOR_SetSpeed(DROITE,speed2);
+      MOTOR_SetSpeed(GAUCHE,-vitesseTourne);
+      MOTOR_SetSpeed(DROITE,vitesseTourne);
     }
   }
   else if(direction == DROITE)
   {
     while(ENCODER_Read(GAUCHE) <= anglePulse/2)
     {
-      MOTOR_SetSpeed(GAUCHE,speed2);
-      MOTOR_SetSpeed(DROITE,-speed2);
+      MOTOR_SetSpeed(GAUCHE,vitesseTourne);
+      MOTOR_SetSpeed(DROITE,-vitesseTourne);
     }
   }
   MOTORS_reset();
@@ -480,9 +479,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(18);
+  avancer(162);
   tournerCentre(direction, angle);
-  reculer(18);
+  reculer(162);
   baisserCrayon();
 }
 void tournerEfface(int direction, float angle)
@@ -497,10 +496,12 @@ void tournerEfface(int direction, float angle)
   //Formes
   void polygone(int nbSommets, int lngrArete)
   {
+    float sommeAngles = (nbSommets - 2)*180;
+    float angle = 180 - (sommeAngles/nbSommets);
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, 180 - (((nbSommets-2)*180)/nbSommets));
+      tournerCrayon(GAUCHE, angle);
     }
      /*-----ZAMBONI------
     for(int tournant = 0; tournant < nbSommets ; tournant++)
