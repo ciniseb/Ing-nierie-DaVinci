@@ -546,7 +546,7 @@ void tournerEfface(int direction, float angle)
     }
     leverCrayon();
     tournerCentre(GAUCHE, 90);
-    reculer(/*Distance entre crayon et roues*/100);
+    reculer(18);
     /*
     avancer(/distance entre crayon et roues);
     for(int i = 0; i < nbSommets; i++)
@@ -562,18 +562,18 @@ void tournerEfface(int direction, float angle)
   }
   void croix(int lngrArete)
   {
-    for(int i=0; i<3; i++)
+    for(int i=0; i<4; i++)
     {
+      avancer(lngrArete);
+      tournerCrayon(DROITE, 90);
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(DROITE, 90);
-      avancer(lngrArete);
-      tournerCrayon(DROITE, 90);
+      tournerCrayon(GAUCHE, 90);
     }
-    tournerCrayon(GAUCHE, 90);
-    avancer(lngrArete);
-    tournerCrayon(DROITE, 90);
+    //tournerCrayon(DROITE, 90);
+    //avancer(lngrArete);
+    //tournerCrayon(GAUCHE, 90);
   }
   void arc(int rayon, float angle, int t)
   {
