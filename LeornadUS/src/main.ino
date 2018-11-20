@@ -54,7 +54,7 @@ Defines globales & robots
 Variables globales
 ===========================================================================*/
 float vitesse;
-int anglecrayon;
+int anglecrayon = 125;
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -110,81 +110,83 @@ Boucle infinie
 void loop()
 {
   // ----- R O B O T  A U T O N O M E ------
-  #ifdef ROBOTAUTONOME
-    int noForme = 0;
-    switch(noForme)
+  //#ifdef ROBOTAUTONOME
+    int noForme = -1;
+    if(ROBUS_IsBumper(3))
     {
-      case 0:
-        polygone(2, 100);//Digone
-      break;
-      case 1:
-        polygone(3, 100);//Triangle
-      break;
-      case 2:
-        polygone(4, 100);//Carré
-      break;
-      case 3:
-        polygone(5, 100);//Pentagone
-      break;
-      case 4:
-        polygone(6, 100);//Hexagone
-      break;
-      case 5:
-        polygone(7, 100);//Heptagone
-      break;
-      case 6:
-        polygone(8, 100);//Octogone
-      break;
-      case 7:
-        polygone(9, 100);//Ennéagone
-      break;
-      case 8:
-        polygone(10, 100);//Décagone
-      break;
-      case 9:
-        polygone(11, 100);//Hendécagone
-      break;
-      case 10:
-        polygone(12, 100);//Dodécagone
-      break;
-      case 11:
-        //polygoneEtoile(, int lngrArete);
-      break;
-      case 12:
-      
-      break;
-      case 13:
-      
-      break;
-      case 14:
-      
-      break;
-      default:
-      break;
+      baisserCrayon();
+
+      switch(noForme)
+      {
+        case 0:
+          polygone(2, 100);//Digone
+        break;
+        case 1:
+          polygone(3, 100);//Triangle
+        break;
+        case 2:
+          polygone(4, 100);//Carré
+        break;
+        case 3:
+          polygone(5, 100);//Pentagone
+        break;
+        case 4:
+          polygone(6, 100);//Hexagone
+        break;
+        case 5:
+          polygone(7, 100);//Heptagone
+        break;
+        case 6:
+          polygone(8, 100);//Octogone
+        break;
+        case 7:
+          polygone(9, 100);//Ennéagone
+        break;
+        case 8:
+          polygone(10, 100);//Décagone
+        break;
+        case 9:
+          polygone(11, 100);//Hendécagone
+        break;
+        case 10:
+          polygone(12, 100);//Dodécagone
+        break;
+        case 11:
+          //polygoneEtoile(5, 100);
+        break;
+        case 12:
+          parallelogramme(100, 60, 120);
+        break;
+        case 13:
+          emotion(SOURIRE, 50);
+        break;
+        case 14:
+
+        break;
+        default:
+          polygone(3, 100);
+          polygone(4, 100);
+          polygone(5, 100);
+          polygone(6, 100);
+          polygone(7, 100);
+          polygone(8, 100);
+          delay(15000);
+          parallelogramme(100, 60, 90);
+          delay(10000);
+          parallelogramme(100, 20, 90);
+          delay(10000);
+          parallelogramme(100, 60, 120);
+          delay(10000);
+          parallelogramme(100, 100, 80);
+        break;
+      }
+      leverCrayon();
     }
-  #endif
+  //#endif
   // ----- R O B O T  M A N U E L -----
   #ifdef ROBOTMANUEL
 
   #endif
-  if(ROBUS_IsBumper(3))
-  {
-    baisserCrayon();
-
-    //Formes
-    //polygone(5, 70);//FONCTIONNE
-    //parallelogramme(100, 40, 120);//FONCTIONNE
-    //polygoneEtoile(int nbSommets, int lngrArete);
-    //arc(int rayon, float angle, int t);
-    //croix(100);
-    //ellipse(int longeur, int largeur, int t);
-    //Spirale
-    //emotion(SOURIRE, 400);
-    //electrique();
-    //informatique();
-
-    leverCrayon();
-  }
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
@@ -354,7 +356,7 @@ void reculer(float distance_mm)
      //accel
     if(counter==0)
     {
-      //acceleration(RECULER);
+      accel_reculer();
       counter=1;
     }
     //deccel
@@ -387,27 +389,29 @@ void reculer(float distance_mm)
 void baisserCrayon()
 {
   int actif = 1;
-  int angle = 125;
+  anglecrayon = 125;
   SERVO_Enable(0);
-  SERVO_SetAngle(0,angle);
+  SERVO_SetAngle(0,anglecrayon);
   delay(100);
 
   while(actif == 1)
   {
-    Serial.println(angle);
-    SERVO_SetAngle(0, (angle));
-    delay(0);
+    //Serial.println(anglecrayon);
+    SERVO_SetAngle(0, (anglecrayon));
+    delay(20);
     // ROBUS_IsBumper(1)
     if (!digitalRead(48))
     {
       actif = 0;
       SERVO_Disable(0);
+      Serial.println(anglecrayon);
     }
-    angle--;
-    if (angle == 0)
+    anglecrayon--;
+    if (anglecrayon == 26)
     {
-      actif = 0;
+      anglecrayon = 26;
       SERVO_Disable(0);
+      actif = 0; //POUR L'INSTANT
     }
   }
   SERVO_Disable(0);
@@ -417,14 +421,14 @@ void leverCrayon()
   SERVO_Enable(0);
 
   delay(100);
-  while (anglecrayon > 0)
+  while(anglecrayon < 125)
   {
-    anglecrayon--;
+    anglecrayon++;
     SERVO_SetAngle(0,anglecrayon);
     delay(20);
   }
   delay(20);
-  SERVO_Disable(0);
+  //SERVO_Disable(0);
 }
 void tourner(int direction, float angle, int sens)
 {
@@ -476,9 +480,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
+  avancer(18);
   tournerCentre(direction, angle);
-  reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
+  reculer(18);
   baisserCrayon();
 }
 void tournerEfface(int direction, float angle)
@@ -535,7 +539,7 @@ void tournerEfface(int direction, float angle)
     float angleExterne = 180*(1-(2/nbSommets));
     float angleInterne = 180 - angleExterne;
 
-    tournerCrayon(DROITE, 90);
+    //tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
     {
       avancer(lngrArete);
@@ -564,9 +568,9 @@ void tournerEfface(int direction, float angle)
     for(int i = 0 ; i < 6 ; i++)
     {
       avancer(lngrArete);
-      tournerCrayon(DROITE, 90);
-      avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
+      avancer(lngrArete);
+      tournerCrayon(DROITE, 90);
     }
     /*
     avancer(Distance entre crayon et roues);
@@ -583,8 +587,8 @@ void tournerEfface(int direction, float angle)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
-    float vG = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
-    float vD = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    float vG = (2*PI*(rayon-((18.5f)/2)))/t;
+    float vD = (2*PI*(rayon+((18.5f)/2)))/t;
 
     while(ENCODER_Read(DROITE) <= anglePulse)
     {
@@ -672,7 +676,7 @@ void tournerEfface(int direction, float angle)
   void emotion(int emotion, int rayon)
   {
     //Contour
-    arc(rayon, 360, 200);//1
+    arc(rayon, 360, 2000);//1
     tournerCrayon(GAUCHE, 90);//2
     switch(emotion)
     {
@@ -684,9 +688,9 @@ void tournerEfface(int direction, float angle)
       tournerCrayon(GAUCHE, 90);//6
       avancer(rayon/3);//7
       //Yeux
-      arc(rayon/6, 360, 200/6);//8
+      arc(rayon/6, 360, 2000/6);//8
       avancer(rayon*2/3);//9
-      arc(rayon/6, 360, 200/6);//10
+      arc(rayon/6, 360, 2000/6);//10
       //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12

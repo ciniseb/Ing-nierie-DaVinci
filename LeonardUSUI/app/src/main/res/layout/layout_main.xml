@@ -1,36 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/couverture"
     android:gravity="center"
     tools:context=".Main">
 
-    <TextView
-        android:id="@+id/nomRobot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="60sp"
-        android:textColor="@android:color/black"
-        android:text="@string/leonardus" />
-
-    <TextView
-        android:id="@+id/nomEquipe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="@android:color/black"
-        android:text="@string/ingenierie_da_vinci" />
-
-    <Space
+    <!--<VideoView
+        android:id="@+id/couverture"
         android:layout_width="match_parent"
-        android:layout_height="45dp" />
+        android:layout_height="match_parent"
+        android:contentDescription="TODO" />-->
 
-    <Button
-        android:id="@+id/debut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/allons_y" />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/nomRobot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:text="@string/leonardus" />
+
+        <TextView
+            android:id="@+id/nomEquipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:text="@string/ingenierie_da_vinci" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <Button
+            android:id="@+id/debut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:text="@string/allons_y" />
+    </LinearLayout>
+</RelativeLayout>

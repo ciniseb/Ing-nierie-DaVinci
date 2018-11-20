@@ -15,6 +15,9 @@ import android.view.View;
 
 import java.io.IOException;
 
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.GREEN;
+import static android.graphics.Color.TRANSPARENT;
 import static java.lang.Math.abs;
 
 //Inspiré par le tutoriel suivant
@@ -141,7 +144,7 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
         if(getHolder().getSurface().isValid())
         {
             Canvas canvas = this.getHolder().lockCanvas();
-            canvas.drawColor(Color.GREEN, PorterDuff.Mode.OVERLAY);
+            canvas.drawColor(TRANSPARENT, PorterDuff.Mode.CLEAR);
             Paint colorBottom = new Paint();
 
             colorBottom.setARGB(100, 50,50,50);
