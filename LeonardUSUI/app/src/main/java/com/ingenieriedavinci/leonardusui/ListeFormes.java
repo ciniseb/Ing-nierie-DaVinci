@@ -170,22 +170,22 @@ public class ListeFormes extends AppCompatActivity
 
             imageForme.setImageResource(getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
             if(!nomForme.equals("forme_autre_informatique") && !nomForme.equals("forme_autre_electrique"))
-                imageForme.setColorFilter(ContextCompat.getColor(context, R.color.bleuFonce));
+                imageForme.setColorFilter(ContextCompat.getColor(context, R.color.bleu));
             nom.setText(formes[position].getNom());
             difficulte.setText(formes[position].getDifficulte().name());
             switch(formes[position].getDifficulte())
             {
                 case Facile:
-                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteVert));
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.vertUDeS));
                     break;
                 case Normale:
-                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteJaune));
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.jauneUDeS));
                     break;
                 case Difficile:
-                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteRouge));
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.rouge));
                     break;
                 case Impossible:
-                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.difficulteMauve));
+                    difficulte.setTextColor(ContextCompat.getColor(context, R.color.mauve));
                     break;
                 default:
                     break;

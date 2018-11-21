@@ -8,9 +8,9 @@
         android:color="@android:color/black" />
     <gradient
         android:angle="90"
-        android:centerColor="@color/bleuFonce"
+        android:centerColor="@color/vertUDeS"
         android:endColor="@color/colorPrimaryDark"
         android:startColor="@color/colorPrimaryDark"
         android:type="radial"
-        android:gradientRadius="550" />
+        android:gradientRadius="500" />
 </shape>

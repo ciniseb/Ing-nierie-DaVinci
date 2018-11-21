@@ -8,12 +8,15 @@
     <color name="brunFonce">#664228</color>
     <color name="fond">#E6BE8A</color>
 
-    <color name="UDeS">#00A759</color>
 
-    <color name="bleuFonce">#00468C</color>
+    <color name="TESTfond">#ffd39b</color>
 
-    <color name="difficulteVert">#3AA655</color>
-    <color name="difficulteJaune">#FBE870</color>
-    <color name="difficulteRouge">#ED0A3F</color>
-    <color name="difficulteMauve">#652DC1</color>
+    <color name="vert">#3AA655</color>
+    <color name="jaune">#FBE870</color>
+
+    <color name="vertUDeS">#00A759</color>
+    <color name="jauneUDeS">#FFC837</color>
+    <color name="rouge">#ED0A3F</color>
+    <color name="bleu">#00468C</color>
+    <color name="mauve">#652DC1</color>
 </resources>

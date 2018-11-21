@@ -39,7 +39,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         String nomForme = getIntent().getExtras().getString("nomForme");
         imageForme.setImageResource(getResources().getIdentifier(nomForme, "drawable", getPackageName()));
         if(!nomForme.equals("forme_autre_informatique") && !nomForme.equals("forme_autre_electrique"))
-            imageForme.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.bleuFonce));
+            imageForme.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.bleu));
     }
 
     @Override
