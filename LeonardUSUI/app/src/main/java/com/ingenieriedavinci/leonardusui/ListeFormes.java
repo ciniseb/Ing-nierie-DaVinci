@@ -27,13 +27,15 @@ public class ListeFormes extends AppCompatActivity
     private static final int SPIRALES = 2;
     private static final int PARALLELOGRAMMES = 3;
     private static final int EMOJI = 4;
-    private static final int AUTRES = 5;
+    private static final int ETOILES = 5;
+    private static final int AUTRES = 6;
 
     //Variables
     int typeFormes;
 
     Forme[] formes;
     ArrayAdapter<Forme> adapteurFormes;
+    Telecommande telecommande;
 
     //Constructeurs
     public ListeFormes() {}
@@ -46,6 +48,7 @@ public class ListeFormes extends AppCompatActivity
 
         //Attributions
         typeFormes = getIntent().getExtras().getInt("typeFormes");
+        telecommande = new Telecommande();
 
         switch(typeFormes)
         {
@@ -75,12 +78,14 @@ public class ListeFormes extends AppCompatActivity
 
                 break;
             case PARALLELOGRAMMES:
-                formes = new Forme[5];
+                formes = new Forme[7];
                 formes[0] = new Forme("Carré", "forme_polygone_carre", Forme.Difficulte.Facile);
                 formes[1] = new Forme("Rectangle 80%", "forme_parallelogramme_rectangle_810", Forme.Difficulte.Facile);
                 formes[2] = new Forme("Rectangle 60%", "forme_parallelogramme_rectangle_610", Forme.Difficulte.Facile);
                 formes[3] = new Forme("Rectangle 40%", "forme_parallelogramme_rectangle_410", Forme.Difficulte.Facile);
                 formes[4] = new Forme("Rectangle 20%", "forme_parallelogramme_rectangle_210", Forme.Difficulte.Facile);
+                formes[5] = new Forme("Parallélogramme 60%\n120 degrés", "forme_parallelogramme_120_610", Forme.Difficulte.Normale);
+                formes[6] = new Forme("Parallélogramme 100%\n80 degrés", "forme_parallelogramme_80_1010", Forme.Difficulte.Normale);
 
 
                 break;
@@ -89,6 +94,14 @@ public class ListeFormes extends AppCompatActivity
                 formes[0] = new Forme("Content", "", Forme.Difficulte.Difficile);
                 formes[1] = new Forme("Triste", "", Forme.Difficulte.Difficile);
                 formes[2] = new Forme("Blazé", "", Forme.Difficulte.Normale);
+
+                break;
+            case ETOILES:
+                formes = new Forme[4];
+                formes[0] = new Forme("Étoile à 5 cotés {5/2}", "forme_polygone_etoile_5_2", Forme.Difficulte.Difficile);
+                formes[1] = new Forme("Étoile à 7 cotés {7/2}", "forme_polygone_etoile_7_2", Forme.Difficulte.Impossible);
+                formes[2] = new Forme("Étoile à 7 cotés {7/3}", "forme_polygone_etoile_7_3", Forme.Difficulte.Impossible);
+                formes[3] = new Forme("Étoile à 8 cotés {8/3}", "forme_polygone_etoile_8_3", Forme.Difficulte.Impossible);
 
                 break;
             case AUTRES:
@@ -112,7 +125,7 @@ public class ListeFormes extends AppCompatActivity
                 //TODO COMMUNICATION BLUETOOTH !
                 //TODO PASSAGE VERS TÉLÉCOMMANDE
 
-                startActivity(new Intent(ListeFormes.this, Telecommande.class));
+                telecommande.startActivity(formes[position].getImageDrawableString(), getApplicationContext());
             }
         });
 
@@ -149,13 +162,15 @@ public class ListeFormes extends AppCompatActivity
             //View d'un placement
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.layout_bouton_forme, null);
-            view.setPaddingRelative(20,20,20,20);
+            //view.setPaddingRelative(20,20,20,20);
 
             ImageViewCarre imageForme = view.findViewById(R.id.imageForme);
             TextView nom = (TextView) view.findViewById(R.id.typeForme);
             TextView difficulte = (TextView) view.findViewById(R.id.difficulteForme);
 
             imageForme.setImageResource(getResources().getIdentifier(nomForme, "drawable", getContext().getPackageName()));
+            if(!nomForme.equals("forme_autre_informatique") && !nomForme.equals("forme_autre_electrique"))
+                imageForme.setColorFilter(ContextCompat.getColor(context, R.color.bleuFonce));
             nom.setText(formes[position].getNom());
             difficulte.setText(formes[position].getDifficulte().name());
             switch(formes[position].getDifficulte())

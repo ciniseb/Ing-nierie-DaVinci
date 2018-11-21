@@ -52,13 +52,26 @@
         android:layout_marginStart="70dp"
         android:layout_alignParentBottom="true"/>
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/ic_swap_vertical_circle_black_24dp"
-        android:contentDescription="Actioner le bras du crayon" />
+        android:orientation="vertical">
+
+        <com.ingenieriedavinci.leonardusui.ImageViewCarre
+            android:id="@+id/imageForme"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/layout_forme"
+            android:padding="9dp" />
+
+        <Button
+            android:id="@+id/boutonToggle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/style_bouton_toggle_ripple"
+            android:contentDescription="Actionner le bras du crayon" />
+    </LinearLayout>
 
     <com.ingenieriedavinci.leonardusui.Manette
         android:id="@+id/manetteDroite"

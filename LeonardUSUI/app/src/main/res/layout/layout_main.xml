@@ -20,19 +20,47 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <TextView
-            android:id="@+id/nomRobot"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="60sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:text="@string/leonardus" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_udes"/>
+
+            <TextView
+                android:id="@+id/nomRobot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/leonard"
+                android:textColor="@android:color/black"
+                android:textSize="60sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/US"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/us"
+                android:textColor="@color/UDeS"
+                android:textSize="60sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_udes"/>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/nomEquipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-10dp"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -46,7 +74,8 @@
             android:id="@+id/debut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/white"
+            android:padding="20dp"
+            android:background="@drawable/style_bouton_ripple"
             android:text="@string/allons_y" />
     </LinearLayout>
 </RelativeLayout>

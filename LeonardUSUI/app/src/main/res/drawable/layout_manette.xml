@@ -6,6 +6,11 @@
     <stroke
         android:width="3dp"
         android:color="@android:color/black" />
-    <solid
-        android:color="@color/colorPrimaryDark" />
+    <gradient
+        android:angle="90"
+        android:centerColor="@color/bleuFonce"
+        android:endColor="@color/colorPrimaryDark"
+        android:startColor="@color/colorPrimaryDark"
+        android:type="radial"
+        android:gradientRadius="550" />
 </shape>

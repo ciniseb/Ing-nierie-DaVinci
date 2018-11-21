@@ -48,7 +48,9 @@ public class Formes extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                listeFormes.startActivity(1, getApplicationContext());
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
             }
         });
         boutonsFormes[2].setOnClickListener(new View.OnClickListener()
@@ -56,7 +58,9 @@ public class Formes extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                listeFormes.startActivity(2, getApplicationContext());
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
             }
         });
         boutonsFormes[3].setOnClickListener(new View.OnClickListener()
@@ -72,7 +76,9 @@ public class Formes extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                listeFormes.startActivity(4, getApplicationContext());
+                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
+                message.setGravity(Gravity.CENTER, 0, 0);
+                message.show();
             }
         });
         boutonsFormes[5].setOnClickListener(new View.OnClickListener()
@@ -88,9 +94,7 @@ public class Formes extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Toast message = Toast.makeText(getApplicationContext(),"Cette option n'est pas encore disponible...", Toast.LENGTH_LONG);
-                message.setGravity(Gravity.CENTER, 0, 0);
-                message.show();
+                listeFormes.startActivity(6, getApplicationContext());
             }
         });
         boutonsFormes[7].setOnClickListener(new View.OnClickListener()

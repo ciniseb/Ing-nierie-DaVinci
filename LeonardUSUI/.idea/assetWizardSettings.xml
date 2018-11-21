@@ -33,9 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="opacityPercent" value="85" />
-                            <entry key="outputName" value="ic_swap_vertical_circle_black_24dp" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/../Images originales/Formes Polygones/SVG/forme_polygone_heptagone.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="forme_polygone_etoile_8_3" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/../Images originales/Formes Polygones/SVG/forme_polygone_etoile_8_3.svg" />
                           </map>
                         </option>
                       </PersistentState>

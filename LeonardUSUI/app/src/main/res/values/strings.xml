@@ -1,7 +1,8 @@
 <resources>
     <!-- Main -->
     <string name="app_name">LeonardUS UI</string>
-    <string name="leonardus">LéonardUS</string>
+    <string name="leonard">Léonard</string>
+    <string name="us">US</string>
     <string name="ingenierie_da_vinci">Ingénierie Da Vinci</string>
     <string name="allons_y">Allons-y</string>
 
@@ -14,4 +15,5 @@
     <string name="pipipi">\???</string>
     <string name="autres">Autres</string>
     <string name="a_venir">À venir...</string>
+    <string name="etoiles">Étoiles</string>
 </resources>
