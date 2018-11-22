@@ -453,8 +453,10 @@ void opto()
   {
     Serial.println("Surface pas blanche");
     // Action du robot s'il n'est plus sur le tableau
-    // Par exemple un bruit, un affichage sur l'écran lcd, ou les roue bloque et ne peuvent rouler qu'en marche arrière
     leverCrayon();
+    reculer(20);
+    tournerCentre(GAUCHE,180);
+    baisserCrayon();
   }
 }
 
