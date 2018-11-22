@@ -2,5 +2,9 @@
     "terminal.integrated.env.osx": {
         "PATH": "/Users/sebastien/.platformio/penv/bin:/Users/sebastien/.platformio/penv:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin",
         "PLATFORMIO_CALLER": "vscode"
+    },
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\Utilisateur\\.platformio\\penv\\Scripts;C:\\Users\\Utilisateur\\.platformio\\penv;C:\\MinGW\\bin;C:\\Program Files\\Git\\cmd;C:\\MinGW\\bin;C:\\Users\\Utilisateur\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\Utilisateur\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\MinGW\\bin;C:\\Program Files\\Git\\cmd;C:\\MinGW\\bin;C:\\Users\\Utilisateur\\AppData\\Local\\GitHubDesktop\\bin;C:\\Users\\Utilisateur\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+        "PLATFORMIO_CALLER": "vscode"
     }
 }
