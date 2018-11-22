@@ -111,7 +111,7 @@ void loop()
 {
   // ----- R O B O T  A U T O N O M E ------
   #ifdef ROBOTAUTONOME
-    int noForme = 0;
+    int noForme = 12;
     switch(noForme)
     {
       case 0:
@@ -151,7 +151,7 @@ void loop()
         //polygoneEtoile(, int lngrArete);
       break;
       case 12:
-      
+       arc(300, 180, 75);
       break;
       case 13:
       
@@ -578,14 +578,23 @@ void tournerEfface(int direction, float angle)
   void arc(int rayon, float angle, int t)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+    float distance = (1.6*2*PI*(rayon+55)*(angle/545));
 
-    float vG = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
-    float vD = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    float vG = (2*PI*(rayon+94))/t;
+    float vD = (2*PI*(rayon-94))/t;
 
-    while(ENCODER_Read(DROITE) <= anglePulse)
+    while(ENCODER_Read(GAUCHE) <= distance_mm_pulse(distance))
     {
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
+      Serial.println(ENCODER_Read(GAUCHE));
+      Serial.println(distance_mm_pulse(distance));
+      MOTOR_SetSpeed(GAUCHE, vG/100);
+      MOTOR_SetSpeed(DROITE, vD/100);
+    }
+    while(ENCODER_Read(GAUCHE)> distance_mm_pulse(distance))
+    {
+      MOTOR_SetSpeed(GAUCHE, 0);
+      MOTOR_SetSpeed(DROITE, 0);
+      break;
     }
   }
   void ellipse(int longeur, int largeur, int t)
