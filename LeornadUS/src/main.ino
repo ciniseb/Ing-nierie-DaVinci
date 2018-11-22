@@ -86,6 +86,8 @@ void setup()
   pinMode(A7,INPUT);
   pinMode(A8,INPUT);
   pinMode(48, INPUT_PULLUP);        // Pin bouton bras.
+  pinMode (44, INPUT);
+
 
   delay(5000);
 }
@@ -94,8 +96,8 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
-  baissercrayon();
-  delay(5000);
+  opto();
+
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
@@ -381,6 +383,40 @@ void levercrayon()
   }
   delay(20);
   SERVO_Disable(0);
+}
+void bruit()
+{
+  int peizoPin = 44 ;
+  tone(peizoPin, 3000, 500);
+  delay(1000);
+}
+
+void opto()
+{
+  int compteur = 0; 
+  int surfaceblanche = 100;
+  int optocoupleur = analogRead(A6);
+
+     if (optocoupleur < surfaceblanche)
+  {
+     while ((optocoupleur < surfaceblanche) && (compteur <= 200))
+    {
+      optocoupleur = analogRead(A6);
+      compteur ++;
+      Serial.println(compteur);
+    }
+  }
+  if (compteur >= 199) // Hors du tableau
+  {
+    while (optocoupleur < surfaceblanche)
+    {
+      //leverCrayon();
+      bruit();
+      optocoupleur = analogRead(A6);
+    }
+  }
+  noTone(44);
+  compteur = 0;
 }
 /*******************************/
 
