@@ -120,9 +120,10 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
+  opto();
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = -1;
+    /*int noForme = -1;
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -206,7 +207,7 @@ void loop()
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-}
+*/}
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
@@ -412,47 +413,36 @@ void leverCrayon()
   //SERVO_Disable(0);
 }
 
-void horszone()
+void bruit()
 {
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(" Retourne dans");
-  lcd.setCursor(0, 1);
-  lcd.print("    la zone    ");
-}
-
-void marchearriere()
-{
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("   marche   ");
-  lcd.setCursor(0, 1);
-  lcd.print("  arriere  ");
-}
-
-void eteindreecran()
-{
-  lcd.clear();
+  int peizoPin =42;
+  tone(peizoPin, 3000, 500);
+  delay(50);
 }
 
 void opto()
 {
-  int compteur = 0;
+  int compteur = 0; 
   int surfaceblanche = 100;
   int optocoupleur = analogRead(A6);
 
      if (optocoupleur < surfaceblanche)
   {
-    while ((optocoupleur < surfaceblanche) || compteur <= 20)
+    while (optocoupleur < surfaceblanche || compteur = 20)
     {
-      compteur++;
+      Serial.println(optocoupleur);
+      compteur ++;
     }
-  }
-  if (compteur >= 20)
+  }  
+  if (compteur >=10) // Hors du tableau
   {
-    Serial.println("Surface pas blanche");
-    // Action du robot s'il n'est plus sur le tableau
-    // Par exemple un bruit, un affichage sur l'écran lcd, ou les roue bloque et ne peuvent rouler qu'en marche arrière
+    bruit();
+    leverCrayon();
+    while (optocoupleur < surfaceblanche)
+    {
+      bruit();
+      delay(500);
+    }
   }
 }
 
