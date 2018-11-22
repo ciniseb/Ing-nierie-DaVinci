@@ -441,18 +441,20 @@ void opto()
   int surfaceblanche = 100;
   int optocoupleur = analogRead(A6);
 
-     if (optocoupleur < surfaceblanche)
+  if (optocoupleur < surfaceblanche)
   {
     while ((optocoupleur < surfaceblanche) || compteur <= 20)
     {
       compteur++;
+      delay(10);
     }
   }
-  if (compteur >= 20)
+  if (compteur >= 10)
   {
     Serial.println("Surface pas blanche");
     // Action du robot s'il n'est plus sur le tableau
     // Par exemple un bruit, un affichage sur l'écran lcd, ou les roue bloque et ne peuvent rouler qu'en marche arrière
+    leverCrayon();
   }
 }
 
