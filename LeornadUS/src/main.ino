@@ -8,6 +8,7 @@ Fichier:            main.ino
                       Philippe B-L (Normes)
                       Sébastien St-Denis (Fonctions de mouvements, normes & formes)
                       Éric Leduc (???)
+                      Samuel Croteau (Fonctions du crayon, optocoupleur & écran lcd)
 
   Date:               04-10-2018
   Révision:           
@@ -19,6 +20,9 @@ Fichier:            main.ino
 =================================================================================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
 #include <math.h>
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
 /*===========================================================================
 Defines globales & robots
 ===========================================================================*/
@@ -101,6 +105,13 @@ void setup()
   pinMode(A7,INPUT);
   pinMode(A8,INPUT);
   pinMode(48, INPUT_PULLUP);        // Pin bouton bras.
+  pinMode(2, INPUT);                // Pin ecran lcd
+  pinMode(3, INPUT);                // Pin ecran lcd
+  pinMode(4, INPUT);                // Pin ecran lcd
+  pinMode(5, INPUT);                // Pin ecran lcd
+  pinMode(11, INPUT);               // Pin ecran lcd
+  pinMode(12, INPUT);               // Pin ecran lcd
+  lcd.begin(16, 2);                // Grandeur de l'écran lcd
 
   delay(5000);
 }
@@ -109,9 +120,10 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
+  opto();
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = -1;
+    /*int noForme = -1;
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -195,7 +207,7 @@ void loop()
 
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-}
+*/}
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
@@ -385,6 +397,7 @@ void baisserCrayon()
   }
   SERVO_Disable(0);
 }
+
 void leverCrayon()
 {
   SERVO_Enable(0);
@@ -399,6 +412,40 @@ void leverCrayon()
   delay(20);
   //SERVO_Disable(0);
 }
+
+void bruit()
+{
+  int peizoPin =42;
+  tone(peizoPin, 3000, 500);
+  delay(50);
+}
+
+void opto()
+{
+  int compteur = 0; 
+  int surfaceblanche = 100;
+  int optocoupleur = analogRead(A6);
+
+     if (optocoupleur < surfaceblanche)
+  {
+    while (optocoupleur < surfaceblanche || compteur = 20)
+    {
+      Serial.println(optocoupleur);
+      compteur ++;
+    }
+  }  
+  if (compteur >=10) // Hors du tableau
+  {
+    bruit();
+    leverCrayon();
+    while (optocoupleur < surfaceblanche)
+    {
+      bruit();
+      delay(500);
+    }
+  }
+}
+
 void tourner(int direction, float angle, int sens)
 {
   float angle_pulse;
