@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.GREEN;
@@ -112,7 +113,8 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
                     if(deplacement < centreY)
                     {
                         draw(centreX, motionEvent.getY());
-                        joystickCallback.onJoystickMoved(0, ((motionEvent.getY() - centreY) / centreY), getId());
+                        float yPercentRound = arrondir((motionEvent.getY() - centreY) / centreY, 1);
+                        joystickCallback.onJoystickMoved(0, yPercentRound, getId());
                     }
                 }
                 else
@@ -148,10 +150,8 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
             Paint colorBottom = new Paint();
 
             colorBottom.setARGB(100, 50,50,50);
-            canvas.drawCircle(centreX, centreY, rayonBase, colorBottom);
+            canvas.drawCircle(x, y, rayonBase, colorBottom);
             canvas.drawCircle(x, y, rayonCentre, couleur);
-            //canvas.drawRect(x-100,y-50, x+100, y+50, colorBottom);
-            //canvas.drawRect(x-50,y-25, x+50, y+25, couleur);
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
@@ -167,4 +167,10 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
         void onJoystickMoved(float xPercent, float yPercent, int source) throws IOException;
     }
 
+    public static float arrondir(float chiffre, int nbDecimal)
+    {
+        BigDecimal bd = new BigDecimal(Float.toString(chiffre));
+        bd = bd.setScale(nbDecimal, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
 }

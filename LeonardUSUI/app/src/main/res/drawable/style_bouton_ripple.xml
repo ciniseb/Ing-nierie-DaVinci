@@ -8,10 +8,16 @@
         android:right="4dp">
         <shape android:shape="rectangle" >
             <corners android:radius="999dp" />
-            <solid android:color="@color/brunFonce" />
             <stroke
                 android:width="6dp"
                 android:color="@color/colorPrimaryDark"/>
+            <gradient
+                android:angle="90"
+                android:centerColor="@color/couleurBoutonIn"
+                android:endColor="@color/couleurBoutonOut"
+                android:startColor="@color/couleurBoutonIn"
+                android:type="radial"
+                android:gradientRadius="250" />
         </shape>
     </item>
     <item

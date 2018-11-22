@@ -1,6 +1,9 @@
 package com.ingenieriedavinci.leonardusui;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +12,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +22,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.UUID;
 
 public class ListeFormes extends AppCompatActivity
 {
@@ -122,13 +130,10 @@ public class ListeFormes extends AppCompatActivity
         {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                //TODO COMMUNICATION BLUETOOTH !
-                //TODO PASSAGE VERS TÉLÉCOMMANDE
-
-                telecommande.startActivity(formes[position].getImageDrawableString(), getApplicationContext());
+                String messageBT = "#" + typeFormes + " " + position;
+                telecommande.startActivity(formes[position].getImageDrawableString(), messageBT, getApplicationContext());
             }
         });
-
 
     }
 
