@@ -30,7 +30,7 @@
         <activity
             android:name=".Telecommande"
             android:screenOrientation="landscape" />
-        <activity android:name=".ListeFormes"></activity>
+        <activity android:name=".ListeFormes" />
     </application>
 
 </manifest>

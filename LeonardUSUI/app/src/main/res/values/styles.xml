@@ -9,4 +9,13 @@
         <item name="android:colorBackground">@color/fond</item>
     </style>
 
+    <style name="pleinEcran" parent="android:Theme.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="chargementCirculaire" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:indeterminateDrawable">@drawable/style_chargement</item>
+    </style>
+
 </resources>

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
     enum ROBOT{DEBUG, AUTONOME, MANUEL} ROBOT robot;
 
     //Variables
+    ChargementBT chargementBT = null;
     private BluetoothAdapter adapteurBT = null;
     private BluetoothSocket priseBT = null;
     private OutputStream outStream = null; //TODO
@@ -50,12 +52,10 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_telecommande);
 
-        Toast message = Toast.makeText(getApplicationContext(),"À toi de jouer!", Toast.LENGTH_LONG);
-        message.setGravity(Gravity.CENTER, 0, 0);
-        message.show();
+        new ChargementBT(this, getFragmentManager()).execute();
 
         //Attributions
-        adapteurBT = BluetoothAdapter.getDefaultAdapter();
+        //adapteurBT = BluetoothAdapter.getDefaultAdapter();
 
         manetteGauche = (Manette) findViewById(R.id.manetteGauche);
         manetteGauche.setZOrderOnTop(true);
@@ -73,7 +73,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
             imageForme.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.bleu));
 
         //Connexion BLUETOOTH
-        addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
+        /*addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
         connexionBT();
         verifEtatBT();
 
@@ -83,7 +83,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
 
         addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
         connexionBT();
-        verifEtatBT();
+        verifEtatBT();*/
 
         //Comportements
         toggle.setOnClickListener(new View.OnClickListener()
@@ -97,12 +97,12 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                 if(etatToggle)
                 {
                     Log.d(DEBUG, "#B");
-                    envoieDonnees("#B");//TODO BLUETOOTH
+                    //envoieDonnees("#B");//TODO BLUETOOTH
                 }
                 else
                 {
                     Log.d(DEBUG, "#H");
-                    envoieDonnees("#H");//TODO BLUETOOTH
+                    //envoieDonnees("#H");//TODO BLUETOOTH
                 }
             }
         });
@@ -121,7 +121,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                     else
                         messageBT = "#G" + (-yPercent);
                     Log.d(DEBUG, messageBT);
-                    envoieDonnees(messageBT);//TODO BLUETOOTH
+                    //envoieDonnees(messageBT);//TODO BLUETOOTH
                     ancienGYPercent = yPercent;
                 }
                 break;
@@ -133,7 +133,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                     else
                         messageBT = "#D" + (-yPercent);
                     Log.d(DEBUG, messageBT);
-                    envoieDonnees(messageBT);//TODO BLUETOOTH
+                    //envoieDonnees(messageBT);//TODO BLUETOOTH
                     ancienDYPercent = yPercent;
                 }
                 break;
@@ -143,14 +143,14 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
     public void onResume()
     {
         super.onResume();
-        connexionBT();
+        //connexionBT();
     }
     @Override
     public void onPause()
     {
         super.onPause();
 
-        if(outStream != null)
+        /*if(outStream != null)
         {
             try
             {
@@ -167,7 +167,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         }catch(IOException e2)
         {
             Log.e(ERREUR,"Dans onPause(), fermeture de la connection échouée: " + e2.getMessage() + ".");
-        }
+        }*/
     }
 
     //Méthodes
