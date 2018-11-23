@@ -81,6 +81,7 @@ void croix(int lngrArete);
 void arc(int rayon, float angle, int t);
 void ellipse(int longeur, int largeur, int t);
 void spirale();
+void spirale2();
 void parallelogramme(float base, float hauteur, float angle);
 void emotion(int emotion, int rayon);
 void electrique();
@@ -577,7 +578,7 @@ void tournerEfface(int direction, float angle)
   }
   void arc(int rayon, float angle, int t)
   {
-    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+    //float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
     float distance = (1.6*2*PI*(rayon+55)*(angle/545));
 
     float vG = (2*PI*(rayon+94))/t;
@@ -641,6 +642,33 @@ void tournerEfface(int direction, float angle)
     avancer(300);
     delay(3000);
     MOTORS_reset();
+  }
+  void spirale2()
+  {
+    float bob=0, ross=0;
+    while(ENCODER_Read(GAUCHE)<70000)
+    {
+      Serial.println(ENCODER_Read(GAUCHE));
+      for(bob=0 ; bob < 0.4 ; bob = bob + 0.0005)
+      {
+        ross=ross+0.00025;
+        MOTOR_SetSpeed(GAUCHE, bob);
+        MOTOR_SetSpeed(DROITE, ross);
+        Serial.print("GAUCHE =");
+        Serial.println(bob);
+        Serial.print("DROITE =");
+        Serial.println(ross);
+      }
+    }
+    /*WHILE(ENCODER_Read(GAUCHE)>70000)
+    {
+      leverCrayon();
+      MOTOR_SetSpeed(GAUCHE, 0.1);
+      MOTOR_SetSpeed(DROITE, 0.1)
+      avancer(1000000000000);
+      tournerCentre(DROITE,90);
+      reculer(90);//distance entre crayon et roues
+    }*/
   }
   void parallelogramme(float base, float hauteur, float angle)
   {
