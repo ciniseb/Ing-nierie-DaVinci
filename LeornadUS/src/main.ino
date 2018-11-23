@@ -152,14 +152,27 @@ void loop()
         //polygoneEtoile(, int lngrArete);
       break;
       case 12:
-       arc(300, 180, 75);
+        arc(400, 360, 100);
       break;
       case 13:
-      
+        spirale();
       break;
       case 14:
-      
+        emotion(SOURIRE, 400);
       break;
+      case 15:
+        emotion(BLAZE, 400);
+      break;
+      case 16:
+        emotion(TRISTE, 400);
+      break;
+      case 17:
+        electrique();
+      break;
+      case 18:
+        informatique();
+      break;
+      
       default:
       break;
     }
@@ -579,7 +592,7 @@ void tournerEfface(int direction, float angle)
   void arc(int rayon, float angle, int t)
   {
     //float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-    float distance = (1.6*2*PI*(rayon+55)*(angle/545));
+    float distance = (3.2*PI*(rayon+69)*(angle/556));
 
     float vG = (2*PI*(rayon+94))/t;
     float vD = (2*PI*(rayon-94))/t;
@@ -631,44 +644,23 @@ void tournerEfface(int direction, float angle)
   }
   void spirale()
   {
-    float vMoins, dV;
-    for(vMoins = 0.4f, dV = 0.0f; vMoins > -0.4f; vMoins = vMoins-dV, dV = 0.0005f/*dV+0.00025f*/)
+    float vMoins=0, dV=0;
+    if(vMoins >-0.1f)
     {
-      MOTOR_SetSpeed(GAUCHE, vMoins);
-      MOTOR_SetSpeed(DROITE, 0.4f);
-      delay(50);
-    }
-    leverCrayon();
-    avancer(300);
-    delay(3000);
-    MOTORS_reset();
-  }
-  void spirale2()
-  {
-    float bob=0, ross=0;
-    while(ENCODER_Read(GAUCHE)<70000)
-    {
-      Serial.println(ENCODER_Read(GAUCHE));
-      for(bob=0 ; bob < 0.4 ; bob = bob + 0.0005)
+      for(vMoins = 0.2f, dV = 0.0f; vMoins > -0.1f; vMoins = vMoins-dV, dV = 0.00065f/*dV+0.00025f*/)
       {
-        ross=ross+0.00025;
-        MOTOR_SetSpeed(GAUCHE, bob);
-        MOTOR_SetSpeed(DROITE, ross);
-        Serial.print("GAUCHE =");
-        Serial.println(bob);
-        Serial.print("DROITE =");
-        Serial.println(ross);
+        Serial.print("MOTEUR GAUCHE : ");
+        Serial.println(vMoins);
+        MOTOR_SetSpeed(GAUCHE, vMoins);
+        MOTOR_SetSpeed(DROITE, 0.2f);
+        delay(50); 
       }
     }
-    /*WHILE(ENCODER_Read(GAUCHE)>70000)
-    {
-      leverCrayon();
-      MOTOR_SetSpeed(GAUCHE, 0.1);
-      MOTOR_SetSpeed(DROITE, 0.1)
-      avancer(1000000000000);
-      tournerCentre(DROITE,90);
-      reculer(90);//distance entre crayon et roues
-    }*/
+    
+   /* leverCrayon();
+    avancer(300);
+    delay(3000);
+    MOTORS_reset();*/
   }
   void parallelogramme(float base, float hauteur, float angle)
   {
@@ -702,10 +694,11 @@ void tournerEfface(int direction, float angle)
       Serial.println(angle);
     }
   }
-  void emotion(int emotion, int rayon)
+  void emotion(int emotion, int rayon) //trouver un rayon fixe pour les émotions si arc n'est pas parfait + logique contradictoire (suite en dessous)
+  // Le debut de la forme est le bas du tableau et commences par faire un cercle ... boom hors du tableau
   {
     //Contour
-    arc(rayon, 360, 200);//1
+    arc(rayon, 360, 100);//1
     tournerCrayon(GAUCHE, 90);//2
     switch(emotion)
     {
@@ -723,7 +716,7 @@ void tournerEfface(int direction, float angle)
       //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12
-      avancer(rayon/3);//13
+      avancer(rayon/2);//13
       //Bouche
       arc(rayon*2/3, 180, 100);//14
       //Transition
@@ -811,10 +804,10 @@ void tournerEfface(int direction, float angle)
     tournerCrayon(DROITE, 90);
     avancer(P);
     tournerCrayon(GAUCHE, 115);
-    avancer(152.36/*+distance entre crayon et roues*/);
+    avancer(152.36+75); //75=distance entre lees roues et le crayon 
     //permet de reset le robot à la position ini.
     tournerCentre(DROITE, 149);
-    reculer(/*distance entre crayon et roues*/100);
+    reculer(75);
     /*
     avancer(distance entre crayon et roues);
     tournerEfface(GAUCHE, 55);
@@ -846,33 +839,33 @@ void tournerEfface(int direction, float angle)
   }
   void informatique()
   {
-    //avancer(/*distance entre crayon et roues*//100);
+    avancer(75);
     tournerCentre(GAUCHE, 70);
-    //reculer(/*distance entre crayon et roues*/);
-    //Descendre crayon
-    //arc(67.7, 134.79, t); 
+    reculer(75);
+    //baisserCrayon();
+    arc(67.7, 134.79, 100); 
     tournerCrayon(DROITE, 20);
     avancer(130);
     tournerCrayon(DROITE, 61.44);
-    //reculer(/*Distance entre crayon et roues*/);
-    //arc(130.23, 57.36, t);
+    reculer(75);//Distance entre crayon et roues=75
+    arc(130.23, 57.36, 100);
     tournerCrayon(DROITE, 61.1);
     avancer(130);
-    leverCrayon();
+    //leverCrayon();
     tournerCentre(GAUCHE, 180);
-    //DESCENDRE CRAYON
-    //avancer(90.43-2*(/*distance entre crayon et roues*/));
+    //baisserCrayon();
+    avancer(90.43-2*(75));//distance entre crayon et roues = 75
     tournerCrayon(GAUCHE,90);
     avancer(125);
-    leverCrayon();
+    //leverCrayon();
     tournerCentre(GAUCHE, 180);
-    //DESCENDRE CRAYON
+    //baisserCrayon();
     avancer(125/2);
     tournerCrayon(GAUCHE, 90);
     avancer(54.33);
-    //arc(62.75, 89.77, t);
+    arc(62.75, 89.77, 100);
     //Retour à la position ini.
-    leverCrayon();
+    //leverCrayon();
     //avancer(/*Distance entre crayon et roues*//100);
     tournerCentre(DROITE, 90);
     avancer(207.75);
