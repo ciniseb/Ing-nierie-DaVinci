@@ -5,10 +5,9 @@ Fichier:            main.ino
   Equipe:             Ingénierie Da Vinci / P14
   Auteurs:            
                       Simon St-Onge (Fonctions de mouvements)
-                      Philippe B-L (Normes)
+                      Philippe B-L (Normes & Bluetooth)
                       Sébastien St-Denis (Fonctions de mouvements, normes & formes)
-                      Éric Leduc (???)
-                      Samuel Croteau (Fonctions du crayon, optocoupleur & écran lcd)
+                      Samuel Croteau (Fonctions du crayon, optocoupleurs & écran lcd)
 
   Date:               04-10-2018
   Révision:           
@@ -16,13 +15,11 @@ Fichier:            main.ino
   Description:        Code source du programme des robots LéonardUS.
                       Robots artistes, un robot contrôlé et un robot automatisé pour dessiner.
 
-  Modification:      10-11-2018
+  Modification:      22-11-2018
 =================================================================================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
 #include <math.h>
 #include <LiquidCrystal.h>
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
 /*===========================================================================
 Defines globales & robots
 ===========================================================================*/
@@ -59,6 +56,8 @@ Variables globales
 ===========================================================================*/
 float vitesse;
 int anglecrayon = 125;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -73,6 +72,8 @@ void avancer(float distance_mm);
 void reculer(float distance_mm);
 void baisserCrayon();
 void leverCrayon();
+void bruit();
+void opto();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
@@ -111,7 +112,7 @@ void setup()
   pinMode(5, INPUT);                // Pin ecran lcd
   pinMode(11, INPUT);               // Pin ecran lcd
   pinMode(12, INPUT);               // Pin ecran lcd
-  lcd.begin(16, 2);                // Grandeur de l'écran lcd
+  lcd.begin(16, 2);                 // Grandeur de l'écran lcd
 
   delay(5000);
 }
@@ -123,7 +124,7 @@ void loop()
   opto();
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    /*int noForme = -1;
+    int noForme = -1;
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -205,9 +206,8 @@ void loop()
 
   #endif
 
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
-*/}
+}
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
@@ -397,7 +397,6 @@ void baisserCrayon()
   }
   SERVO_Disable(0);
 }
-
 void leverCrayon()
 {
   SERVO_Enable(0);
@@ -412,29 +411,27 @@ void leverCrayon()
   delay(20);
   //SERVO_Disable(0);
 }
-
 void bruit()
 {
-  int peizoPin =42;
+  int peizoPin = 42;
   tone(peizoPin, 3000, 500);
   delay(50);
 }
-
 void opto()
 {
   int compteur = 0; 
   int surfaceblanche = 100;
   int optocoupleur = analogRead(A6);
 
-     if (optocoupleur < surfaceblanche)
+  if(optocoupleur < surfaceblanche)
   {
-    while (optocoupleur < surfaceblanche || compteur = 20)
+    while(optocoupleur < surfaceblanche || compteur == 20)
     {
       Serial.println(optocoupleur);
       compteur ++;
     }
   }  
-  if (compteur >=10) // Hors du tableau
+  if (compteur >= 10) // Hors du tableau
   {
     bruit();
     leverCrayon();
@@ -445,13 +442,11 @@ void opto()
     }
   }
 }
-
 void tourner(int direction, float angle, int sens)
 {
   float angle_pulse;
  
-  //détermine le nombre de pulse pour arriver à l'angle demandé
-  angle_pulse = angle_degree_a_pulse(angle);
+  angle_pulse = angle_degree_a_pulse(angle);//détermine le nombre de pulse pour arriver à l'angle demandé
 
   if((direction == GAUCHE && sens == DEVANT) || (direction == DROITE && sens == DERRIERE))
   {
