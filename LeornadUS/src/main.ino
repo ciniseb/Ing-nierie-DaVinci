@@ -8,6 +8,7 @@ Fichier:            main.ino
                       Philippe B-L (Normes & Bluetooth)
                       Sébastien St-Denis (Fonctions de mouvements, normes & formes)
                       Samuel Croteau (Fonctions du crayon, optocoupleurs & écran lcd)
+                      Frédéric Gagnon (Formes)
 
   Date:               04-10-2018
   Révision:           
@@ -113,6 +114,8 @@ void setup()
   pinMode(11, INPUT);               // Pin ecran lcd
   pinMode(12, INPUT);               // Pin ecran lcd
   lcd.begin(16, 2);                 // Grandeur de l'écran lcd
+
+  pinMode (44, INPUT);
 
   delay(5000);
 }
@@ -413,9 +416,9 @@ void leverCrayon()
 }
 void bruit()
 {
-  int peizoPin = 42;
+  int peizoPin = 44;
   tone(peizoPin, 3000, 500);
-  delay(50);
+  delay(1000);
 }
 void opto()
 {
@@ -425,22 +428,24 @@ void opto()
 
   if(optocoupleur < surfaceblanche)
   {
-    while(optocoupleur < surfaceblanche || compteur == 20)
+    while(optocoupleur < surfaceblanche && compteur <= 200)
     {
-      Serial.println(optocoupleur);
+      optocoupleur = analogRead(A6);
       compteur ++;
+      Serial.println(compteur);
     }
   }  
-  if (compteur >= 10) // Hors du tableau
+  if(compteur > 200) // Hors du tableau
   {
-    bruit();
-    leverCrayon();
-    while (optocoupleur < surfaceblanche)
+   while (optocoupleur < surfaceblanche)
     {
+      //leverCrayon();
       bruit();
-      delay(500);
+      optocoupleur = analogRead(A6);
     }
   }
+  noTone(44);
+  compteur = 0;
 }
 void tourner(int direction, float angle, int sens)
 {
