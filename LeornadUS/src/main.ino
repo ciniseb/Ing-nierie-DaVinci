@@ -59,6 +59,13 @@ float vitesse;
 int anglecrayon = 125;
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int  serIn;             // var that will hold the bytes-in read from the serialBuffer
+char serInString[100];  // array that will hold the different bytes  100=100characters;
+                        // -> you must state how long the array will be else it won't work.
+int  serInIndx  = 0;    // index of serInString[] in which to insert the next incoming byte
+int  serOutIndx = 0;    // index of the outgoing serInString[] array;
+char SerialRead[63];
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -78,6 +85,7 @@ void opto();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
+void readSerialString();
 
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
@@ -100,6 +108,11 @@ Lancement
 void setup()
 {
   BoardInit();
+
+  Serial.begin(9600);
+  Serial1.begin(57600);
+  while(!Serial);
+  while(!Serial1);
 
   pinMode(A10,INPUT);
   pinMode(A9,INPUT);
@@ -125,6 +138,19 @@ Boucle infinie
 void loop()
 {
   opto();
+  Serial1.readBytes(SerialRead, 64);
+  for(int i = 0; i <= 63; i++)
+  {
+    if(SerialRead[i] == '#')
+    {
+      for(int a = 0; a <= 63; a++)
+      {
+        Serial.print(SerialRead[i+a]);
+        SerialRead[i+a] = 0;
+      }
+      Serial.println(" ");
+    }
+  }
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
     int noForme = -1;
@@ -501,6 +527,21 @@ void tournerCrayon(int direction, float angle)
   reculer(172);
   baisserCrayon();
 }
+void readSerialString()
+{
+  int sb = 0;   
+  if(Serial.available())
+  { 
+    while (Serial.available())
+    { 
+      sb = Serial.read();             
+      serInString[serInIndx] = sb;
+      serInIndx++;
+    }
+  }  
+}
+
+
 void tournerEfface(int direction, float angle)
 {
   //avancer(distance entre roues et efface);
