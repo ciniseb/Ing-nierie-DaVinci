@@ -590,18 +590,29 @@ void opto()
     //avancer(lngrArete);
     //tournerCrayon(GAUCHE, 90);
   }
-  void arc(int rayon, float angle, int t)
+  void arc(int rayon, float angle, float vitesse)
   {
-    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+    float distroue = 95; // À mesurer en mm
+    float rayondroit = rayon + distroue; // en mm
+    float rayongauche = rayon; // en mm
+    float ratiocirconference = (angle/360);
+    float distrouegauche = ratiocirconference * (2 * PI * rayongauche);
+    float distrouedroite = ratiocirconference * (2 * PI * rayondroit);
+    float distroue_pulse_gauche = distance_mm_pulse(distrouegauche);
+    float distroue_pulse_droite = distance_mm_pulse(distrouedroite);
+    float ratiodistance = distroue_pulse_droite/distroue_pulse_gauche; //>1, même ratio pour les vitesse
+    float vitessedroite = vitesse * ratiodistance;
+    float vitessegauche = vitesse;
 
-    float vG = 2*PI*(rayon-(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
-    float vD = 2*PI*(rayon+(/*DISTANCE ENTRE ROUES MM*/100/2))/t;
+    ENCODER_Reset(GAUCHE);
+    ENCODER_Read(DROITE);
 
-    while(ENCODER_Read(DROITE) <= anglePulse)
+    while ((ENCODER_Read(GAUCHE) <= distroue_pulse_gauche) && (ENCODER_Read(DROITE) <= distroue_pulse_droite))
     {
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
+      MOTOR_SetSpeed(GAUCHE,vitessegauche);
+      MOTOR_SetSpeed(DROITE,vitessedroite);
     }
+  MOTORS_reset();
   }
   void ellipse(int longeur, int largeur, int t)
   {
