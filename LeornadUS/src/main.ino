@@ -112,7 +112,7 @@ void loop()
 {
   // ----- R O B O T  A U T O N O M E ------
   #ifdef ROBOTAUTONOME
-    int noForme = 12;
+    int noForme = 15;
     switch(noForme)
     {
       case 0:
@@ -152,16 +152,16 @@ void loop()
         //polygoneEtoile(, int lngrArete);
       break;
       case 12:
-        arc(400, 360, 100);
+        arc(200, 90, 50);
       break;
       case 13:
         spirale();
       break;
       case 14:
-        emotion(SOURIRE, 400);
+        polygoneEtoile(5,2,75);
       break;
       case 15:
-        emotion(BLAZE, 400);
+        croix(75);
       break;
       case 16:
         emotion(TRISTE, 400);
@@ -490,9 +490,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
+  avancer(160);
   tournerCentre(direction, angle);
-  reculer(/*INSÉRER DISTANCE EN MM ENTRE LE MILIEU DES ROUES ET LE CRAYON*/70);
+  reculer(160);
   baisserCrayon();
 }
 void tournerEfface(int direction, float angle)
@@ -549,6 +549,7 @@ void tournerEfface(int direction, float angle)
     float angle = 180*(nbSommets-2*diffSommets)/nbSommets;
     float angleExterne = 180-angle;
     float angleInterne = 360*(diffSommets-1)/nbSommets;
+    baisserCrayon();
 
     tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
@@ -576,6 +577,7 @@ void tournerEfface(int direction, float angle)
   }
   void croix(int lngrArete)
   {
+    
     for(int i=0; i<4; i++)
     {
       avancer(lngrArete);
@@ -583,7 +585,7 @@ void tournerEfface(int direction, float angle)
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, 90);
+      tournerCrayon(DROITE, 90);
     }
     //tournerCrayon(DROITE, 90);
     //avancer(lngrArete);
@@ -592,19 +594,21 @@ void tournerEfface(int direction, float angle)
   void arc(int rayon, float angle, int t)
   {
     //float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-    float distance = (3.2*PI*(rayon+69)*(angle/556));
+    //float distance = (3.2*PI*(rayon+68)*(angle/556));
+    float distanceG = 2*PI*(rayon+85)*angle/360;
 
-    float vG = (2*PI*(rayon+94))/t;
-    float vD = (2*PI*(rayon-94))/t;
+    float vG = (2*PI*(rayon+2*95))/(100*t);
+    float vD = (2*PI*(rayon-95))/(100*t);
+    baisserCrayon();
 
-    while(ENCODER_Read(GAUCHE) <= distance_mm_pulse(distance))
+    while(ENCODER_Read(GAUCHE) <= distance_mm_pulse(distanceG))
     {
       Serial.println(ENCODER_Read(GAUCHE));
-      Serial.println(distance_mm_pulse(distance));
-      MOTOR_SetSpeed(GAUCHE, vG/100);
-      MOTOR_SetSpeed(DROITE, vD/100);
+      Serial.println(distance_mm_pulse(distanceG));
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
     }
-    while(ENCODER_Read(GAUCHE)> distance_mm_pulse(distance))
+    while(ENCODER_Read(GAUCHE)> distance_mm_pulse(distanceG))
     {
       MOTOR_SetSpeed(GAUCHE, 0);
       MOTOR_SetSpeed(DROITE, 0);
@@ -783,7 +787,7 @@ void tournerEfface(int direction, float angle)
   void electrique()
   {
 	  float P=40; //distance en mm des petits côtés
-    tournerCrayon(GAUCHE, 55);
+    tournerCrayon(DROITE, 45);
     avancer(85.81);
     tournerCrayon(DROITE, 90);
     avancer(P);
@@ -808,34 +812,6 @@ void tournerEfface(int direction, float angle)
     //permet de reset le robot à la position ini.
     tournerCentre(DROITE, 149);
     reculer(75);
-    /*
-    avancer(distance entre crayon et roues);
-    tournerEfface(GAUCHE, 55);
-    avancer(85.81);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 90);
-    avancer(66.65);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 95);
-    avancer(60);
-    tournerEfface(GAUCHE, 52);
-    avancer(70);
-    tournerEfface(GAUCHE, 125);
-    avancer(50);
-    tournerEfface(DROITE,90);
-    avancer(P);
-    tournerEfface(GAUCHE, 90);
-    avancer(62.72);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 115);
-    avancer(152.36);
-    //permet de reset le robot à la position ini.
-    leverCrayon();
-    tournerCentre(DROITE, 149);
-    reculer(/*distance entre crayon et roues100);*/
   }
   void informatique()
   {
@@ -843,12 +819,12 @@ void tournerEfface(int direction, float angle)
     tournerCentre(GAUCHE, 70);
     reculer(75);
     //baisserCrayon();
-    arc(67.7, 134.79, 100); 
+    arc(300, 150, 100); 
     tournerCrayon(DROITE, 20);
     avancer(130);
     tournerCrayon(DROITE, 61.44);
     reculer(75);//Distance entre crayon et roues=75
-    arc(130.23, 57.36, 100);
+    arc(500, 57.36, 100);
     tournerCrayon(DROITE, 61.1);
     avancer(130);
     //leverCrayon();
@@ -863,7 +839,7 @@ void tournerEfface(int direction, float angle)
     avancer(125/2);
     tournerCrayon(GAUCHE, 90);
     avancer(54.33);
-    arc(62.75, 89.77, 100);
+    arc(62.75*10, 89.77, 100);
     //Retour à la position ini.
     //leverCrayon();
     //avancer(/*Distance entre crayon et roues*//100);
@@ -871,29 +847,6 @@ void tournerEfface(int direction, float angle)
     avancer(207.75);
     tournerCentre(DROITE, 90);
     //reculer(/*Distance entre crayon et roues*//100);
-    /*
-    avancer(distance entre crayon et roues);
-    tournerCentre(GAUCHE, 70);
-    arc(67.7, 134.79, t); 
-    tournerEfface(DROITE, 20);
-    avancer(130);
-    tournerEfface(DROITE, 61.44);
-    arc(130.23, 57.36, t);
-    tournerEfface(DROITE, 61.1);
-    avancer(130);
-    tournerCentre(GAUCHE, 180);
-    avancer(90.43-2(distance entre crayon et roues));
-    tournerEfface(GAUCHE,90);
-    avancer(125);
-    tournerCentre(GAUCHE, 180);
-    avancer(125/2);
-    tournerEfface(GAUCHE, 90);
-    avancer(54.33);
-    arc(62.75, 89.77, t)
-    tournerCentre(DROITE, 90);
-    avancer(207.75);
-    tournerCentre(DROITE, 90);
-    reculer(Distance entre crayon et roues);*/
   }  
 #endif
 
