@@ -37,7 +37,6 @@ public class Transition extends DialogFragment
 
         chargement.setIndeterminate(true);
         chargement.setIndeterminateDrawable(getResources().getDrawable(R.drawable.style_chargement, null));
-        chargement.setSecondaryProgress(50);
 
         return view;
     }
@@ -51,9 +50,9 @@ public class Transition extends DialogFragment
             {
                 Toast message;
                 essaies++;
-                if(essaies <= 1)
+                if(essaies == 3)
                 {
-                    message = Toast.makeText(getContext(),"Bien éssayé!", Toast.LENGTH_SHORT);
+                    message = Toast.makeText(getContext(),"Cet Easter Egg prouve à quel point mon équipe mon fait confiance sur Android.. XD", Toast.LENGTH_LONG);
                 }
                 else if(essaies == 2)
                 {
@@ -61,7 +60,7 @@ public class Transition extends DialogFragment
                 }
                 else
                 {
-                    message = Toast.makeText(getContext(),"Cet Easter Egg prouve à quel point mon équipe mon fait confiance sur Android.. XD", Toast.LENGTH_LONG);
+                    message = Toast.makeText(getContext(),"Bien éssayé!", Toast.LENGTH_SHORT);
                 }
                 message.setGravity(Gravity.CENTER, 0, 0);
                 message.show();

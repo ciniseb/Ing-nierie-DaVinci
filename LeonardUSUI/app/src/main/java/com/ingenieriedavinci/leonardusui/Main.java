@@ -17,6 +17,10 @@ import java.util.UUID;
 
 public class Main extends AppCompatActivity
 {
+    //Statics
+    public static final String DEBUG = "Débuggage";
+    public static final String ERREUR = "Erreur";
+
     //Variables
     Button debut;
 
