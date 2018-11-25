@@ -154,7 +154,7 @@ void loop()
   }
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = 3;
+    int noForme = 13;
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -201,7 +201,7 @@ void loop()
           parallelogramme(100, 60, 120);
         break;
         case 13:
-          polygoneEtoile(10,3,300);
+          polygoneEtoile(5,2,300);
         break;
         case 14:
           leverCrayon();
@@ -632,8 +632,9 @@ void tournerEfface(int direction, float angle)
       tournerCrayon(GAUCHE, angleExterne);
     }
     leverCrayon();
+    avancer(167)
     tournerCentre(GAUCHE, 90);
-    reculer(172);
+    reculer(162);
     /*
     avancer(/distance entre crayon et roues);
     for(int i = 0; i < nbSommets; i++)
