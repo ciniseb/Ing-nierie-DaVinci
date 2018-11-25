@@ -19,21 +19,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.ingenieriedavinci.leonardusui.Main.DEBUG;
+import static com.ingenieriedavinci.leonardusui.Main.ERREUR;
+
 public class Telecommande extends AppCompatActivity implements Manette.JoystickListener
 {
     //Statics
-    private static final int REQUEST_ENABLE_BT = 1;//TODO
-    private static final String DEBUG = "Débuggage";
-    private static final String ERREUR = "Erreur";
+    public static final int REQUEST_ENABLE_BT = 1;//TODO
     enum ROBOT{DEBUG, AUTONOME, MANUEL} ROBOT robot;
 
     //Variables
     ChargementBT chargementBT = null;
-    private BluetoothAdapter adapteurBT = null;
-    private BluetoothSocket priseBT = null;
-    private OutputStream outStream = null; //TODO
+    public static BluetoothAdapter adapteurBT = null;
+    public static BluetoothSocket priseBT = null;
+    public static OutputStream outStream = null; //TODO
 
-    private static final UUID MON_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");//Universel UUID
+    public static final UUID MON_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");//Universel UUID
     public static String addresseMac = "00:00:00:00:00:00";//Normalement l'adresse est « private » mais nous allons procéder à des manipulations non-catholiques. Ex: "20:16:09:12:32:93"
 
     private static float ancienGYPercent = 0;
@@ -44,6 +45,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
     ImageButton toggle;
 
     boolean etatToggle = false;
+    boolean created = false;
 
 
     @Override
@@ -52,11 +54,19 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_telecommande);
 
-        new ChargementBT(this, getFragmentManager()).execute();
+        //BLUETOOTH
+        adapteurBT = BluetoothAdapter.getDefaultAdapter();
+        verifEtatBT();
+
+        String messageBT = getIntent().getExtras().getString("messageBT");
+        chargementBT = new ChargementBT(this, getFragmentManager(), /*adapteurBT, priseBT, outStream, */messageBT);
+        chargementBT.execute();
+
+        //adapteurBT = chargementBT.getAdapteurBT();
+        //priseBT = chargementBT.getPriseBT();
+        //outStream = chargementBT.getOutStream();
 
         //Attributions
-        //adapteurBT = BluetoothAdapter.getDefaultAdapter();
-
         manetteGauche = (Manette) findViewById(R.id.manetteGauche);
         manetteGauche.setZOrderOnTop(true);
         manetteGauche.setColor(0,0, 0);
@@ -72,19 +82,6 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         if(!nomForme.equals("forme_autre_informatique") && !nomForme.equals("forme_autre_electrique"))
             imageForme.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.bleu));
 
-        //Connexion BLUETOOTH
-        /*addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
-        connexionBT();
-        verifEtatBT();
-
-        String messageBT = getIntent().getExtras().getString("messageBT");
-        Log.d(DEBUG, messageBT);
-        envoieDonnees(messageBT);
-
-        addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
-        connexionBT();
-        verifEtatBT();*/
-
         //Comportements
         toggle.setOnClickListener(new View.OnClickListener()
         {
@@ -95,15 +92,9 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                 toggle.setSelected(etatToggle);
 
                 if(etatToggle)
-                {
-                    Log.d(DEBUG, "#B");
-                    //envoieDonnees("#B");//TODO BLUETOOTH
-                }
+                    envoieDonnees("#B");
                 else
-                {
-                    Log.d(DEBUG, "#H");
-                    //envoieDonnees("#H");//TODO BLUETOOTH
-                }
+                    envoieDonnees("#H");
             }
         });
     }
@@ -120,8 +111,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                         messageBT = "#G+" + (-yPercent);
                     else
                         messageBT = "#G" + (-yPercent);
-                    Log.d(DEBUG, messageBT);
-                    //envoieDonnees(messageBT);//TODO BLUETOOTH
+                    envoieDonnees(messageBT);
                     ancienGYPercent = yPercent;
                 }
                 break;
@@ -132,8 +122,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
                         messageBT = "#D+" + (-yPercent);
                     else
                         messageBT = "#D" + (-yPercent);
-                    Log.d(DEBUG, messageBT);
-                    //envoieDonnees(messageBT);//TODO BLUETOOTH
+                    envoieDonnees(messageBT);
                     ancienDYPercent = yPercent;
                 }
                 break;
@@ -143,14 +132,17 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
     public void onResume()
     {
         super.onResume();
-        //connexionBT();
+        if(created)
+            connexionBT();
+        else
+            created = true;
     }
     @Override
     public void onPause()
     {
         super.onPause();
 
-        /*if(outStream != null)
+        if(outStream != null)
         {
             try
             {
@@ -167,7 +159,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         }catch(IOException e2)
         {
             Log.e(ERREUR,"Dans onPause(), fermeture de la connection échouée: " + e2.getMessage() + ".");
-        }*/
+        }
     }
 
     //Méthodes
@@ -187,7 +179,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
             }
             else
             {
-                Intent enableBtIntent = new Intent(adapteurBT.ACTION_REQUEST_ENABLE);
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
@@ -210,7 +202,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         try
         {
             priseBT.connect();
-            //Log.d(DEBUG, "...Connection établie et lien de données ouvert...");
+            Log.d(DEBUG, "...Connection établie et lien de données ouvert...");
         }catch(IOException e)
         {
             try
@@ -233,7 +225,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
     private void envoieDonnees(String message)
     {
         byte[] msgBuffer = message.getBytes();
-        //Log.d(DEBUG, "...Données envoyées: " + message + "...");
+        Log.d(DEBUG, "...Données envoyées: " + message + "...");
 
         try
         {
