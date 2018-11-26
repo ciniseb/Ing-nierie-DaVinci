@@ -27,7 +27,7 @@ Defines globales & robots
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
 //#define ROBOTAUTONOME
 #define ROBOTMANUEL
-//#define DEBUGG
+#define DEBUGG
 
 //Si 2 robots définis, dé-defini les deux codes
 #ifdef ROBOTAUTONOME
@@ -115,8 +115,10 @@ void setup()
 
   Serial.begin(9600);
   Serial1.begin(57600);
+  Serial1.setTimeout(25);
   while(!Serial);
   while(!Serial1);
+  Serial1.setTimeout(25);
 
   pinMode(A10,INPUT);
   pinMode(A9,INPUT);
@@ -232,24 +234,6 @@ void loop()
         Serial.println(noForme);
         #endif
 
-        /*
-        switch(SerialRead[i+a]) 
-        {
-          case '' :
-          
-            break;
-          case 'B' :
-          case 'C' :
-          
-            break;
-          case 'D' :
-          
-            break;
-          default :
-
-            break;
-        }
-        */
         #endif // --------------------
 
         #ifdef ROBOTMANUEL // --------------------
@@ -267,12 +251,11 @@ void loop()
         //Serial.print(SerialRead[i+a+3]);
         //Serial.println(SerialRead[i+a+4]);
         #endif
-
+        float vitLueConv = 0;
         int sensMoteur = 0;
         switch(SerialRead[i+a]) 
         {
           case 'G' : // GAUCHE
-
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
@@ -295,11 +278,12 @@ void loop()
             Serial.print("sensMoteur: ");
             Serial.println(sensMoteur);
             */
-
+            
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
             {
-              MOTOR_SetSpeed(GAUCHE, 0.3);
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(GAUCHE, 0.3);
             }
             else if(SerialRead[i+a+2] == '0')
             {
@@ -321,35 +305,38 @@ void loop()
               
               //Serial.println(vitToConv);
              
-              float vitLueConv = 0;
+              
               char vitToConv = SerialRead[i+a+4];
               switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
                 case '1' :
-                  vitLueConv = 0.03;
+                  vitLueConv = 0.04;
                   break;
                 case '2' :
-                  vitLueConv = 0.06;
+                  vitLueConv = 0.08;
                   break;
                 case '3' :
-                  vitLueConv = 0.09;
-                  break;
-                case '4' :
                   vitLueConv = 0.12;
                   break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
                 case '5' :
-                  vitLueConv = 0.15;
+                  vitLueConv = 0.20;
                   break;
                 case '6' :
-                  vitLueConv = 0.18;
-                  break;
-                case '7' :
-                  vitLueConv = 0.21;
-                  break;
-                case '8' :
                   vitLueConv = 0.24;
                   break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
                 case '9' :
-                  vitLueConv = 0.27;
+                  vitLueConv = 0.36;
                   break;
               }
 
@@ -376,7 +363,7 @@ void loop()
             
             break;
           case 'D' : // DROIT
-
+            
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
@@ -399,11 +386,11 @@ void loop()
             Serial.print("sensMoteur: ");
             Serial.println(sensMoteur);
             */
-
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
             {
-              MOTOR_SetSpeed(DROITE, 0.3);
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(DROITE, 0.3);
             }
             else if(SerialRead[i+a+2] == '0')
             {
@@ -425,35 +412,37 @@ void loop()
               char vitToConv = SerialRead[i+a+4];
               //Serial.println(vitToConv);
              
-              float vitLueConv = 0;
 
               switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
                 case '1' :
-                  vitLueConv = 0.03;
+                  vitLueConv = 0.04;
                   break;
                 case '2' :
-                  vitLueConv = 0.06;
+                  vitLueConv = 0.08;
                   break;
                 case '3' :
-                  vitLueConv = 0.09;
-                  break;
-                case '4' :
                   vitLueConv = 0.12;
                   break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
                 case '5' :
-                  vitLueConv = 0.15;
+                  vitLueConv = 0.20;
                   break;
                 case '6' :
-                  vitLueConv = 0.18;
-                  break;
-                case '7' :
-                  vitLueConv = 0.21;
-                  break;
-                case '8' :
                   vitLueConv = 0.24;
                   break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
                 case '9' :
-                  vitLueConv = 0.27;
+                  vitLueConv = 0.36;
                   break;
               }
 
