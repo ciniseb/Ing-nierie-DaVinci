@@ -78,7 +78,8 @@ void tournerCrayon(int direction, float angle);
 void polygone(int nbSommets, int lngrArete);
 void polygoneEtoile(int nbSommets,int diffSommets, int lngrArete);
 void croix(int lngrArete);
-void arc(int rayon, float angle, int t);
+void arc(int rayon, float angle, float vitesse);
+//void arc(int rayon, float angle, int t);
 void ellipse(int longeur, int largeur, int t);
 void spirale();
 void parallelogramme(float base, float hauteur, float angle);
@@ -109,7 +110,9 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
-  opto();
+  arc(2000,180,0.15);
+  delay(5000);
+
   // ----- R O B O T  A U T O N O M E ------
  /* #ifdef ROBOTAUTONOME
     int noForme = 0;
@@ -202,11 +205,11 @@ float PICalcul(float distanceGauche, float distanceDroite)
   float PIresultant = 0;
 
   erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
-  proportionnel = erreur * 0.03f;//P
-  integral = (integral + (erreur * 0.1f)) * 0.0f;//I
+  proportionnel = erreur * 0.01f;//P
+  integral = (integral + (erreur * 0.1f)) * 0.01f;//I
 
   //P=20, I=20    //PI=40 -> 40 tick de plus a faire
-  PIresultant = (proportionnel+integral)/100;//Calcul PI en pulse
+  PIresultant = (proportionnel+integral)/2500;//Calcul PI en pulse
   //Serial.print("PIOUT: ");
   //Serial.println(PIresultant);
   return (PIresultant);
@@ -214,7 +217,7 @@ float PICalcul(float distanceGauche, float distanceDroite)
 float distance_mm_pulse(float distance_mm)
 {
    // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
+  float diametre_roue_mm = 78;
   float circonference_roue_mm = 3.1416*diametre_roue_mm;
   float circonference_roue_pulse = 3200;
   float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
@@ -257,7 +260,7 @@ void MOTORS_reset()
 float angle_degree_a_pulse(float angle)
 {
   // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
+  float diametre_roue_mm = 78;
   float circonference_roue_mm = 3.1416*diametre_roue_mm;
   float circonference_roue_pulse = 3200;
   // déterminer la circonference des 2 roues en mm et en pulse
@@ -454,22 +457,40 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
   float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  float distgauche1;
+  float distdroite1;
+  float k;
+  float speed;
 
   if(direction == GAUCHE)
   {
-    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    Serial.println(anglePulse);
+    while(distdroite1 <= (anglePulse/2))
     {
-      MOTOR_SetSpeed(GAUCHE,-speed2);
-      MOTOR_SetSpeed(DROITE,speed2);
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      Serial.println("encodeur gauche:");
+      Serial.println(distgauche1);
+      Serial.println("encodeur droite:");
+      Serial.println(distdroite1);
+      k = PICalcul(distgauche1,distdroite1);
+      speed = 0.15+k;
+
+      Serial.println(k);
+      MOTOR_SetSpeed(GAUCHE,-speed);
+      MOTOR_SetSpeed(DROITE,0.15);
     }
   }
+
   else if(direction == DROITE)
   {
     while(ENCODER_Read(GAUCHE) <= anglePulse/2)
     {
-      MOTOR_SetSpeed(GAUCHE,speed2);
-      MOTOR_SetSpeed(DROITE,-speed2);
+      MOTOR_SetSpeed(GAUCHE,speed1);
+      MOTOR_SetSpeed(DROITE,-speed1);
     }
   }
   MOTORS_reset();
@@ -592,7 +613,7 @@ void opto()
   }
   void arc(int rayon, float angle, float vitesse)
   {
-    float distroue = 95; // À mesurer en mm
+    float distroue = 187; // À mesurer en mm
     float rayondroit = rayon + distroue; // en mm
     float rayongauche = rayon; // en mm
     float ratiocirconference = (angle/360);
