@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".Main"
+            android:name=".activity.Main"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,12 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Formes"
+            android:name=".activity.Formes"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".Telecommande"
+            android:name=".activity.Telecommande"
             android:screenOrientation="landscape" />
-        <activity android:name=".ListeFormes" />
+        <activity android:name=".activity.ListeFormes" />
     </application>
 
 </manifest>

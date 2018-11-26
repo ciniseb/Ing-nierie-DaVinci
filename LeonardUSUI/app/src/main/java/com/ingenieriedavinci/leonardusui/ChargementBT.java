@@ -1,30 +1,24 @@
 package com.ingenieriedavinci.leonardusui;
 
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Gravity;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
-import static com.ingenieriedavinci.leonardusui.Main.DEBUG;
-import static com.ingenieriedavinci.leonardusui.Main.ERREUR;
-import static com.ingenieriedavinci.leonardusui.Telecommande.MON_UUID;
-import static com.ingenieriedavinci.leonardusui.Telecommande.REQUEST_ENABLE_BT;
-import static com.ingenieriedavinci.leonardusui.Telecommande.adapteurBT;
-import static com.ingenieriedavinci.leonardusui.Telecommande.outStream;
-import static com.ingenieriedavinci.leonardusui.Telecommande.priseBT;
-import static com.ingenieriedavinci.leonardusui.Telecommande.addresseMac;
+import static com.ingenieriedavinci.leonardusui.activity.Main.DEBUG;
+import static com.ingenieriedavinci.leonardusui.activity.Main.ERREUR;
+import static com.ingenieriedavinci.leonardusui.activity.Telecommande.MON_UUID;
+import static com.ingenieriedavinci.leonardusui.activity.Telecommande.adapteurBT;
+import static com.ingenieriedavinci.leonardusui.activity.Telecommande.outStream;
+import static com.ingenieriedavinci.leonardusui.activity.Telecommande.priseBT;
+import static com.ingenieriedavinci.leonardusui.activity.Telecommande.addresseMac;
+
+import com.ingenieriedavinci.leonardusui.fragment.Transition;
 
 public class ChargementBT extends AsyncTask<Void, Void, Void>
 {
@@ -58,12 +52,14 @@ public class ChargementBT extends AsyncTask<Void, Void, Void>
     {
 
         //Connexion BLUETOOTH
-        addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
+        addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
+        //addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
         connexionBT();
 
         envoieDonnees(messageBT);
 
-        addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
+        addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
+        //addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
         connexionBT();
 
         return null;
