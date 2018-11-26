@@ -77,6 +77,7 @@ double angle_degree_a_pulse(float angle);
 void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
+void avancer2(float distance_mm);
 void reculer(float distance_mm);
 void baisserCrayon();
 void leverCrayon();
@@ -153,7 +154,7 @@ void loop()
   }
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = -1;
+    int noForme = 13;
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -167,10 +168,10 @@ void loop()
           polygone(3, 100);//Triangle
         break;
         case 2:
-          polygone(4, 100);//Carré
+          polygone(4, 300);//Carré
         break;
         case 3:
-          polygone(5, 100);//Pentagone
+          polygone(5, 200);//Pentagone
         break;
         case 4:
           polygone(6, 100);//Hexagone
@@ -200,7 +201,7 @@ void loop()
           parallelogramme(100, 60, 120);
         break;
         case 13:
-          emotion(SOURIRE, 50);
+          polygoneEtoile(5,2,300);
         break;
         case 14:
           leverCrayon();
@@ -208,6 +209,12 @@ void loop()
           tournerCentre(GAUCHE, 90);
           reculer(172);
           baisserCrayon();
+        break;
+        case 15:
+          avancer2(200); //Sans accel,mais un PID : valeur théorique de 2716 pulses 
+        break;
+        case 16:
+          avancer(200); //Avec accel et PID : valeur théorique de 2716 pulses 
         break;
         default:
           //polygone(2, 100);
@@ -261,7 +268,7 @@ float PICalcul(float distanceGauche, float distanceDroite)
 float distance_mm_pulse(float distance_mm)
 {
    // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
+  float diametre_roue_mm = 76;
   float circonference_roue_mm = 3.1416*diametre_roue_mm;
   float circonference_roue_pulse = 3200;
   float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
@@ -304,7 +311,7 @@ void MOTORS_reset()
 double angle_degree_a_pulse(float angle)
 {
   // déterminer la circonference d'une roue en mm et en pulse
-  double diametre_roue_mm = 75;
+  double diametre_roue_mm = 76;
   double circonference_roue_mm = 3.1416*diametre_roue_mm;
   double circonference_roue_pulse = 3200;
   // déterminer la circonference des 2 roues en mm et en pulse
@@ -352,6 +359,7 @@ void avancer(float distance_mm)
 
   while(ENCODER_Read(GAUCHE) <= distance_pulse)
   {
+    Serial.println(ENCODER_Read(GAUCHE));
     //accel
     if(counter == 0)
     {
@@ -383,6 +391,24 @@ void avancer(float distance_mm)
       MOTOR_SetSpeed(DROITE,speed);
       delay(100);
     }
+  }
+  MOTORS_reset();
+}
+void avancer2(float distance_mm)
+{
+  float distance_pulse,distgauche1,distdroite1;
+  float k;
+  float speed = speed1 ;
+  int counter=0;
+  distance_pulse = distance_mm_pulse(distance_mm);
+
+
+  while(ENCODER_Read(GAUCHE) <= distance_pulse)
+  {
+    Serial.println(ENCODER_Read(GAUCHE));
+      MOTOR_SetSpeed(GAUCHE,0.2);
+      MOTOR_SetSpeed(DROITE,0.2);
+      delay(100);
   }
   MOTORS_reset();
 }
@@ -522,9 +548,9 @@ void tournerCentre(int direction, float angle)
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(172);
+  avancer(167);
   tournerCentre(direction, angle);
-  reculer(172);
+  reculer(162);
   baisserCrayon();
 }
 void readSerialString()
@@ -559,7 +585,7 @@ void tournerEfface(int direction, float angle)
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, angle);
+      tournerCrayon(DROITE, angle);
     }
      /*-----ZAMBONI------
     for(int tournant = 0; tournant < nbSommets ; tournant++)
@@ -599,17 +625,16 @@ void tournerEfface(int direction, float angle)
     float angleExterne = 180-angle;
     float angleInterne = 360*(diffSommets-1)/nbSommets;
 
-    //tournerCrayon(DROITE, 90);
+    tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
     {
-      avancer(lngrArete);
-      tournerCrayon(DROITE, angleInterne);
       avancer(lngrArete);
       tournerCrayon(GAUCHE, angleExterne);
     }
     leverCrayon();
+    avancer(167)
     tournerCentre(GAUCHE, 90);
-    reculer(18);
+    reculer(162);
     /*
     avancer(/distance entre crayon et roues);
     for(int i = 0; i < nbSommets; i++)
@@ -632,7 +657,7 @@ void tournerEfface(int direction, float angle)
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, 90);
+      tournerCrayon(DROITE, 90);
     }
     //tournerCrayon(DROITE, 90);
     //avancer(lngrArete);
