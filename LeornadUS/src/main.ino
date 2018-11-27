@@ -7,8 +7,9 @@ Fichier:            main.ino
                       Simon St-Onge (Fonctions de mouvements)
                       Philippe B-L (Normes & Bluetooth)
                       Sébastien St-Denis (Fonctions de mouvements, normes & formes)
-                      Samuel Croteau (Fonctions du crayon, optocoupleurs & écran lcd)
+                      Samuel Croteau (Fonctions du crayon, optocoupleurs, écran lcd & avertisseur sonore)
                       Frédéric Gagnon (Formes)
+                      William Caron (LEDs)
 
   Date:               04-10-2018
   Révision:           
@@ -16,7 +17,7 @@ Fichier:            main.ino
   Description:        Code source du programme des robots LéonardUS.
                       Robots artistes, un robot contrôlé et un robot automatisé pour dessiner.
 
-  Modification:      22-11-2018
+  Modification:      26-11-2018
 =================================================================================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
 #include <math.h>
@@ -25,8 +26,9 @@ Fichier:            main.ino
 Defines globales & robots
 ===========================================================================*/
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
-#define ROBOTAUTONOME
-//#define ROBOTMANUEL
+//#define ROBOTAUTONOME
+#define ROBOTMANUEL
+//#define DEBUG
 
 //Si 2 robots définis, dé-defini les deux codes
 #ifdef ROBOTAUTONOME
@@ -115,8 +117,10 @@ void setup()
 
   Serial.begin(9600);
   Serial1.begin(57600);
+  Serial1.setTimeout(25);
   while(!Serial);
   while(!Serial1);
+  Serial1.setTimeout(25);
 
   pinMode(A10,INPUT);
   pinMode(A9,INPUT);
@@ -151,7 +155,7 @@ void loop()
   {
     if(SerialRead[i] == '#')
     {
-      #ifdef DEBUGG
+      #ifdef DEBUG
       Serial.println("# recue");
       Serial.print(SerialRead[i]);
       Serial.print(SerialRead[i+1]);
@@ -163,13 +167,12 @@ void loop()
 
       for(int a = 0; a <= 63; a++)
       {
-        #ifdef ROBOTAUTONOME // --------------------
-        // A U T O N O M M E
+        // ----- R O B O T  A U T O N O M E ------
+        #ifdef ROBOTAUTONOME
         // 0123
         // 1010
         
-
-        #ifdef DEBUGG
+        #ifdef DEBUG
         Serial.println(" ");
         Serial.print("Lecture Trame: ");
         Serial.print(SerialRead[i+a]);
@@ -179,7 +182,7 @@ void loop()
         Serial.println(SerialRead[i+a+4]);
         #endif
 
-        // NNuméro type de forme:
+        //Numéro type de forme:
         /*
         char vitToConv = SerialRead[i+a];
         switch(vitToConv) {
@@ -222,7 +225,7 @@ void loop()
         noForme += (atof(SerialRead[i+a+3]));        // Convertis les unitées pour numéro de forme.
         */
 
-        #ifdef DEBUGG
+        #ifdef DEBUG
         Serial.println(" ");
         Serial.print("typeForme: ");
         Serial.println(typeForme);
@@ -232,47 +235,29 @@ void loop()
         Serial.println(noForme);
         #endif
 
-        /*
-        switch(SerialRead[i+a]) 
-        {
-          case '' :
-          
-            break;
-          case 'B' :
-          case 'C' :
-          
-            break;
-          case 'D' :
-          
-            break;
-          default :
+        #endif
 
-            break;
-        }
-        */
-        #endif // --------------------
-
-        #ifdef ROBOTMANUEL // --------------------
-        // M A N U E L
+        // ----- R O B O T  M A N U E L -----
+        #ifdef ROBOTMANUEL
         // 01234
         // G-0.2
 
         // Affichage de la tramme.
-        #ifdef DEBUGG
-        //Serial.println(" ");
-        //Serial.print("Lecture Trame: ");
-        //Serial.print(SerialRead[i+a]);
-        //Serial.print(SerialRead[i+a+1]);
-        //Serial.print(SerialRead[i+a+2]);
-        //Serial.print(SerialRead[i+a+3]);
-        //Serial.println(SerialRead[i+a+4]);
+        #ifdef DEBUG
+        Serial.println(" ");
+        Serial.print("Lecture Trame: ");
+        Serial.print(SerialRead[i+a]);
+        Serial.print(SerialRead[i+a+1]);
+        Serial.print(SerialRead[i+a+2]);
+        Serial.print(SerialRead[i+a+3]);
+        Serial.println(SerialRead[i+a+4]);
         #endif
 
+        float vitLueConv = 0;
         int sensMoteur = 0;
         switch(SerialRead[i+a]) 
         {
           case 'G' : // GAUCHE
-
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
@@ -284,7 +269,7 @@ void loop()
               sensMoteur = NEGATIF;
             }
 
-            #ifdef DEBUGG
+            #ifdef DEBUG
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
@@ -295,11 +280,12 @@ void loop()
             Serial.print("sensMoteur: ");
             Serial.println(sensMoteur);
             */
-
+            
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
             {
-              MOTOR_SetSpeed(GAUCHE, 0.3);
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(GAUCHE, 0.3);
             }
             else if(SerialRead[i+a+2] == '0')
             {
@@ -321,35 +307,38 @@ void loop()
               
               //Serial.println(vitToConv);
              
-              float vitLueConv = 0;
+              
               char vitToConv = SerialRead[i+a+4];
               switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
                 case '1' :
-                  vitLueConv = 0.03;
+                  vitLueConv = 0.04;
                   break;
                 case '2' :
-                  vitLueConv = 0.06;
+                  vitLueConv = 0.08;
                   break;
                 case '3' :
-                  vitLueConv = 0.09;
-                  break;
-                case '4' :
                   vitLueConv = 0.12;
                   break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
                 case '5' :
-                  vitLueConv = 0.15;
+                  vitLueConv = 0.20;
                   break;
                 case '6' :
-                  vitLueConv = 0.18;
-                  break;
-                case '7' :
-                  vitLueConv = 0.21;
-                  break;
-                case '8' :
                   vitLueConv = 0.24;
                   break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
                 case '9' :
-                  vitLueConv = 0.27;
+                  vitLueConv = 0.36;
                   break;
               }
 
@@ -364,7 +353,7 @@ void loop()
               //Serial.println(atof(SerialRead[i+a+4]));
               //Serial.println(((atof(SerialRead[i+a+4]))/10));
 
-              #ifdef DEBUGG
+              #ifdef DEBUG
               Serial.println(" ");
               Serial.print("Valeur moteur G: ");
               Serial.print(vitLueConv);
@@ -376,7 +365,7 @@ void loop()
             
             break;
           case 'D' : // DROIT
-
+            
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
@@ -388,7 +377,7 @@ void loop()
               sensMoteur = NEGATIF;
             }
             
-            #ifdef DEBUGG
+            #ifdef DEBUG
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
@@ -399,11 +388,11 @@ void loop()
             Serial.print("sensMoteur: ");
             Serial.println(sensMoteur);
             */
-
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
             {
-              MOTOR_SetSpeed(DROITE, 0.3);
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(DROITE, 0.3);
             }
             else if(SerialRead[i+a+2] == '0')
             {
@@ -425,35 +414,37 @@ void loop()
               char vitToConv = SerialRead[i+a+4];
               //Serial.println(vitToConv);
              
-              float vitLueConv = 0;
 
               switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
                 case '1' :
-                  vitLueConv = 0.03;
+                  vitLueConv = 0.04;
                   break;
                 case '2' :
-                  vitLueConv = 0.06;
+                  vitLueConv = 0.08;
                   break;
                 case '3' :
-                  vitLueConv = 0.09;
-                  break;
-                case '4' :
                   vitLueConv = 0.12;
                   break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
                 case '5' :
-                  vitLueConv = 0.15;
+                  vitLueConv = 0.20;
                   break;
                 case '6' :
-                  vitLueConv = 0.18;
-                  break;
-                case '7' :
-                  vitLueConv = 0.21;
-                  break;
-                case '8' :
                   vitLueConv = 0.24;
                   break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
                 case '9' :
-                  vitLueConv = 0.27;
+                  vitLueConv = 0.36;
                   break;
               }
 
@@ -468,7 +459,7 @@ void loop()
               //Serial.println(atof(SerialRead[i+a+4]));
               //Serial.println(((atof(SerialRead[i+a+4]))/10));
 
-              #ifdef DEBUGG
+              #ifdef DEBUG
               Serial.println(" ");
               Serial.print("Valeur moteur D: ");
               Serial.print(vitLueConv);
@@ -480,7 +471,7 @@ void loop()
             
             break;
           case 'H' : // HAUT
-          #ifdef DEBUGG
+          #ifdef DEBUG
             Serial.println(" ");
             Serial.print("Lever crayon");
             #endif
@@ -488,7 +479,7 @@ void loop()
             leverCrayon();
             break;
           case 'B' : // BAS
-          #ifdef DEBUGG
+          #ifdef DEBUG
             Serial.println(" ");
             Serial.print("baisser crayon");
             #endif
@@ -499,9 +490,9 @@ void loop()
 
             break;
         }
-        #endif // --------------------
+        #endif
 
-        #ifdef DEBUGG
+        #ifdef DEBUG
         //Serial.print(SerialRead[i+a]);
         SerialRead[i+a] = 0;
         #endif
