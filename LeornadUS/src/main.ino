@@ -184,11 +184,21 @@ void loop()
         #endif
 
         
-        char trameLue = SerialRead[i+a];
+        
+
+        //SerialRead[i+a]
+        Serial.print("trame: ");
+        Serial.print(SerialRead[i+a]);
+        Serial.print(SerialRead[i+a+1]);
+        Serial.print(SerialRead[i+a+2]);
+        Serial.print(SerialRead[i+a+3]);
+        Serial.print(SerialRead[i+a+4]);
+        Serial.println(" ");
+        
 
         Serial.print("typeForme decod lue: ");
 
-
+        char trameLue = SerialRead[i+a+1];
         switch(trameLue) {
                 case '0' :
                   typeForme = 00;
@@ -222,7 +232,7 @@ void loop()
                   break;
               }
 
-              trameLue = SerialRead[i+a+1];
+              trameLue = SerialRead[i+a+2];
 
               switch(trameLue) {
                 case '0' :
@@ -256,12 +266,12 @@ void loop()
                   typeForme += 9;
                   break;
               }
-              typeForme = 1;
+              //typeForme = 1;
               Serial.println(typeForme);
 
               Serial.print("noForme decod lue: ");
 
-              trameLue = SerialRead[i+a+1];
+              trameLue = SerialRead[i+a+3];
 
               switch(trameLue) {
                 case '0' :
@@ -296,7 +306,7 @@ void loop()
                   break;
               }
 
-              trameLue = SerialRead[i+a+2];
+              trameLue = SerialRead[i+a+4];
               
               switch(trameLue) {
                 case '0' :
@@ -332,6 +342,86 @@ void loop()
               }
 
               Serial.println(noForme);
+              
+              /*
+              void polygone(int nbSommets, int lngrArete);
+              void polygoneEtoile(int nbSommets,int diffSommets, int lngrArete);
+              void croix(int lngrArete);
+              void arc(int rayon, float angle, int t);
+              void ellipse(int longeur, int largeur, int t);
+              void spirale();
+              void parallelogramme(float base, float hauteur, float angle);
+              void emotion(int emotion, int rayon);
+              void electrique();
+              void informatique();
+              */
+
+              switch(typeForme) {
+                  case 0:
+                    //polygone
+                    polygone((noForme + 2), 80);
+                    break;
+                  case 1:
+                    //Ellipse
+                    arc(80, 360, 10);
+                    break;
+                  case 2:
+                    //Spirale
+                    spirale();
+                    break;
+                  case 3:
+                    //Parallelogramme
+                    switch(noForme) {
+                        case 0:
+                          parallelogramme(80, 80, 90);
+                          break;
+                        case 1:
+                          parallelogramme(80, (80 * 0.8), 90);
+                          break;
+                        case 2:
+                          parallelogramme(80, (80 * 0.6), 90);
+                          break;
+                        case 3:
+                          parallelogramme(80, (80 * 0.4), 90);
+                          break;
+                        case 4:
+                          parallelogramme(80, (80 * 0.2), 90);
+                          break;
+                        case 5:
+                          parallelogramme(80, (80 * 0.6), 120);
+                          break;
+                        case 6:
+                          parallelogramme(80, 80, 80);
+                          break;
+                      }
+                    break;
+                  case 4:
+                    //Emoji
+                    break;
+                  case 5:
+                    //Etoile
+                    switch(noForme) {
+                        case 0:
+                          polygoneEtoile(5, 2, 200);
+                          break;
+                        case 1:
+                          polygoneEtoile(7, 2, 200);
+                          break;
+                        case 2:
+                          polygoneEtoile(7, 3, 200);
+                          break;
+                        case 3:
+                          polygoneEtoile(8, 3, 200);
+                          break;
+                      }
+
+                    //polygoneEtoile(5 , 5, int lngrArete);
+                    break;
+                  case 6:
+                    //Autre
+                    break;
+              }
+
 
         // NNuméro type de forme:
         /*
