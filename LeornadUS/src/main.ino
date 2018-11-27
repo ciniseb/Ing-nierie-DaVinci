@@ -5,10 +5,11 @@ Fichier:            main.ino
   Equipe:             Ingénierie Da Vinci / P14
   Auteurs:            
                       Simon St-Onge (Fonctions de mouvements)
-                      Philippe B-L (Normes)
+                      Philippe B-L (Normes & Bluetooth)
                       Sébastien St-Denis (Fonctions de mouvements, normes & formes)
-                      Éric Leduc (???)
-                      Samuel Croteau (Fonctions du crayon, optocoupleur & écran lcd)
+                      Samuel Croteau (Fonctions du crayon, optocoupleurs, écran lcd & avertisseur sonore)
+                      Frédéric Gagnon (Formes)
+                      William Caron (LEDs)
 
   Date:               04-10-2018
   Révision:           
@@ -16,19 +17,18 @@ Fichier:            main.ino
   Description:        Code source du programme des robots LéonardUS.
                       Robots artistes, un robot contrôlé et un robot automatisé pour dessiner.
 
-  Modification:      10-11-2018
+  Modification:      26-11-2018
 =================================================================================================*/
 #include <LibRobus.h> //Librairie de la platforme Robus (Robot)
 #include <math.h>
 #include <LiquidCrystal.h>
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
 /*===========================================================================
 Defines globales & robots
 ===========================================================================*/
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
 #define ROBOTAUTONOME
 //#define ROBOTMANUEL
+//#define DEBUG
 
 //Si 2 robots définis, dé-defini les deux codes
 #ifdef ROBOTAUTONOME
@@ -54,15 +54,35 @@ Defines globales & robots
 #define speed3 0.20
 #define speed4 0.20
 
+#define POSITIF 1
+#define NEGATIF -1
+
 /*===========================================================================
 Variables globales
 ===========================================================================*/
 float vitesse;
 int anglecrayon = 125;
+
+//Lumiere
+
+int pinRougeDroite = 40;
+int pinRougeGauche = 43;
+int pinBlancheDroite = 41;
+int pinBlancheGauche = 42;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int  serIn;             // var that will hold the bytes-in read from the serialBuffer
+char serInString[100];  // array that will hold the different bytes  100=100characters;
+                        // -> you must state how long the array will be else it won't work.
+int  serInIndx  = 0;    // index of serInString[] in which to insert the next incoming byte
+int  serOutIndx = 0;    // index of the outgoing serInString[] array;
+char SerialRead[63];
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
+float PICalcultournercentre(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
@@ -70,19 +90,23 @@ double angle_degree_a_pulse(float angle);
 void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
+void avancer2(float distance_mm);
 void reculer(float distance_mm);
 void baisserCrayon();
 void leverCrayon();
+void bruit();
+void opto();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
 void tournerCrayon(int direction, float angle);
+void readSerialString();
 
 // ----- R O B O T  A U T O N O M E ------ //Appel des fonctions du robot autonome ici
 //Formes
 void polygone(int nbSommets, int lngrArete);
 void polygoneEtoile(int nbSommets,int diffSommets, int lngrArete);
 void croix(int lngrArete);
-void arc(int rayon, float angle, int t);
+void arc(int rayon, float angle);
 void ellipse(int longeur, int largeur, int t);
 void spirale();
 void parallelogramme(float base, float hauteur, float angle);
@@ -91,13 +115,24 @@ void electrique();
 void informatique();
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
-
+void avancerLumiere();
+void reculerLumiere();
+void eteindreLumiere();
 /*===========================================================================
 Lancement
 ===========================================================================*/
 void setup()
 {
   BoardInit();
+
+  Serial.begin(9600);
+  Serial1.begin(57600);
+  Serial1.setTimeout(25);
+  while(!Serial);
+  while(!Serial1);
+  Serial1.setTimeout(25);
+
+
 
   pinMode(A10,INPUT);
   pinMode(A9,INPUT);
@@ -111,7 +146,14 @@ void setup()
   pinMode(5, INPUT);                // Pin ecran lcd
   pinMode(11, INPUT);               // Pin ecran lcd
   pinMode(12, INPUT);               // Pin ecran lcd
-  lcd.begin(16, 2);                // Grandeur de l'écran lcd
+
+  pinMode(pinRougeDroite,OUTPUT);
+  pinMode(pinBlancheGauche,OUTPUT);
+  pinMode(pinRougeDroite,OUTPUT);
+  pinMode(pinRougeGauche,OUTPUT);
+  lcd.begin(16, 2);                 // Grandeur de l'écran lcd
+
+  pinMode (44, INPUT);
 
   delay(5000);
 }
@@ -120,9 +162,365 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
+  int typeForme = -1;
+  int noForme   = -1;
+  
+  opto();
+  Serial1.readBytes(SerialRead, 64);
+  //Serial.println("Lecture trame...");
+  for(int i = 0; i <= 63; i++)
+  {
+    if(SerialRead[i] == '#')
+    {
+      #ifdef DEBUG
+      Serial.println("# recue");
+      Serial.print(SerialRead[i]);
+      Serial.print(SerialRead[i+1]);
+      Serial.print(SerialRead[i+2]);
+      Serial.print(SerialRead[i+3]);
+      Serial.print(SerialRead[i+4]);
+      Serial.println(SerialRead[i+5]);
+      #endif
+
+      for(int a = 0; a <= 63; a++)
+      {
+        // ----- R O B O T  A U T O N O M E ------
+        #ifdef ROBOTAUTONOME
+        // 0123
+        // 1010
+        
+        #ifdef DEBUG
+        Serial.println(" ");
+        Serial.print("Lecture Trame: ");
+        Serial.print(SerialRead[i+a]);
+        Serial.print(SerialRead[i+a+1]);
+        Serial.print(SerialRead[i+a+2]);
+        Serial.print(SerialRead[i+a+3]);
+        Serial.println(SerialRead[i+a+4]);
+        #endif
+
+        //Numéro type de forme:
+        /*
+        char vitToConv = SerialRead[i+a];
+        switch(vitToConv) {
+          case '1' :
+            vitLueConv = 0.1;
+            break;
+          case '2' :
+            vitLueConv = 0.2;
+            break;
+          case '3' :
+            vitLueConv = 0.3;
+            break;
+          case '4' :
+            vitLueConv = 0.4;
+            break;
+          case '5' :
+            vitLueConv = 0.5;
+            break;
+          case '6' :
+            vitLueConv = 0.6;
+            break;
+          case '7' :
+            vitLueConv = 0.7;
+            break;
+          case '8' :
+            vitLueConv = 0.8;
+            break;
+          case '9' :
+            vitLueConv = 0.9;
+            break;
+          }
+          */
+
+        /*
+        typeForme =   ((atof(SerialRead[i+a]))*10);   // Convertis les disaines pour type de forme.
+        typeForme +=  (atof(SerialRead[i+a+1]));      // Convertis les unitées pour type de forme.
+
+        // Numéro de forme: 
+        noForme =  ((atof(SerialRead[i+a+2]))*10);   // Convertis les disaines pour numéro de forme.
+        noForme += (atof(SerialRead[i+a+3]));        // Convertis les unitées pour numéro de forme.
+        */
+
+        #ifdef DEBUG
+        Serial.println(" ");
+        Serial.print("typeForme: ");
+        Serial.println(typeForme);
+
+        Serial.println(" ");
+        Serial.print("noForme: ");
+        Serial.println(noForme);
+        #endif
+
+        #endif
+
+        // ----- R O B O T  M A N U E L -----
+        #ifdef ROBOTMANUEL
+        // 01234
+        // G-0.2
+
+        // Affichage de la tramme.
+        #ifdef DEBUG
+        Serial.println(" ");
+        Serial.print("Lecture Trame: ");
+        Serial.print(SerialRead[i+a]);
+        Serial.print(SerialRead[i+a+1]);
+        Serial.print(SerialRead[i+a+2]);
+        Serial.print(SerialRead[i+a+3]);
+        Serial.println(SerialRead[i+a+4]);
+        #endif
+
+        float vitLueConv = 0;
+        int sensMoteur = 0;
+        switch(SerialRead[i+a]) 
+        {
+          case 'G' : // GAUCHE
+            // sens:
+            sensMoteur = 0;
+            if(SerialRead[i+a+1] == '+') // Détermination du signe.
+            { // Signe positif donc avance.
+              sensMoteur = POSITIF;
+            }
+            else if(SerialRead[i+a+1] == '-')
+            {
+              sensMoteur = NEGATIF;
+            }
+
+            #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("sensMoteur: ");
+              Serial.println(sensMoteur);
+            #endif
+
+            /*
+            Serial.println(" ");
+            Serial.print("sensMoteur: ");
+            Serial.println(sensMoteur);
+            */
+            
+            // Valeur pour le moteur:
+            if(SerialRead[i+a+2] == '1')
+            {
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(GAUCHE, 0.3);
+            }
+            else if(SerialRead[i+a+2] == '0')
+            {
+              /*
+              Serial.println(" ");
+              Serial.print("Lecture Trame: ");
+              Serial.print(SerialRead[i+a]);
+              Serial.print(SerialRead[i+a+1]);
+              Serial.print(SerialRead[i+a+2]);
+              Serial.print(SerialRead[i+a+3]);
+              Serial.println(SerialRead[i+a+4]);
+              */
+
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse lue: ");
+              //Serial.print(SerialRead[i+a+4]);
+              //Serial.print(" ");
+              
+              //Serial.println(vitToConv);
+             
+              
+              char vitToConv = SerialRead[i+a+4];
+              switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
+                case '1' :
+                  vitLueConv = 0.04;
+                  break;
+                case '2' :
+                  vitLueConv = 0.08;
+                  break;
+                case '3' :
+                  vitLueConv = 0.12;
+                  break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
+                case '5' :
+                  vitLueConv = 0.20;
+                  break;
+                case '6' :
+                  vitLueConv = 0.24;
+                  break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
+                case '9' :
+                  vitLueConv = 0.36;
+                  break;
+              }
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse convertis: ");
+              //Serial.println(vitLueConv);
+
+
+
+              //Serial.print("Vitesse moteur G: ");
+              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
+              //Serial.println(atof(SerialRead[i+a+4]));
+              //Serial.println(((atof(SerialRead[i+a+4]))/10));
+
+              #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("Valeur moteur G: ");
+              Serial.print(vitLueConv);
+              #endif
+
+              if(sensMoteur == POSITIF) MOTOR_SetSpeed( GAUCHE, vitLueConv );
+              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( GAUCHE, (vitLueConv - vitLueConv - vitLueConv) );
+            }
+            
+            break;
+          case 'D' : // DROIT
+            
+            // sens:
+            sensMoteur = 0;
+            if(SerialRead[i+a+1] == '+') // Détermination du signe.
+            { // Signe positif donc avance.
+              sensMoteur = POSITIF;
+            }
+            else if(SerialRead[i+a+1] == '-')
+            {
+              sensMoteur = NEGATIF;
+            }
+            
+            #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("sensMoteur: ");
+              Serial.println(sensMoteur);
+            #endif
+
+            /*
+            Serial.println(" ");
+            Serial.print("sensMoteur: ");
+            Serial.println(sensMoteur);
+            */
+            // Valeur pour le moteur:
+            if(SerialRead[i+a+2] == '1')
+            {
+              vitLueConv = 0.4;
+              //MOTOR_SetSpeed(DROITE, 0.3);
+            }
+            else if(SerialRead[i+a+2] == '0')
+            {
+              /*
+              Serial.println(" ");
+              Serial.print("Lecture Trame: ");
+              Serial.print(SerialRead[i+a]);
+              Serial.print(SerialRead[i+a+1]);
+              Serial.print(SerialRead[i+a+2]);
+              Serial.print(SerialRead[i+a+3]);
+              Serial.println(SerialRead[i+a+4]);
+              */
+
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse lue: ");
+              //Serial.print(SerialRead[i+a+4]);
+              //Serial.print(" ");
+              char vitToConv = SerialRead[i+a+4];
+              //Serial.println(vitToConv);
+             
+
+              switch(vitToConv) {
+                case '0' :
+                  vitLueConv = 0;
+                  break;
+                case '1' :
+                  vitLueConv = 0.04;
+                  break;
+                case '2' :
+                  vitLueConv = 0.08;
+                  break;
+                case '3' :
+                  vitLueConv = 0.12;
+                  break;
+                case '4' :
+                  vitLueConv = 0.16;
+                  break;
+                case '5' :
+                  vitLueConv = 0.20;
+                  break;
+                case '6' :
+                  vitLueConv = 0.24;
+                  break;
+                case '7' :
+                  vitLueConv = 0.28;
+                  break;
+                case '8' :
+                  vitLueConv = 0.32;
+                  break;
+                case '9' :
+                  vitLueConv = 0.36;
+                  break;
+              }
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse convertis: ");
+              //Serial.println(vitLueConv);
+
+
+
+              //Serial.print("Vitesse moteur G: ");
+              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
+              //Serial.println(atof(SerialRead[i+a+4]));
+              //Serial.println(((atof(SerialRead[i+a+4]))/10));
+
+              #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("Valeur moteur D: ");
+              Serial.print(vitLueConv);
+              #endif
+
+              if(sensMoteur == POSITIF) MOTOR_SetSpeed( DROITE, vitLueConv );
+              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( DROITE, (vitLueConv - vitLueConv - vitLueConv) );
+            }
+            
+            break;
+          case 'H' : // HAUT
+          #ifdef DEBUG
+            Serial.println(" ");
+            Serial.print("Lever crayon");
+            #endif
+
+            leverCrayon();
+            break;
+          case 'B' : // BAS
+          #ifdef DEBUG
+            Serial.println(" ");
+            Serial.print("baisser crayon");
+            #endif
+
+            baisserCrayon();
+            break;
+          default :
+
+            break;
+        }
+        #endif
+
+        #ifdef DEBUG
+        //Serial.print(SerialRead[i+a]);
+        SerialRead[i+a] = 0;
+        #endif
+        SerialRead[i+a] = 0;
+      }
+      //Serial.println(" ");
+    }
+  }
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = -1;
+    /*
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -199,12 +597,12 @@ void loop()
       leverCrayon();
     }
   //#endif
+  */
   // ----- R O B O T  M A N U E L -----
   #ifdef ROBOTMANUEL
 
   #endif
 
-  // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(10);// Delais pour décharger le CPU
 }
 /*===========================================================================
@@ -228,10 +626,27 @@ float PICalcul(float distanceGauche, float distanceDroite)
   //Serial.println(PIresultant);
   return (PIresultant);
 }
+float PICalcultournercentre(float distanceGauche, float distanceDroite)
+{
+  float erreur = 0;
+  float proportionnel = 0;
+  float integral = 0;
+  float PIresultant = 0;
+
+  erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
+  proportionnel = erreur * 0.01f;//P
+  integral = (integral + (erreur * 0.1f)) * 0.01f;//I
+
+  //P=20, I=20    //PI=40 -> 40 tick de plus a faire
+  PIresultant = (proportionnel+integral)/2500;//Calcul PI en pulse
+  //Serial.print("PIOUT: ");
+  //Serial.println(PIresultant);
+  return (PIresultant);
+}
 float distance_mm_pulse(float distance_mm)
 {
    // déterminer la circonference d'une roue en mm et en pulse
-  float diametre_roue_mm = 75;
+  float diametre_roue_mm = 76;
   float circonference_roue_mm = 3.1416*diametre_roue_mm;
   float circonference_roue_pulse = 3200;
   float distance_pulse = (distance_mm/circonference_roue_mm)*circonference_roue_pulse;
@@ -265,6 +680,7 @@ void acceleration(float *v, float vVoulue, float distance)
 }
 void MOTORS_reset()
 {
+  eteindreLumiere();
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
   ENCODER_Reset(GAUCHE);
@@ -274,7 +690,7 @@ void MOTORS_reset()
 double angle_degree_a_pulse(float angle)
 {
   // déterminer la circonference d'une roue en mm et en pulse
-  double diametre_roue_mm = 75;
+  double diametre_roue_mm = 76;
   double circonference_roue_mm = 3.1416*diametre_roue_mm;
   double circonference_roue_pulse = 3200;
   // déterminer la circonference des 2 roues en mm et en pulse
@@ -314,14 +730,19 @@ void accel_reculer()
 }
 void avancer(float distance_mm)
 {
+  
   float distance_pulse,distgauche1,distdroite1;
   float k;
   float speed = speed1;
   int counter=0;
   distance_pulse = distance_mm_pulse(distance_mm);
-
+  #ifdef ROBOTMANUEL
+    avancerLumiere();
+  #endif
   while(ENCODER_Read(GAUCHE) <= distance_pulse)
   {
+    
+    Serial.println(ENCODER_Read(GAUCHE));
     //accel
     if(counter == 0)
     {
@@ -356,11 +777,33 @@ void avancer(float distance_mm)
   }
   MOTORS_reset();
 }
+void avancer2(float distance_mm)
+{
+  float distance_pulse,distgauche1,distdroite1;
+  float k;
+  float speed = speed1 ;
+  int counter=0;
+  distance_pulse = distance_mm_pulse(distance_mm);
+
+
+  while(ENCODER_Read(GAUCHE) <= distance_pulse)
+  {
+    Serial.println(ENCODER_Read(GAUCHE));
+      MOTOR_SetSpeed(GAUCHE,0.2);
+      MOTOR_SetSpeed(DROITE,0.2);
+      delay(100);
+  }
+  MOTORS_reset();
+}
 void reculer(float distance_mm)
 {
   float distance_pulse = distance_mm_pulse(distance_mm);
+  #ifdef ROBOTMANUEL
+      reculerLumiere();
+  #endif
   while(ENCODER_Read(GAUCHE) >= -distance_pulse)
   {
+    
     MOTOR_SetSpeed(GAUCHE, -speed1);
     MOTOR_SetSpeed(DROITE, -speed1);
   }
@@ -396,7 +839,6 @@ void baisserCrayon()
   }
   SERVO_Disable(0);
 }
-
 void leverCrayon()
 {
   SERVO_Enable(0);
@@ -411,61 +853,44 @@ void leverCrayon()
   delay(20);
   //SERVO_Disable(0);
 }
-
-void horszone()
+void bruit()
 {
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(" Retourne dans");
-  lcd.setCursor(0, 1);
-  lcd.print("    la zone    ");
+  int peizoPin = 44;
+  tone(peizoPin, 3000, 500);
+  delay(1000);
 }
-
-void marchearriere()
-{
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("   marche   ");
-  lcd.setCursor(0, 1);
-  lcd.print("  arriere  ");
-}
-
-void eteindreecran()
-{
-  lcd.clear();
-}
-
 void opto()
 {
-  int compteur = 0;
+  int compteur = 0; 
   int surfaceblanche = 100;
   int optocoupleur = analogRead(A6);
 
-  if (optocoupleur < surfaceblanche)
+  if(optocoupleur < surfaceblanche)
   {
-    while ((optocoupleur < surfaceblanche) || compteur <= 20)
+    while(optocoupleur < surfaceblanche && compteur <= 200)
     {
-      compteur++;
-      delay(10);
+      optocoupleur = analogRead(A6);
+      compteur ++;
+      Serial.println(compteur);
+    }
+  }  
+  if(compteur > 200) // Hors du tableau
+  {
+   while (optocoupleur < surfaceblanche)
+    {
+      //leverCrayon();
+      bruit();
+      optocoupleur = analogRead(A6);
     }
   }
-  if (compteur >= 10)
-  {
-    Serial.println("Surface pas blanche");
-    // Action du robot s'il n'est plus sur le tableau
-    leverCrayon();
-    reculer(20);
-    tournerCentre(GAUCHE,180);
-    baisserCrayon();
-  }
+  noTone(44);
+  compteur = 0;
 }
-
 void tourner(int direction, float angle, int sens)
 {
   float angle_pulse;
  
-  //détermine le nombre de pulse pour arriver à l'angle demandé
-  angle_pulse = angle_degree_a_pulse(angle);
+  angle_pulse = angle_degree_a_pulse(angle);//détermine le nombre de pulse pour arriver à l'angle demandé
 
   if((direction == GAUCHE && sens == DEVANT) || (direction == DROITE && sens == DERRIERE))
   {
@@ -487,39 +912,62 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
-  double anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  float distgauche1;
+  float distdroite1;
+  float k;
+  float speed;
 
   if(direction == GAUCHE)
   {
-    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    while(distdroite1 <= (anglePulse/2))
     {
-      MOTOR_SetSpeed(GAUCHE,-vitesseTourne);
-      MOTOR_SetSpeed(DROITE,vitesseTourne);
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = 0.15+k;
+      MOTOR_SetSpeed(GAUCHE,-speed);
+      MOTOR_SetSpeed(DROITE,0.15);
     }
   }
+
   else if(direction == DROITE)
   {
-    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    while(distgauche1 <= anglePulse/2)
     {
-      MOTOR_SetSpeed(GAUCHE,vitesseTourne);
-      MOTOR_SetSpeed(DROITE,-vitesseTourne);
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = 0.15+k;
+      MOTOR_SetSpeed(GAUCHE,0.15);
+      MOTOR_SetSpeed(DROITE,-speed);
     }
   }
   MOTORS_reset();
 }
+
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(172);
+  avancer(167);
   tournerCentre(direction, angle);
-  reculer(172);
+  reculer(162);
   baisserCrayon();
 }
-void tournerEfface(int direction, float angle)
+void readSerialString()
 {
-  //avancer(distance entre roues et efface);
-  //reculer(distance entre roues et efface);
-  tournerCentre(direction,angle);
+  int sb = 0;   
+  if(Serial.available())
+  { 
+    while (Serial.available())
+    { 
+      sb = Serial.read();             
+      serInString[serInIndx] = sb;
+      serInIndx++;
+    }
+  }  
 }
 
 // ----- R O B O T  A U T O N O M E ------ //Définitions des fonctions du robot autonome ici
@@ -532,17 +980,8 @@ void tournerEfface(int direction, float angle)
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, angle);
+      tournerCrayon(DROITE, angle);
     }
-     /*-----ZAMBONI------
-    for(int tournant = 0; tournant < nbSommets ; tournant++)
-    {
-      avancer(distance entre crayon et roues);
-      //DESCENDRE EFFACE
-      avancer(lngrArete);
-      tournerEfface(GAUCHE, ((nbSommets-2)*180/nbSommets));
-    }
-    reculer(distance entre crayon et roues);*/
   }
   void parallelogramme(int base, int hauteur, float angle)
   {
@@ -553,17 +992,6 @@ void tournerEfface(int direction, float angle)
       avancer(hauteur/cos(angle - 90));
       tournerCrayon(GAUCHE, angle);
     }
-    /*
-    for(int diagonale = 0 ; diagonale < 2 ; diagonale++)
-    {
-      avancer(distance entre crayon et roues)
-      //Descendre efface
-      avancer(base);
-      tournerEfface(GAUCHE, 180-angle);
-      avancer(hauteur/cos(angle-90));
-      tournerEfface(GAUCHE, angle);
-    }
-    reculer(distance entre crayon et roues)*/
   }
   void polygoneEtoile(int nbSommets, int diffSommets ,int lngrArete)
   {
@@ -572,29 +1000,16 @@ void tournerEfface(int direction, float angle)
     float angleExterne = 180-angle;
     float angleInterne = 360*(diffSommets-1)/nbSommets;
 
-    //tournerCrayon(DROITE, 90);
+    tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
     {
-      avancer(lngrArete);
-      tournerCrayon(DROITE, angleInterne);
       avancer(lngrArete);
       tournerCrayon(GAUCHE, angleExterne);
     }
     leverCrayon();
+    avancer(167);
     tournerCentre(GAUCHE, 90);
-    reculer(18);
-    /*
-    avancer(/distance entre crayon et roues);
-    for(int i = 0; i < nbSommets; i++)
-    {
-      avancer(lngrArete);
-      tournerEfface(DROITE, angleInterne);
-      avancer(lngrArete);
-      tournerEffaceCrayon);
-    }
-    reculer(dsitance entre crayon et roues);
-    tournerCentre(GAUCHE, 90);
-    reculer(Distance entre crayon et roues);*/
+    reculer(162);
   }
   void croix(int lngrArete)
   {
@@ -605,13 +1020,25 @@ void tournerEfface(int direction, float angle)
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(GAUCHE, 90);
+      tournerCrayon(DROITE, 90);
     }
-    //tournerCrayon(DROITE, 90);
-    //avancer(lngrArete);
-    //tournerCrayon(GAUCHE, 90);
   }
-  void arc(int rayon, float angle, int t)
+    void arc(int rayon, float angle)
+  {
+    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+
+    float dV = (rayon - 92.5f)/(rayon + 92.5f);
+
+    float vG = 0.4f;
+    float vD = 0.4f*dV;
+
+    while(ENCODER_Read(DROITE) <= anglePulse)
+    {
+      MOTOR_SetSpeed(GAUCHE, vG);
+      MOTOR_SetSpeed(DROITE, vD);
+    }
+  }
+  /*void arc(int rayon, float angle, int t)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
@@ -623,7 +1050,7 @@ void tournerEfface(int direction, float angle)
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
-  }
+  }*/
   void ellipse(int longeur, int largeur, int t)
   {
     float vG = 2*PI*(largeur/2)/t;
@@ -704,7 +1131,7 @@ void tournerEfface(int direction, float angle)
   void emotion(int emotion, int rayon)
   {
     //Contour
-    arc(rayon, 360, 2000);//1
+    arc(rayon, 360);//1
     tournerCrayon(GAUCHE, 90);//2
     switch(emotion)
     {
@@ -716,15 +1143,15 @@ void tournerEfface(int direction, float angle)
       tournerCrayon(GAUCHE, 90);//6
       avancer(rayon/3);//7
       //Yeux
-      arc(rayon/6, 360, 2000/6);//8
+      arc(rayon/6, 360);//8
       avancer(rayon*2/3);//9
-      arc(rayon/6, 360, 2000/6);//10
+      arc(rayon/6, 360);//10
       //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12
       avancer(rayon/3);//13
       //Bouche
-      arc(rayon*2/3, 180, 100);//14
+      arc(rayon*2/3, 180);//14
       //Transition
       tournerCrayon(DROITE, 90);//15
       avancer(rayon/3);//16
@@ -738,9 +1165,9 @@ void tournerEfface(int direction, float angle)
       tournerCrayon(GAUCHE, 90);//6
       avancer(rayon/3);//7
       //Yeux
-      arc(rayon/6, 360, 200/6);//8
+      arc(rayon/6, 360);//8
       avancer(rayon*2/3);//9
-      arc(rayon/6, 360, 200/6);//10
+      arc(rayon/6, 360);//10
       //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12
@@ -749,7 +1176,7 @@ void tournerEfface(int direction, float angle)
       avancer(rayon*4/3);//15
       tournerCrayon(GAUCHE, 90);//16
       //Bouche
-      arc(rayon*2/3, 180, 100);//17
+      arc(rayon*2/3, 180);//17
       //Transition
       tournerCrayon(GAUCHE, 90);//18
       avancer(rayon*4/3);//19
@@ -767,15 +1194,15 @@ void tournerEfface(int direction, float angle)
       tournerCrayon(GAUCHE, 90);//6
       avancer(rayon/3);//7
       //Yeux
-      arc(rayon/6, 360, 200/6);//8
+      arc(rayon/6, 360);//8
       avancer(rayon*2/3);//9
-      arc(rayon/6, 360, 200/6);//10
+      arc(rayon/6, 360);//10
       //Transition
       avancer(rayon/3);//11
       tournerCrayon(GAUCHE, 90);//12
       avancer(rayon/3);//13
       //Bouche
-      arc(rayon*2/3, 180, 100);//14
+      arc(rayon*2/3, 180);//14
       //Transition
       tournerCrayon(DROITE, 90);//15
       avancer(rayon/3);//16
@@ -814,34 +1241,6 @@ void tournerEfface(int direction, float angle)
     //permet de reset le robot à la position ini.
     tournerCentre(DROITE, 149);
     reculer(/*distance entre crayon et roues*/100);
-    /*
-    avancer(distance entre crayon et roues);
-    tournerEfface(GAUCHE, 55);
-    avancer(85.81);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 90);
-    avancer(66.65);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 95);
-    avancer(60);
-    tournerEfface(GAUCHE, 52);
-    avancer(70);
-    tournerEfface(GAUCHE, 125);
-    avancer(50);
-    tournerEfface(DROITE,90);
-    avancer(P);
-    tournerEfface(GAUCHE, 90);
-    avancer(62.72);
-    tournerEfface(DROITE, 90);
-    avancer(P);
-    tournerEfface(GAUCHE, 115);
-    avancer(152.36);
-    //permet de reset le robot à la position ini.
-    leverCrayon();
-    tournerCentre(DROITE, 149);
-    reculer(/*distance entre crayon et roues100);*/
   }
   void informatique()
   {
@@ -849,12 +1248,12 @@ void tournerEfface(int direction, float angle)
     tournerCentre(GAUCHE, 70);
     //reculer(/*distance entre crayon et roues*/);
     //Descendre crayon
-    //arc(67.7, 134.79, t); 
+    arc(67.7, 134.79); 
     tournerCrayon(DROITE, 20);
     avancer(130);
     tournerCrayon(DROITE, 61.44);
     //reculer(/*Distance entre crayon et roues*/);
-    //arc(130.23, 57.36, t);
+    arc(130.23, 57.36);
     tournerCrayon(DROITE, 61.1);
     avancer(130);
     leverCrayon();
@@ -869,7 +1268,7 @@ void tournerEfface(int direction, float angle)
     avancer(125/2);
     tournerCrayon(GAUCHE, 90);
     avancer(54.33);
-    //arc(62.75, 89.77, t);
+    arc(62.75, 89.77);
     //Retour à la position ini.
     leverCrayon();
     //avancer(/*Distance entre crayon et roues*//100);
@@ -877,33 +1276,28 @@ void tournerEfface(int direction, float angle)
     avancer(207.75);
     tournerCentre(DROITE, 90);
     //reculer(/*Distance entre crayon et roues*//100);
-    /*
-    avancer(distance entre crayon et roues);
-    tournerCentre(GAUCHE, 70);
-    arc(67.7, 134.79, t); 
-    tournerEfface(DROITE, 20);
-    avancer(130);
-    tournerEfface(DROITE, 61.44);
-    arc(130.23, 57.36, t);
-    tournerEfface(DROITE, 61.1);
-    avancer(130);
-    tournerCentre(GAUCHE, 180);
-    avancer(90.43-2(distance entre crayon et roues));
-    tournerEfface(GAUCHE,90);
-    avancer(125);
-    tournerCentre(GAUCHE, 180);
-    avancer(125/2);
-    tournerEfface(GAUCHE, 90);
-    avancer(54.33);
-    arc(62.75, 89.77, t)
-    tournerCentre(DROITE, 90);
-    avancer(207.75);
-    tournerCentre(DROITE, 90);
-    reculer(Distance entre crayon et roues);*/
   }  
 #endif
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
-  //Formes
+  void avancerLumiere(){
+    digitalWrite(pinBlancheGauche,HIGH);
+    digitalWrite(pinBlancheDroite,HIGH);
+    digitalWrite(pinRougeGauche,LOW);
+    digitalWrite(pinRougeDroite,LOW);
+  }
+  void reculerLumiere(){
+    digitalWrite(pinBlancheGauche,LOW);
+    digitalWrite(pinBlancheDroite,LOW);
+    digitalWrite(pinRougeGauche,HIGH);
+    digitalWrite(pinRougeDroite,HIGH);
+  }
+
+  void eteindreLumiere(){
+    digitalWrite(pinBlancheGauche,LOW);
+    digitalWrite(pinBlancheDroite,LOW);
+    digitalWrite(pinRougeGauche,LOW);
+    digitalWrite(pinRougeDroite,LOW);
+  }
 #endif
