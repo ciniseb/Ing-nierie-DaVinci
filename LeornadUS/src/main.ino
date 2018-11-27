@@ -63,13 +63,6 @@ Variables globales
 float vitesse;
 int anglecrayon = 125;
 
-//Lumiere
-
-int pinRougeDroite = 40;
-int pinRougeGauche = 43;
-int pinBlancheDroite = 41;
-int pinBlancheGauche = 42;
-
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 int  serIn;             // var that will hold the bytes-in read from the serialBuffer
@@ -82,7 +75,6 @@ char SerialRead[63];
 Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
-float PICalcultournercentre(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
@@ -90,7 +82,6 @@ double angle_degree_a_pulse(float angle);
 void accel_avancer();
 void accel_reculer();
 void avancer(float distance_mm);
-void avancer2(float distance_mm);
 void reculer(float distance_mm);
 void baisserCrayon();
 void leverCrayon();
@@ -115,9 +106,7 @@ void electrique();
 void informatique();
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
-void avancerLumiere();
-void reculerLumiere();
-void eteindreLumiere();
+
 /*===========================================================================
 Lancement
 ===========================================================================*/
@@ -132,8 +121,6 @@ void setup()
   while(!Serial1);
   Serial1.setTimeout(25);
 
-
-
   pinMode(A10,INPUT);
   pinMode(A9,INPUT);
   pinMode(A6,INPUT);
@@ -146,11 +133,6 @@ void setup()
   pinMode(5, INPUT);                // Pin ecran lcd
   pinMode(11, INPUT);               // Pin ecran lcd
   pinMode(12, INPUT);               // Pin ecran lcd
-
-  pinMode(pinRougeDroite,OUTPUT);
-  pinMode(pinBlancheGauche,OUTPUT);
-  pinMode(pinRougeDroite,OUTPUT);
-  pinMode(pinRougeGauche,OUTPUT);
   lcd.begin(16, 2);                 // Grandeur de l'écran lcd
 
   pinMode (44, INPUT);
@@ -173,6 +155,7 @@ void loop()
     if(SerialRead[i] == '#')
     {
       #ifdef DEBUG
+    
       Serial.println("# recue");
       Serial.print(SerialRead[i]);
       Serial.print(SerialRead[i+1]);
@@ -189,7 +172,9 @@ void loop()
         // 0123
         // 1010
         
+
         #ifdef DEBUG
+      
         Serial.println(" ");
         Serial.print("Lecture Trame: ");
         Serial.print(SerialRead[i+a]);
@@ -243,6 +228,7 @@ void loop()
         */
 
         #ifdef DEBUG
+      
         Serial.println(" ");
         Serial.print("typeForme: ");
         Serial.println(typeForme);
@@ -261,15 +247,15 @@ void loop()
 
         // Affichage de la tramme.
         #ifdef DEBUG
-        Serial.println(" ");
-        Serial.print("Lecture Trame: ");
-        Serial.print(SerialRead[i+a]);
-        Serial.print(SerialRead[i+a+1]);
-        Serial.print(SerialRead[i+a+2]);
-        Serial.print(SerialRead[i+a+3]);
-        Serial.println(SerialRead[i+a+4]);
+      
+        //Serial.println(" ");
+        //Serial.print("Lecture Trame: ");
+        //Serial.print(SerialRead[i+a]);
+        //Serial.print(SerialRead[i+a+1]);
+        //Serial.print(SerialRead[i+a+2]);
+        //Serial.print(SerialRead[i+a+3]);
+        //Serial.println(SerialRead[i+a+4]);
         #endif
-
         float vitLueConv = 0;
         int sensMoteur = 0;
         switch(SerialRead[i+a]) 
@@ -287,6 +273,7 @@ void loop()
             }
 
             #ifdef DEBUG
+          
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
@@ -371,6 +358,7 @@ void loop()
               //Serial.println(((atof(SerialRead[i+a+4]))/10));
 
               #ifdef DEBUG
+            
               Serial.println(" ");
               Serial.print("Valeur moteur G: ");
               Serial.print(vitLueConv);
@@ -395,6 +383,7 @@ void loop()
             }
             
             #ifdef DEBUG
+          
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
@@ -477,6 +466,7 @@ void loop()
               //Serial.println(((atof(SerialRead[i+a+4]))/10));
 
               #ifdef DEBUG
+            
               Serial.println(" ");
               Serial.print("Valeur moteur D: ");
               Serial.print(vitLueConv);
@@ -489,6 +479,7 @@ void loop()
             break;
           case 'H' : // HAUT
           #ifdef DEBUG
+        
             Serial.println(" ");
             Serial.print("Lever crayon");
             #endif
@@ -497,6 +488,7 @@ void loop()
             break;
           case 'B' : // BAS
           #ifdef DEBUG
+        
             Serial.println(" ");
             Serial.print("baisser crayon");
             #endif
@@ -510,6 +502,7 @@ void loop()
         #endif
 
         #ifdef DEBUG
+      
         //Serial.print(SerialRead[i+a]);
         SerialRead[i+a] = 0;
         #endif
@@ -608,6 +601,8 @@ void loop()
 /*===========================================================================
 Définition des fonctions
 ===========================================================================*/
+
+
 // ----- 2  R O B O T S ------
 float PICalcul(float distanceGauche, float distanceDroite)
 {
@@ -622,23 +617,6 @@ float PICalcul(float distanceGauche, float distanceDroite)
 
   //P=20, I=20    //PI=40 -> 40 tick de plus a faire
   PIresultant = (proportionnel+integral)/100;//Calcul PI en pulse
-  //Serial.print("PIOUT: ");
-  //Serial.println(PIresultant);
-  return (PIresultant);
-}
-float PICalcultournercentre(float distanceGauche, float distanceDroite)
-{
-  float erreur = 0;
-  float proportionnel = 0;
-  float integral = 0;
-  float PIresultant = 0;
-
-  erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
-  proportionnel = erreur * 0.01f;//P
-  integral = (integral + (erreur * 0.1f)) * 0.01f;//I
-
-  //P=20, I=20    //PI=40 -> 40 tick de plus a faire
-  PIresultant = (proportionnel+integral)/2500;//Calcul PI en pulse
   //Serial.print("PIOUT: ");
   //Serial.println(PIresultant);
   return (PIresultant);
@@ -680,9 +658,6 @@ void acceleration(float *v, float vVoulue, float distance)
 }
 void MOTORS_reset()
 {
-  #ifdef ROBOTMANUEL
-    eteindreLumiere();
-  #endif
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
   ENCODER_Reset(GAUCHE);
@@ -732,19 +707,14 @@ void accel_reculer()
 }
 void avancer(float distance_mm)
 {
-  
   float distance_pulse,distgauche1,distdroite1;
   float k;
   float speed = speed1;
   int counter=0;
   distance_pulse = distance_mm_pulse(distance_mm);
-  #ifdef ROBOTMANUEL
-    avancerLumiere();
-  #endif
+
   while(ENCODER_Read(GAUCHE) <= distance_pulse)
   {
-    
-    Serial.println(ENCODER_Read(GAUCHE));
     //accel
     if(counter == 0)
     {
@@ -779,33 +749,11 @@ void avancer(float distance_mm)
   }
   MOTORS_reset();
 }
-void avancer2(float distance_mm)
-{
-  float distance_pulse,distgauche1,distdroite1;
-  float k;
-  float speed = speed1 ;
-  int counter=0;
-  distance_pulse = distance_mm_pulse(distance_mm);
-
-
-  while(ENCODER_Read(GAUCHE) <= distance_pulse)
-  {
-    Serial.println(ENCODER_Read(GAUCHE));
-      MOTOR_SetSpeed(GAUCHE,0.2);
-      MOTOR_SetSpeed(DROITE,0.2);
-      delay(100);
-  }
-  MOTORS_reset();
-}
 void reculer(float distance_mm)
 {
   float distance_pulse = distance_mm_pulse(distance_mm);
-  #ifdef ROBOTMANUEL
-      reculerLumiere();
-  #endif
   while(ENCODER_Read(GAUCHE) >= -distance_pulse)
   {
-    
     MOTOR_SetSpeed(GAUCHE, -speed1);
     MOTOR_SetSpeed(DROITE, -speed1);
   }
@@ -914,44 +862,26 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-  float distgauche1;
-  float distdroite1;
-  float k;
-  float speed;
+  double anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
   if(direction == GAUCHE)
   {
-    while(distdroite1 <= (anglePulse/2))
+    while(ENCODER_Read(DROITE) <= anglePulse/2)
     {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k = 0;
-      //k = PICalcultournercentre(distgauche1,distdroite1);
-      speed = 0.15+k;
-      MOTOR_SetSpeed(GAUCHE,-speed);
-      MOTOR_SetSpeed(DROITE,0.15);
+      MOTOR_SetSpeed(GAUCHE,-vitesseTourne);
+      MOTOR_SetSpeed(DROITE,vitesseTourne);
     }
   }
-
   else if(direction == DROITE)
   {
-    while(distgauche1 <= anglePulse/2)
+    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
     {
-      distgauche1 = ENCODER_Read(GAUCHE);
-      distdroite1 = ENCODER_Read(DROITE);
-      k = 0;
-      //k = PICalcultournercentre(distgauche1,distdroite1);
-      speed = 0.15+k;
-      MOTOR_SetSpeed(GAUCHE,0.15);
-      MOTOR_SetSpeed(DROITE,-speed);
+      MOTOR_SetSpeed(GAUCHE,vitesseTourne);
+      MOTOR_SetSpeed(DROITE,-vitesseTourne);
     }
   }
   MOTORS_reset();
 }
-
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
@@ -984,7 +914,7 @@ void readSerialString()
     for(int tournant = 0 ; tournant < nbSommets ; tournant++)
     {
       avancer(lngrArete);
-      tournerCrayon(DROITE, angle);
+      tournerCrayon(GAUCHE, angle);
     }
   }
   void parallelogramme(int base, int hauteur, float angle)
@@ -1004,16 +934,17 @@ void readSerialString()
     float angleExterne = 180-angle;
     float angleInterne = 360*(diffSommets-1)/nbSommets;
 
-    tournerCrayon(DROITE, 90);
+    //tournerCrayon(DROITE, 90);
     for(int i = 0; i < nbSommets ; i++)
     {
+      avancer(lngrArete);
+      tournerCrayon(DROITE, angleInterne);
       avancer(lngrArete);
       tournerCrayon(GAUCHE, angleExterne);
     }
     leverCrayon();
-    avancer(167);
     tournerCentre(GAUCHE, 90);
-    reculer(162);
+    reculer(18);
   }
   void croix(int lngrArete)
   {
@@ -1285,23 +1216,5 @@ void readSerialString()
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
-  void avancerLumiere(){
-    digitalWrite(pinBlancheGauche,HIGH);
-    digitalWrite(pinBlancheDroite,HIGH);
-    digitalWrite(pinRougeGauche,LOW);
-    digitalWrite(pinRougeDroite,LOW);
-  }
-  void reculerLumiere(){
-    digitalWrite(pinBlancheGauche,LOW);
-    digitalWrite(pinBlancheDroite,LOW);
-    digitalWrite(pinRougeGauche,HIGH);
-    digitalWrite(pinRougeDroite,HIGH);
-  }
-
-  void eteindreLumiere(){
-    digitalWrite(pinBlancheGauche,LOW);
-    digitalWrite(pinBlancheDroite,LOW);
-    digitalWrite(pinRougeGauche,LOW);
-    digitalWrite(pinRougeDroite,LOW);
-  }
+  //Formes
 #endif
