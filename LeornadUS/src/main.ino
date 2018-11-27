@@ -25,8 +25,8 @@ Fichier:            main.ino
 Defines globales & robots
 ===========================================================================*/
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
-//#define ROBOTAUTONOME
-#define ROBOTMANUEL
+#define ROBOTAUTONOME
+//#define ROBOTMANUEL
 #define DEBUGG
 
 //Si 2 robots définis, dé-defini les deux codes
@@ -172,6 +172,7 @@ void loop()
         
 
         #ifdef DEBUGG
+        /*
         Serial.println(" ");
         Serial.print("Lecture Trame: ");
         Serial.print(SerialRead[i+a]);
@@ -179,7 +180,158 @@ void loop()
         Serial.print(SerialRead[i+a+2]);
         Serial.print(SerialRead[i+a+3]);
         Serial.println(SerialRead[i+a+4]);
+        */
         #endif
+
+        
+        char trameLue = SerialRead[i+a];
+
+        Serial.print("typeForme decod lue: ");
+
+
+        switch(trameLue) {
+                case '0' :
+                  typeForme = 00;
+                  break;
+                case '1' :
+                  typeForme = 10;
+                  break;
+                case '2' :
+                  typeForme = 20;
+                  break;
+                case '3' :
+                  typeForme = 30;
+                  break;
+                case '4' :
+                  typeForme = 40;
+                  break;
+                case '5' :
+                  typeForme = 50;
+                  break;
+                case '6' :
+                  typeForme = 60;
+                  break;
+                case '7' :
+                  typeForme = 70;
+                  break;
+                case '8' :
+                  typeForme = 80;
+                  break;
+                case '9' :
+                  typeForme = 90;
+                  break;
+              }
+
+              trameLue = SerialRead[i+a+1];
+
+              switch(trameLue) {
+                case '0' :
+                  typeForme += 0;
+                  break;
+                case '1' :
+                  typeForme += 1;
+                  break;
+                case '2' :
+                  typeForme += 2;
+                  break;
+                case '3' :
+                  typeForme += 3;
+                  break;
+                case '4' :
+                  typeForme += 4;
+                  break;
+                case '5' :
+                  typeForme += 5;
+                  break;
+                case '6' :
+                  typeForme += 6;
+                  break;
+                case '7' :
+                  typeForme += 7;
+                  break;
+                case '8' :
+                  typeForme += 8;
+                  break;
+                case '9' :
+                  typeForme += 9;
+                  break;
+              }
+              typeForme = 1;
+              Serial.println(typeForme);
+
+              Serial.print("noForme decod lue: ");
+
+              trameLue = SerialRead[i+a+1];
+
+              switch(trameLue) {
+                case '0' :
+                  noForme = 00;
+                  break;
+                case '1' :
+                  noForme = 10;
+                  break;
+                case '2' :
+                  noForme = 20;
+                  break;
+                case '3' :
+                  noForme = 30;
+                  break;
+                case '4' :
+                  noForme = 40;
+                  break;
+                case '5' :
+                  noForme = 50;
+                  break;
+                case '6' :
+                  noForme = 60;
+                  break;
+                case '7' :
+                  noForme = 70;
+                  break;
+                case '8' :
+                  noForme = 80;
+                  break;
+                case '9' :
+                  noForme = 90;
+                  break;
+              }
+
+              trameLue = SerialRead[i+a+2];
+              
+              switch(trameLue) {
+                case '0' :
+                  noForme += 0;
+                  break;
+                case '1' :
+                  noForme += 1;
+                  break;
+                case '2' :
+                  noForme += 2;
+                  break;
+                case '3' :
+                  noForme += 3;
+                  break;
+                case '4' :
+                  noForme += 4;
+                  break;
+                case '5' :
+                  noForme += 5;
+                  break;
+                case '6' :
+                  noForme += 6;
+                  break;
+                case '7' :
+                  noForme += 7;
+                  break;
+                case '8' :
+                  noForme += 8;
+                  break;
+                case '9' :
+                  noForme += 9;
+                  break;
+              }
+
+              Serial.println(noForme);
 
         // NNuméro type de forme:
         /*
@@ -225,6 +377,7 @@ void loop()
         */
 
         #ifdef DEBUGG
+        /*
         Serial.println(" ");
         Serial.print("typeForme: ");
         Serial.println(typeForme);
@@ -232,6 +385,7 @@ void loop()
         Serial.println(" ");
         Serial.print("noForme: ");
         Serial.println(noForme);
+        */
         #endif
 
         #endif // --------------------
