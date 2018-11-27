@@ -33,7 +33,6 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
     private JoystickListener joystickCallback;
     private Paint couleur;
 
-
     //Constructeurs
     public Manette(Context context)
     {
@@ -61,7 +60,6 @@ public class Manette extends SurfaceView implements Callback, View.OnTouchListen
         }
         couleur = new Paint();
         couleur.setARGB(100, 255,0,0);
-
     }
 
     public Manette(Context context, AttributeSet attrs, int defStyleAttr)

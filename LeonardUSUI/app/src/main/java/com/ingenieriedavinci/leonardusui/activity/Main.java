@@ -23,7 +23,7 @@ public class Main extends AppCompatActivity
     //Variables
     Button debut;
     VideoView couverture;
-    public static MediaPlayer player;
+    public static MediaPlayer musique;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,10 +37,10 @@ public class Main extends AppCompatActivity
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
 
-        player = MediaPlayer.create(this, R.raw.droid_bishop_the_outlander);
-        player.setLooping(true); // Set looping
-        player.setVolume(60,60);
-        player.start();
+        musique = MediaPlayer.create(this, R.raw.droid_bishop_the_outlander);
+        musique.setLooping(true); // Set looping
+        musique.setVolume(60,60);
+        musique.start();
 
         //Comportements
         debut.setOnClickListener(new View.OnClickListener()
@@ -58,9 +58,9 @@ public class Main extends AppCompatActivity
                         e.printStackTrace();
                     }
                     float log1=(float)(Math.log(60 - volume)/Math.log(60));
-                    player.setVolume(1-log1, 1-log1);
+                    musique.setVolume(1-log1, 1-log1);
                 }
-                player.stop();
+                musique.stop();
                 startActivity(new Intent(Main.this, Formes.class));//Ouvrir l'activité des formes
             }
         });

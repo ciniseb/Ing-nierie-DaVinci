@@ -141,6 +141,7 @@ public class ListeFormes extends AppCompatActivity
     {
         Intent intent = new Intent(context, ListeFormes.class);
         intent.putExtra("typeFormes", typeFormes);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

@@ -9,10 +9,6 @@ import android.widget.Toast;
 
 import com.ingenieriedavinci.leonardusui.R;
 
-import java.util.concurrent.TimeUnit;
-
-import static com.ingenieriedavinci.leonardusui.activity.Main.player;
-
 public class Formes extends AppCompatActivity
 {
     //Variables
@@ -117,15 +113,5 @@ public class Formes extends AppCompatActivity
                 message.show();
             }
         });
-
-        //Comportements
-        /*debut.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                startActivity(new Intent(Main.this, Formes.class));//Ouvrir l'activité des formes
-            }
-        });*/
     }
 }

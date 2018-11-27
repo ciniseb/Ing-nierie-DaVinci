@@ -245,6 +245,7 @@ public class Telecommande extends AppCompatActivity implements Manette.JoystickL
         Intent intent = new Intent(context, Telecommande.class);
         intent.putExtra("nomForme", nomForme);
         intent.putExtra("messageBT", messageBT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }
