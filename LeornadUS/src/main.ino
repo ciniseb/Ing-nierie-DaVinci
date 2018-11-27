@@ -53,6 +53,7 @@ Defines globales & robots
 #define vitesseTourne 0.15
 #define speed3 0.20
 #define speed4 0.20
+#define speed5 0.15
 
 #define POSITIF 1
 #define NEGATIF -1
@@ -74,8 +75,8 @@ char SerialRead[63];
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
-float PICalcul(float distanceGauche, float distanceDroite);
 float PICalcultournercentre(float distanceGauche, float distanceDroite);
+float PICalcul(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
@@ -91,6 +92,7 @@ void bruit();
 void opto();
 void tourner(int direction, float angle, int sens);
 void tournerCentre(int direction, float angle);
+void tournerCentre2(int direction, float angle);
 void tournerCrayon(int direction, float angle);
 void readSerialString();
 
@@ -147,7 +149,7 @@ Boucle infinie
 void loop()
 {
   int typeForme = -1;
-  int noForme   = -1;
+  int noForme   = 4;
   
  
   // ----- R O B O T  A U T O N O M E ------
@@ -163,7 +165,7 @@ void loop()
           polygone(2, 100);//Digone
         break;
         case 1:
-          polygone(3, 100);//Triangle
+          polygoneEtoile(5,2,200);
         break;
         case 2:
           polygone(4, 100);//Carré
@@ -268,7 +270,23 @@ float PICalcultournercentre(float distanceGauche, float distanceDroite)
   //Serial.println(PIresultant);
   return (PIresultant);
 }
+float PICalcul (float distanceGauche, float distanceDroite)
+{
+  float erreur = 0;
+  float proportionnel = 0;
+  float integral = 0;
+  float PIresultant = 0;
 
+  erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
+  proportionnel = erreur * 0.01f;//P
+  integral = (integral + (erreur * 0.1f)) * 0.03f;//I
+
+  //P=20, I=20    //PI=40 -> 40 tick de plus a faire
+  PIresultant = (proportionnel+integral)/100;//Calcul PI en pulse
+  //Serial.print("PIOUT: ");
+  //Serial.println(PIresultant);
+  return (PIresultant);
+}
 
 void acceleration(float *v, float vVoulue, float distance)
 {
@@ -501,7 +519,35 @@ void tourner(int direction, float angle, int sens)
   }
   MOTORS_reset();
 }
+
 void tournerCentre(int direction, float angle)
+{
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  
+  
+
+  if(direction == GAUCHE)
+  {
+    while(ENCODER_Read(DROITE) <= (anglePulse/2))
+    {
+      MOTOR_SetSpeed(GAUCHE,-0.15);
+      MOTOR_SetSpeed(DROITE,0.15);
+    }
+  }
+
+  else if(direction == DROITE)
+  {
+    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    {
+      MOTOR_SetSpeed(GAUCHE,0.15);
+      MOTOR_SetSpeed(DROITE,-0.15);
+    }
+  }
+  MOTORS_reset();
+}
+void tournerCentre2(int direction, float angle)
 {
   ENCODER_Reset(0);
   ENCODER_Reset(1);
@@ -538,13 +584,12 @@ void tournerCentre(int direction, float angle)
   }
   MOTORS_reset();
 }
-
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(167);
+  avancer(168);
   tournerCentre(direction, angle);
-  reculer(162);
+  reculer(165);
   baisserCrayon();
 }
 void readSerialString()
@@ -572,7 +617,7 @@ void readSerialString()
     {
       avancer(lngrArete);
       tournerCrayon(DROITE, angle);
-    }
+    }    
   }
   void parallelogramme(int base, int hauteur, float angle)
   {
@@ -583,6 +628,8 @@ void readSerialString()
       avancer(hauteur/cos(angle - 90));
       tournerCrayon(GAUCHE, angle);
     }
+    leverCrayon();
+    reculer(167);
   }
   void polygoneEtoile(int nbSommets, int diffSommets ,int lngrArete)
   {
@@ -600,10 +647,11 @@ void readSerialString()
     leverCrayon();
     avancer(167);
     tournerCentre(GAUCHE, 90);
-    reculer(162);
+    reculer(192);
   }
   void croix(int lngrArete)
   {
+    avancer(125);
     for(int i = 0 ; i < 4 ; i++)
     {
       avancer(lngrArete);
@@ -619,12 +667,14 @@ void readSerialString()
     float distanceG = 2*PI*(rayon+93)*angle/360;
     float vG = 2*PI*(rayon+93)/10000;
     float vD = 2*PI*(rayon-93)/10000;
+    avancer(125);
 
     while(ENCODER_Read(GAUCHE) <= distanceG)
     {
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
+    reculer(125);
   }
   void spirale()
   {
