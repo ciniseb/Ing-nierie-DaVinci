@@ -955,10 +955,10 @@ void readSerialString()
       avancer(lngrArete);
       tournerCrayon(GAUCHE, 90);
       avancer(lngrArete);
-      tournerCrayon(DROITE, 90);
+      tournerCrayon(GAUCHE, 90);
     }
   }
-    void arc(int rayon, float angle)
+  void arc(int rayon, float angle)
   {
     float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
 
