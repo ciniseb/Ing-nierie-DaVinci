@@ -71,6 +71,11 @@ char serInString[100];  // array that will hold the different bytes  100=100char
 int  serInIndx  = 0;    // index of serInString[] in which to insert the next incoming byte
 int  serOutIndx = 0;    // index of the outgoing serInString[] array;
 char SerialRead[63];
+
+int pinRougeDroite = 40;
+int pinRougeGauche = 43;
+int pinBlancheDroite = 41;
+int pinBlancheGauche = 42;
 /*===========================================================================
 Appel des fonctions
 ===========================================================================*/
@@ -106,7 +111,9 @@ void electrique();
 void informatique();
 
 // ----- R O B O T  M A N U E L ----- //Appel des fonctions du robot manuel ici
-
+void avancerLumiere();
+void reculerLumiere();
+void eteindreLumiere();
 /*===========================================================================
 Lancement
 ===========================================================================*/
@@ -133,6 +140,14 @@ void setup()
   pinMode(5, INPUT);                // Pin ecran lcd
   pinMode(11, INPUT);               // Pin ecran lcd
   pinMode(12, INPUT);               // Pin ecran lcd
+
+  pinMode(45, INPUT);               // Pin suiveur de ligne
+
+  pinMode(pinRougeDroite,OUTPUT);
+  pinMode(pinBlancheGauche,OUTPUT);
+  pinMode(pinRougeDroite,OUTPUT);
+  pinMode(pinRougeGauche,OUTPUT);
+
   lcd.begin(16, 2);                 // Grandeur de l'écran lcd
 
   pinMode (44, INPUT);
@@ -174,7 +189,6 @@ void loop()
         
 
         #ifdef DEBUG
-      
         Serial.println(" ");
         Serial.print("Lecture Trame: ");
         Serial.print(SerialRead[i+a]);
@@ -182,53 +196,7 @@ void loop()
         Serial.print(SerialRead[i+a+2]);
         Serial.print(SerialRead[i+a+3]);
         Serial.println(SerialRead[i+a+4]);
-        #endif
-
-        //Numéro type de forme:
-        /*
-        char vitToConv = SerialRead[i+a];
-        switch(vitToConv) {
-          case '1' :
-            vitLueConv = 0.1;
-            break;
-          case '2' :
-            vitLueConv = 0.2;
-            break;
-          case '3' :
-            vitLueConv = 0.3;
-            break;
-          case '4' :
-            vitLueConv = 0.4;
-            break;
-          case '5' :
-            vitLueConv = 0.5;
-            break;
-          case '6' :
-            vitLueConv = 0.6;
-            break;
-          case '7' :
-            vitLueConv = 0.7;
-            break;
-          case '8' :
-            vitLueConv = 0.8;
-            break;
-          case '9' :
-            vitLueConv = 0.9;
-            break;
-          }
-          */
-
-        /*
-        typeForme =   ((atof(SerialRead[i+a]))*10);   // Convertis les disaines pour type de forme.
-        typeForme +=  (atof(SerialRead[i+a+1]));      // Convertis les unitées pour type de forme.
-
-        // Numéro de forme: 
-        noForme =  ((atof(SerialRead[i+a+2]))*10);   // Convertis les disaines pour numéro de forme.
-        noForme += (atof(SerialRead[i+a+3]));        // Convertis les unitées pour numéro de forme.
-        */
-
-        #ifdef DEBUG
-      
+        
         Serial.println(" ");
         Serial.print("typeForme: ");
         Serial.println(typeForme);
@@ -245,9 +213,11 @@ void loop()
         // 01234
         // G-0.2
 
+        if(digitalRead(45))
+          leverCrayon();
+
         // Affichage de la tramme.
         #ifdef DEBUG
-      
         //Serial.println(" ");
         //Serial.print("Lecture Trame: ");
         //Serial.print(SerialRead[i+a]);
@@ -256,6 +226,7 @@ void loop()
         //Serial.print(SerialRead[i+a+3]);
         //Serial.println(SerialRead[i+a+4]);
         #endif
+
         float vitLueConv = 0;
         int sensMoteur = 0;
         switch(SerialRead[i+a]) 
@@ -264,56 +235,24 @@ void loop()
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
-            { // Signe positif donc avance.
-              sensMoteur = POSITIF;
-            }
+              sensMoteur = POSITIF; // Signe positif donc avance.
             else if(SerialRead[i+a+1] == '-')
-            {
               sensMoteur = NEGATIF;
-            }
 
             #ifdef DEBUG
-          
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
             #endif
-
-            /*
-            Serial.println(" ");
-            Serial.print("sensMoteur: ");
-            Serial.println(sensMoteur);
-            */
             
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
-            {
               vitLueConv = 0.4;
-              //MOTOR_SetSpeed(GAUCHE, 0.3);
-            }
             else if(SerialRead[i+a+2] == '0')
             {
-              /*
-              Serial.println(" ");
-              Serial.print("Lecture Trame: ");
-              Serial.print(SerialRead[i+a]);
-              Serial.print(SerialRead[i+a+1]);
-              Serial.print(SerialRead[i+a+2]);
-              Serial.print(SerialRead[i+a+3]);
-              Serial.println(SerialRead[i+a+4]);
-              */
-
-
-              //Serial.println(" ");
-              //Serial.print("Valeur vitesse lue: ");
-              //Serial.print(SerialRead[i+a+4]);
-              //Serial.print(" ");
-              
-              //Serial.println(vitToConv);
-             
-              
               char vitToConv = SerialRead[i+a+4];
-              switch(vitToConv) {
+              switch(vitToConv)
+              {
                 case '0' :
                   vitLueConv = 0;
                   break;
@@ -346,82 +285,50 @@ void loop()
                   break;
               }
 
-              //Serial.println(" ");
-              //Serial.print("Valeur vitesse convertis: ");
-              //Serial.println(vitLueConv);
-
-
-
-              //Serial.print("Vitesse moteur G: ");
-              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
-              //Serial.println(atof(SerialRead[i+a+4]));
-              //Serial.println(((atof(SerialRead[i+a+4]))/10));
-
               #ifdef DEBUG
-            
               Serial.println(" ");
               Serial.print("Valeur moteur G: ");
               Serial.print(vitLueConv);
               #endif
 
-              if(sensMoteur == POSITIF) MOTOR_SetSpeed( GAUCHE, vitLueConv );
-              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( GAUCHE, (vitLueConv - vitLueConv - vitLueConv) );
+              if(vitLueConv == 0.0f)
+                eteindreLumiere();
+              if(sensMoteur == POSITIF)
+              {                
+                avancerLumiere();
+                MOTOR_SetSpeed( GAUCHE, vitLueConv );
+              }
+              if(sensMoteur == NEGATIF)
+              {
+                reculerLumiere();
+                MOTOR_SetSpeed( GAUCHE, (vitLueConv - vitLueConv - vitLueConv) );
+              }
             }
-            
             break;
           case 'D' : // DROIT
             
             // sens:
             sensMoteur = 0;
             if(SerialRead[i+a+1] == '+') // Détermination du signe.
-            { // Signe positif donc avance.
-              sensMoteur = POSITIF;
-            }
+              sensMoteur = POSITIF; // Signe positif donc avance.
             else if(SerialRead[i+a+1] == '-')
-            {
               sensMoteur = NEGATIF;
-            }
             
             #ifdef DEBUG
-          
               Serial.println(" ");
               Serial.print("sensMoteur: ");
               Serial.println(sensMoteur);
             #endif
 
-            /*
-            Serial.println(" ");
-            Serial.print("sensMoteur: ");
-            Serial.println(sensMoteur);
-            */
             // Valeur pour le moteur:
             if(SerialRead[i+a+2] == '1')
-            {
               vitLueConv = 0.4;
-              //MOTOR_SetSpeed(DROITE, 0.3);
-            }
             else if(SerialRead[i+a+2] == '0')
             {
-              /*
-              Serial.println(" ");
-              Serial.print("Lecture Trame: ");
-              Serial.print(SerialRead[i+a]);
-              Serial.print(SerialRead[i+a+1]);
-              Serial.print(SerialRead[i+a+2]);
-              Serial.print(SerialRead[i+a+3]);
-              Serial.println(SerialRead[i+a+4]);
-              */
-
-
-              //Serial.println(" ");
-              //Serial.print("Valeur vitesse lue: ");
-              //Serial.print(SerialRead[i+a+4]);
-              //Serial.print(" ");
               char vitToConv = SerialRead[i+a+4];
-              //Serial.println(vitToConv);
-             
-
-              switch(vitToConv) {
+              
+              switch(vitToConv)
+              {
                 case '0' :
                   vitLueConv = 0;
                   break;
@@ -454,149 +361,57 @@ void loop()
                   break;
               }
 
-              //Serial.println(" ");
-              //Serial.print("Valeur vitesse convertis: ");
-              //Serial.println(vitLueConv);
-
-
-
-              //Serial.print("Vitesse moteur G: ");
-              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
-              //Serial.println(atof(SerialRead[i+a+4]));
-              //Serial.println(((atof(SerialRead[i+a+4]))/10));
-
               #ifdef DEBUG
-            
               Serial.println(" ");
               Serial.print("Valeur moteur D: ");
               Serial.print(vitLueConv);
               #endif
 
-              if(sensMoteur == POSITIF) MOTOR_SetSpeed( DROITE, vitLueConv );
-              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( DROITE, (vitLueConv - vitLueConv - vitLueConv) );
+              if(vitLueConv == 0.0f)
+                eteindreLumiere();
+              if(sensMoteur == POSITIF)
+              {
+                avancerLumiere();
+                MOTOR_SetSpeed( DROITE, vitLueConv );
+              }
+              if(sensMoteur == NEGATIF)
+              {
+                reculerLumiere();
+                MOTOR_SetSpeed( DROITE, (vitLueConv - vitLueConv - vitLueConv));
+              }
             }
-            
             break;
           case 'H' : // HAUT
-          #ifdef DEBUG
-        
-            Serial.println(" ");
-            Serial.print("Lever crayon");
+            #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("Lever crayon");
             #endif
 
-            leverCrayon();
+            if(!digitalRead(45))
+              leverCrayon();
             break;
           case 'B' : // BAS
-          #ifdef DEBUG
-        
-            Serial.println(" ");
-            Serial.print("baisser crayon");
+            #ifdef DEBUG
+              Serial.println(" ");
+              Serial.print("baisser crayon");
             #endif
 
-            baisserCrayon();
+            if(!digitalRead(45))
+              baisserCrayon();
             break;
           default :
-
             break;
         }
         #endif
 
         #ifdef DEBUG
-      
         //Serial.print(SerialRead[i+a]);
-        SerialRead[i+a] = 0;
         #endif
         SerialRead[i+a] = 0;
       }
-      //Serial.println(" ");
     }
   }
-  // ----- R O B O T  A U T O N O M E ------
-  //#ifdef ROBOTAUTONOME
-    /*
-    if(ROBUS_IsBumper(3))
-    {
-      baisserCrayon();
-
-      switch(noForme)
-      {
-        case 0:
-          polygone(2, 100);//Digone
-        break;
-        case 1:
-          polygone(3, 100);//Triangle
-        break;
-        case 2:
-          polygone(4, 100);//Carré
-        break;
-        case 3:
-          polygone(5, 100);//Pentagone
-        break;
-        case 4:
-          polygone(6, 100);//Hexagone
-        break;
-        case 5:
-          polygone(7, 100);//Heptagone
-        break;
-        case 6:
-          polygone(8, 100);//Octogone
-        break;
-        case 7:
-          polygone(9, 100);//Ennéagone
-        break;
-        case 8:
-          polygone(10, 100);//Décagone
-        break;
-        case 9:
-          polygone(11, 100);//Hendécagone
-        break;
-        case 10:
-          polygone(12, 100);//Dodécagone
-        break;
-        case 11:
-          //polygoneEtoile(5, 100);
-        break;
-        case 12:
-          parallelogramme(100, 60, 120);
-        break;
-        case 13:
-          emotion(SOURIRE, 50);
-        break;
-        case 14:
-          leverCrayon();
-          avancer(160);
-          tournerCentre(GAUCHE, 90);
-          reculer(172);
-          baisserCrayon();
-        break;
-        default:
-          //polygone(2, 100);
-          //polygone(3, 100);
-          //polygone(4, 100);
-          //polygone(5, 100);
-          //polygone(6, 100);
-          //polygone(7, 100);
-          //polygone(8, 100);
-          //delay(15000);
-          //parallelogramme(100, 60, 90);
-          //delay(10000);
-          //parallelogramme(100, 20, 90);
-          //delay(10000);
-          //parallelogramme(100, 60, 120);
-          //delay(10000);
-          //parallelogramme(100, 100, 80);
-        break;
-      }
-      leverCrayon();
-    }
-  //#endif
-  */
-  // ----- R O B O T  M A N U E L -----
-  #ifdef ROBOTMANUEL
-
-  #endif
-
-  delay(10);// Delais pour décharger le CPU
+  delay(10); // Delais pour décharger le CPU
 }
 /*===========================================================================
 Définition des fonctions
@@ -1216,5 +1031,26 @@ void readSerialString()
 
 // ----- R O B O T  M A N U E L ----- //Définitions des fonctions du robot manuel ici
 #ifdef ROBOTMANUEL
-  //Formes
+  void avancerLumiere()
+  {
+    digitalWrite(pinBlancheGauche,HIGH);
+    digitalWrite(pinBlancheDroite,HIGH);
+    digitalWrite(pinRougeGauche,LOW);
+    digitalWrite(pinRougeDroite,LOW);
+  }
+  void reculerLumiere()
+  {
+    digitalWrite(pinBlancheGauche,LOW);
+    digitalWrite(pinBlancheDroite,LOW);
+    digitalWrite(pinRougeGauche,HIGH);
+    digitalWrite(pinRougeDroite,HIGH);
+  }
+
+  void eteindreLumiere()
+  {
+    digitalWrite(pinBlancheGauche,LOW);
+    digitalWrite(pinBlancheDroite,LOW);
+    digitalWrite(pinRougeGauche,LOW);
+    digitalWrite(pinRougeDroite,LOW);
+  }
 #endif
