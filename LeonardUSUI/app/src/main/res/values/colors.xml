@@ -4,12 +4,18 @@
     <color name="colorPrimaryDark">#2A2A2B</color>
     <color name="colorAccent">#C1C1C1</color>
 
-    <color name="brun">#74533C</color>
+    <color name="fond">#FFDA90</color>
+
     <color name="brunFonce">#664228</color>
-    <color name="fond">#E6BE8A</color>
+    <color name="brun">#805533</color>
+
+    <color name="couleurBoutonOut">#AE8555</color>
+    <color name="couleurBoutonIn">#C59E66</color>
 
 
-    <color name="TESTfond">#ffd39b</color>
+    <color name="couleurCadreOut">#BA915D</color>
+    <color name="couleurCadreIn">#A3794C</color>
+
 
     <color name="vert">#3AA655</color>
     <color name="jaune">#FBE870</color>
@@ -19,4 +25,19 @@
     <color name="rouge">#ED0A3F</color>
     <color name="bleu">#00468C</color>
     <color name="mauve">#652DC1</color>
+
+
+    <!-- Brun à Beige -->
+    <color name="brun1">#805533</color>
+    <color name="brun2">#8C613B</color>
+    <color name="brun3">#976D44</color>
+    <color name="brun4">#A3794C</color>
+    <color name="brun5">#AE8555</color>
+    <color name="brun6">#BA915D</color>
+    <color name="beige6">#C59E66</color>
+    <color name="beige5">#D1AA6E</color>
+    <color name="beige4">#DCB677</color>
+    <color name="beige3">#E8C27F</color>
+    <color name="beige2">#F3CE88</color>
+    <color name="beige1">#FFDA90</color>
 </resources>
