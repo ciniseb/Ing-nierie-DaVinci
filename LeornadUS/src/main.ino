@@ -616,59 +616,12 @@ void readSerialString()
   }
     void arc(int rayon, float angle)
   {
-    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+    float distanceG = 2*PI*(rayon+93)*angle/360;
+    float vG = 2*PI*(rayon+93)/10000;
+    float vD = 2*PI*(rayon-93)/10000;
 
-    float dV = (rayon - 92.5f)/(rayon + 92.5f);
-
-    float vG = 0.4f;
-    float vD = 0.4f*dV;
-
-    while(ENCODER_Read(DROITE) <= anglePulse)
+    while(ENCODER_Read(GAUCHE) <= distanceG)
     {
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-  }
-  /*void arc(int rayon, float angle, int t)
-  {
-    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-
-    float vG = (2*PI*(rayon-((18.5f)/2)))/t;
-    float vD = (2*PI*(rayon+((18.5f)/2)))/t;
-
-    while(ENCODER_Read(DROITE) <= anglePulse)
-    {
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-  }*/
-  void ellipse(int longeur, int largeur, int t)
-  {
-    float vG = 2*PI*(largeur/2)/t;
-    float vD = 2*PI*(largeur/2)/t;
-    
-    for(int i = 0 ; i < t/4 ; i++)
-    {
-      //vG = vG + ???;
-      //r = sqrt(pow(largeur/2,2) + pow(lngrArete/2,2));
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-    for(int i = 0 ; i < t/4 ; i++)
-    {
-      //vG = vG - ???;
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-    for(int i = 0 ; i < t/4 ; i++)
-    {
-      //vG = vG + ???;
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-    for(int i = 0 ; i < t/4 ; i++)
-    {
-      //vG = vG - ???;
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
