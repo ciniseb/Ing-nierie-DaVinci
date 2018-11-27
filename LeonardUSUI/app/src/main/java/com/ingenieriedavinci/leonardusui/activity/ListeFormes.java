@@ -20,6 +20,11 @@ import com.ingenieriedavinci.leonardusui.ImageViewCarre;
 
 import com.ingenieriedavinci.leonardusui.R;
 
+import static com.ingenieriedavinci.leonardusui.model.Forme.Difficulte.Difficile;
+import static com.ingenieriedavinci.leonardusui.model.Forme.Difficulte.Facile;
+import static com.ingenieriedavinci.leonardusui.model.Forme.Difficulte.Impossible;
+import static com.ingenieriedavinci.leonardusui.model.Forme.Difficulte.Normale;
+
 public class ListeFormes extends AppCompatActivity
 {
     //Statics - Types de formes
@@ -55,60 +60,61 @@ public class ListeFormes extends AppCompatActivity
         {
             case POLYGONES:
                 formes = new Forme[11];//De 2 à 12 inclu
-                formes[0] = new Forme("Digone","forme_polygone_digone", Forme.Difficulte.Facile);
-                formes[1] = new Forme("Triangle","forme_polygone_triangle", Forme.Difficulte.Normale);
-                formes[2] = new Forme("Carré","forme_polygone_carre", Forme.Difficulte.Facile);
-                formes[3] = new Forme("Pentagone","forme_polygone_pentagone", Forme.Difficulte.Normale);
-                formes[4] = new Forme("Hexagone","forme_polygone_hexagone", Forme.Difficulte.Normale);
-                formes[5] = new Forme("Heptagone","forme_polygone_heptagone", Forme.Difficulte.Difficile);
-                formes[6] = new Forme("Octogone","forme_polygone_octogone", Forme.Difficulte.Difficile);
-                formes[7] = new Forme("Ennéagone","forme_polygone_enneagone", Forme.Difficulte.Difficile);
-                formes[8] = new Forme("Décagone","forme_polygone_decagone", Forme.Difficulte.Impossible);
-                formes[9] = new Forme("Hendécagone","forme_polygone_hendecagone", Forme.Difficulte.Impossible);
-                formes[10] = new Forme("Dodécagone","forme_polygone_dodecagone", Forme.Difficulte.Impossible);
+                formes[0] = new Forme("Digone","forme_polygone_digone", Facile);
+                formes[1] = new Forme("Triangle","forme_polygone_triangle", Normale);
+                formes[2] = new Forme("Carré","forme_polygone_carre", Facile);
+                formes[3] = new Forme("Pentagone","forme_polygone_pentagone", Normale);
+                formes[4] = new Forme("Hexagone","forme_polygone_hexagone", Normale);
+                formes[5] = new Forme("Heptagone","forme_polygone_heptagone", Difficile);
+                formes[6] = new Forme("Octogone","forme_polygone_octogone", Difficile);
+                formes[7] = new Forme("Ennéagone","forme_polygone_enneagone", Difficile);
+                formes[8] = new Forme("Décagone","forme_polygone_decagone", Impossible);
+                formes[9] = new Forme("Hendécagone","forme_polygone_hendecagone", Impossible);
+                formes[10] = new Forme("Dodécagone","forme_polygone_dodecagone", Impossible);
 
                 break;
             case ELLIPSES:
                 formes = new Forme[1];
-                formes[0] = new Forme("Cercle", "ic_regular_star_polygon_5_2", Forme.Difficulte.Facile);
+                formes[0] = new Forme("Cercle", "forme_ellipse_cercle", Facile);
 
                 break;
             case SPIRALES:
                 formes = new Forme[1];
-                formes[0] = new Forme("À venir", "", null);
+                formes[0] = new Forme("Spirale", "forme_spirale_spirale0", Normale);
 
                 break;
             case PARALLELOGRAMMES:
                 formes = new Forme[7];
-                formes[0] = new Forme("Carré", "forme_polygone_carre", Forme.Difficulte.Facile);
-                formes[1] = new Forme("Rectangle 80%", "forme_parallelogramme_rectangle_810", Forme.Difficulte.Facile);
-                formes[2] = new Forme("Rectangle 60%", "forme_parallelogramme_rectangle_610", Forme.Difficulte.Facile);
-                formes[3] = new Forme("Rectangle 40%", "forme_parallelogramme_rectangle_410", Forme.Difficulte.Facile);
-                formes[4] = new Forme("Rectangle 20%", "forme_parallelogramme_rectangle_210", Forme.Difficulte.Facile);
-                formes[5] = new Forme("Parallélogramme 60%\n120 degrés", "forme_parallelogramme_120_610", Forme.Difficulte.Normale);
-                formes[6] = new Forme("Parallélogramme 100%\n80 degrés", "forme_parallelogramme_80_1010", Forme.Difficulte.Normale);
+                formes[0] = new Forme("Carré", "forme_polygone_carre", Facile);
+                formes[1] = new Forme("Rectangle 80%", "forme_parallelogramme_rectangle_810", Facile);
+                formes[2] = new Forme("Rectangle 60%", "forme_parallelogramme_rectangle_610", Facile);
+                formes[3] = new Forme("Rectangle 40%", "forme_parallelogramme_rectangle_410", Facile);
+                formes[4] = new Forme("Rectangle 20%", "forme_parallelogramme_rectangle_210", Facile);
+                formes[5] = new Forme("Parallélogramme 60%\n120 degrés", "forme_parallelogramme_120_610", Normale);
+                formes[6] = new Forme("Parallélogramme 100%\n80 degrés", "forme_parallelogramme_80_1010", Normale);
 
 
                 break;
             case EMOJI:
-                formes = new Forme[3];
-                formes[0] = new Forme("Content", "", Forme.Difficulte.Difficile);
-                formes[1] = new Forme("Triste", "", Forme.Difficulte.Difficile);
-                formes[2] = new Forme("Blazé", "", Forme.Difficulte.Normale);
+                formes = new Forme[2];
+                formes[0] = new Forme("Content", "forme_emotion_content", Difficile);
+                formes[1] = new Forme("Triste", "forme_emotion_triste", Difficile);
+                //formes[2] = new Forme("Blazé", "", Normale);
 
                 break;
             case ETOILES:
                 formes = new Forme[4];
-                formes[0] = new Forme("Étoile à 5 cotés {5/2}", "forme_polygone_etoile_5_2", Forme.Difficulte.Difficile);
-                formes[1] = new Forme("Étoile à 7 cotés {7/2}", "forme_polygone_etoile_7_2", Forme.Difficulte.Impossible);
-                formes[2] = new Forme("Étoile à 7 cotés {7/3}", "forme_polygone_etoile_7_3", Forme.Difficulte.Impossible);
-                formes[3] = new Forme("Étoile à 8 cotés {8/3}", "forme_polygone_etoile_8_3", Forme.Difficulte.Impossible);
+                formes[0] = new Forme("Étoile à 5 cotés {5/2}", "forme_polygone_etoile_5_2", Difficile);
+                formes[1] = new Forme("Étoile à 7 cotés {7/2}", "forme_polygone_etoile_7_2", Impossible);
+                formes[2] = new Forme("Étoile à 7 cotés {7/3}", "forme_polygone_etoile_7_3", Impossible);
+                formes[3] = new Forme("Étoile à 8 cotés {8/3}", "forme_polygone_etoile_8_3", Impossible);
 
                 break;
             case AUTRES:
-                formes = new Forme[2];
-                formes[0] = new Forme("Informatique", "forme_autre_informatique", Forme.Difficulte.Impossible);
-                formes[1] = new Forme("Électrique", "forme_autre_electrique", Forme.Difficulte.Difficile);
+                formes = new Forme[3];
+                formes[0] = new Forme("Informatique", "forme_autre_informatique", Impossible);
+                formes[1] = new Forme("Électrique", "forme_autre_electrique", Difficile);
+                formes[2] = new Forme("Croix", "forme_autre_croix", Normale);
 
                 break;
             default:
