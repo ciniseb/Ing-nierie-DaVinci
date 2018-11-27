@@ -75,6 +75,7 @@ char SerialRead[63];
 Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
+float PICalcultournercentre(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
@@ -605,6 +606,23 @@ float PICalcul(float distanceGauche, float distanceDroite)
 
   //P=20, I=20    //PI=40 -> 40 tick de plus a faire
   PIresultant = (proportionnel+integral)/100;//Calcul PI en pulse
+  //Serial.print("PIOUT: ");
+  //Serial.println(PIresultant);
+  return (PIresultant);
+}
+float PICalcultournercentre(float distanceGauche, float distanceDroite)
+{
+  float erreur = 0;
+  float proportionnel = 0;
+  float integral = 0;
+  float PIresultant = 0;
+
+  erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
+  proportionnel = erreur * 0.01f;//P
+  integral = (integral + (erreur * 0.1f)) * 0.01f;//I
+
+  //P=20, I=20    //PI=40 -> 40 tick de plus a faire
+  PIresultant = (proportionnel+integral)/2500;//Calcul PI en pulse
   //Serial.print("PIOUT: ");
   //Serial.println(PIresultant);
   return (PIresultant);
