@@ -9,6 +9,10 @@ import android.widget.Toast;
 
 import com.ingenieriedavinci.leonardusui.R;
 
+import java.util.concurrent.TimeUnit;
+
+import static com.ingenieriedavinci.leonardusui.activity.Main.player;
+
 public class Formes extends AppCompatActivity
 {
     //Variables

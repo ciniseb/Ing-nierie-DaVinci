@@ -52,6 +52,9 @@ Defines globales & robots
 #define speed3 0.20
 #define speed4 0.20
 
+#define POSITIF 1
+#define NEGATIF -1
+
 /*===========================================================================
 Variables globales
 ===========================================================================*/
@@ -138,23 +141,378 @@ Boucle infinie
 ===========================================================================*/
 void loop()
 {
+  int typeForme = -1;
+  int noForme   = -1;
+  
   opto();
   Serial1.readBytes(SerialRead, 64);
+  //Serial.println("Lecture trame...");
   for(int i = 0; i <= 63; i++)
   {
     if(SerialRead[i] == '#')
     {
+      #ifdef DEBUGG
+      Serial.println("# recue");
+      Serial.print(SerialRead[i]);
+      Serial.print(SerialRead[i+1]);
+      Serial.print(SerialRead[i+2]);
+      Serial.print(SerialRead[i+3]);
+      Serial.print(SerialRead[i+4]);
+      Serial.println(SerialRead[i+5]);
+      #endif
+
       for(int a = 0; a <= 63; a++)
       {
+        #ifdef ROBOTAUTONOME // --------------------
+        // A U T O N O M M E
+        // 0123
+        // 1010
+        
+
+        #ifdef DEBUGG
+        Serial.println(" ");
+        Serial.print("Lecture Trame: ");
         Serial.print(SerialRead[i+a]);
+        Serial.print(SerialRead[i+a+1]);
+        Serial.print(SerialRead[i+a+2]);
+        Serial.print(SerialRead[i+a+3]);
+        Serial.println(SerialRead[i+a+4]);
+        #endif
+
+        // NNuméro type de forme:
+        /*
+        char vitToConv = SerialRead[i+a];
+        switch(vitToConv) {
+          case '1' :
+            vitLueConv = 0.1;
+            break;
+          case '2' :
+            vitLueConv = 0.2;
+            break;
+          case '3' :
+            vitLueConv = 0.3;
+            break;
+          case '4' :
+            vitLueConv = 0.4;
+            break;
+          case '5' :
+            vitLueConv = 0.5;
+            break;
+          case '6' :
+            vitLueConv = 0.6;
+            break;
+          case '7' :
+            vitLueConv = 0.7;
+            break;
+          case '8' :
+            vitLueConv = 0.8;
+            break;
+          case '9' :
+            vitLueConv = 0.9;
+            break;
+          }
+          */
+
+        /*
+        typeForme =   ((atof(SerialRead[i+a]))*10);   // Convertis les disaines pour type de forme.
+        typeForme +=  (atof(SerialRead[i+a+1]));      // Convertis les unitées pour type de forme.
+
+        // Numéro de forme: 
+        noForme =  ((atof(SerialRead[i+a+2]))*10);   // Convertis les disaines pour numéro de forme.
+        noForme += (atof(SerialRead[i+a+3]));        // Convertis les unitées pour numéro de forme.
+        */
+
+        #ifdef DEBUGG
+        Serial.println(" ");
+        Serial.print("typeForme: ");
+        Serial.println(typeForme);
+
+        Serial.println(" ");
+        Serial.print("noForme: ");
+        Serial.println(noForme);
+        #endif
+
+        /*
+        switch(SerialRead[i+a]) 
+        {
+          case '' :
+          
+            break;
+          case 'B' :
+          case 'C' :
+          
+            break;
+          case 'D' :
+          
+            break;
+          default :
+
+            break;
+        }
+        */
+        #endif // --------------------
+
+        #ifdef ROBOTMANUEL // --------------------
+        // M A N U E L
+        // 01234
+        // G-0.2
+
+        // Affichage de la tramme.
+        #ifdef DEBUGG
+        //Serial.println(" ");
+        //Serial.print("Lecture Trame: ");
+        //Serial.print(SerialRead[i+a]);
+        //Serial.print(SerialRead[i+a+1]);
+        //Serial.print(SerialRead[i+a+2]);
+        //Serial.print(SerialRead[i+a+3]);
+        //Serial.println(SerialRead[i+a+4]);
+        #endif
+
+        int sensMoteur = 0;
+        switch(SerialRead[i+a]) 
+        {
+          case 'G' : // GAUCHE
+
+            // sens:
+            sensMoteur = 0;
+            if(SerialRead[i+a+1] == '+') // Détermination du signe.
+            { // Signe positif donc avance.
+              sensMoteur = POSITIF;
+            }
+            else if(SerialRead[i+a+1] == '-')
+            {
+              sensMoteur = NEGATIF;
+            }
+
+            #ifdef DEBUGG
+              Serial.println(" ");
+              Serial.print("sensMoteur: ");
+              Serial.println(sensMoteur);
+            #endif
+
+            /*
+            Serial.println(" ");
+            Serial.print("sensMoteur: ");
+            Serial.println(sensMoteur);
+            */
+
+            // Valeur pour le moteur:
+            if(SerialRead[i+a+2] == '1')
+            {
+              MOTOR_SetSpeed(GAUCHE, 0.3);
+            }
+            else if(SerialRead[i+a+2] == '0')
+            {
+              /*
+              Serial.println(" ");
+              Serial.print("Lecture Trame: ");
+              Serial.print(SerialRead[i+a]);
+              Serial.print(SerialRead[i+a+1]);
+              Serial.print(SerialRead[i+a+2]);
+              Serial.print(SerialRead[i+a+3]);
+              Serial.println(SerialRead[i+a+4]);
+              */
+
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse lue: ");
+              //Serial.print(SerialRead[i+a+4]);
+              //Serial.print(" ");
+              
+              //Serial.println(vitToConv);
+             
+              float vitLueConv = 0;
+              char vitToConv = SerialRead[i+a+4];
+              switch(vitToConv) {
+                case '1' :
+                  vitLueConv = 0.03;
+                  break;
+                case '2' :
+                  vitLueConv = 0.06;
+                  break;
+                case '3' :
+                  vitLueConv = 0.09;
+                  break;
+                case '4' :
+                  vitLueConv = 0.12;
+                  break;
+                case '5' :
+                  vitLueConv = 0.15;
+                  break;
+                case '6' :
+                  vitLueConv = 0.18;
+                  break;
+                case '7' :
+                  vitLueConv = 0.21;
+                  break;
+                case '8' :
+                  vitLueConv = 0.24;
+                  break;
+                case '9' :
+                  vitLueConv = 0.27;
+                  break;
+              }
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse convertis: ");
+              //Serial.println(vitLueConv);
+
+
+
+              //Serial.print("Vitesse moteur G: ");
+              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
+              //Serial.println(atof(SerialRead[i+a+4]));
+              //Serial.println(((atof(SerialRead[i+a+4]))/10));
+
+              #ifdef DEBUGG
+              Serial.println(" ");
+              Serial.print("Valeur moteur G: ");
+              Serial.print(vitLueConv);
+              #endif
+
+              if(sensMoteur == POSITIF) MOTOR_SetSpeed( GAUCHE, vitLueConv );
+              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( GAUCHE, (vitLueConv - vitLueConv - vitLueConv) );
+            }
+            
+            break;
+          case 'D' : // DROIT
+
+            // sens:
+            sensMoteur = 0;
+            if(SerialRead[i+a+1] == '+') // Détermination du signe.
+            { // Signe positif donc avance.
+              sensMoteur = POSITIF;
+            }
+            else if(SerialRead[i+a+1] == '-')
+            {
+              sensMoteur = NEGATIF;
+            }
+            
+            #ifdef DEBUGG
+              Serial.println(" ");
+              Serial.print("sensMoteur: ");
+              Serial.println(sensMoteur);
+            #endif
+
+            /*
+            Serial.println(" ");
+            Serial.print("sensMoteur: ");
+            Serial.println(sensMoteur);
+            */
+
+            // Valeur pour le moteur:
+            if(SerialRead[i+a+2] == '1')
+            {
+              MOTOR_SetSpeed(DROITE, 0.3);
+            }
+            else if(SerialRead[i+a+2] == '0')
+            {
+              /*
+              Serial.println(" ");
+              Serial.print("Lecture Trame: ");
+              Serial.print(SerialRead[i+a]);
+              Serial.print(SerialRead[i+a+1]);
+              Serial.print(SerialRead[i+a+2]);
+              Serial.print(SerialRead[i+a+3]);
+              Serial.println(SerialRead[i+a+4]);
+              */
+
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse lue: ");
+              //Serial.print(SerialRead[i+a+4]);
+              //Serial.print(" ");
+              char vitToConv = SerialRead[i+a+4];
+              //Serial.println(vitToConv);
+             
+              float vitLueConv = 0;
+
+              switch(vitToConv) {
+                case '1' :
+                  vitLueConv = 0.03;
+                  break;
+                case '2' :
+                  vitLueConv = 0.06;
+                  break;
+                case '3' :
+                  vitLueConv = 0.09;
+                  break;
+                case '4' :
+                  vitLueConv = 0.12;
+                  break;
+                case '5' :
+                  vitLueConv = 0.15;
+                  break;
+                case '6' :
+                  vitLueConv = 0.18;
+                  break;
+                case '7' :
+                  vitLueConv = 0.21;
+                  break;
+                case '8' :
+                  vitLueConv = 0.24;
+                  break;
+                case '9' :
+                  vitLueConv = 0.27;
+                  break;
+              }
+
+              //Serial.println(" ");
+              //Serial.print("Valeur vitesse convertis: ");
+              //Serial.println(vitLueConv);
+
+
+
+              //Serial.print("Vitesse moteur G: ");
+              //Serial.println(Float.parseFloat(SerialRead[i+a+4]));
+              //Serial.println(atof(SerialRead[i+a+4]));
+              //Serial.println(((atof(SerialRead[i+a+4]))/10));
+
+              #ifdef DEBUGG
+              Serial.println(" ");
+              Serial.print("Valeur moteur D: ");
+              Serial.print(vitLueConv);
+              #endif
+
+              if(sensMoteur == POSITIF) MOTOR_SetSpeed( DROITE, vitLueConv );
+              if(sensMoteur == NEGATIF) MOTOR_SetSpeed( DROITE, (vitLueConv - vitLueConv - vitLueConv) );
+            }
+            
+            break;
+          case 'H' : // HAUT
+          #ifdef DEBUGG
+            Serial.println(" ");
+            Serial.print("Lever crayon");
+            #endif
+
+            leverCrayon();
+            break;
+          case 'B' : // BAS
+          #ifdef DEBUGG
+            Serial.println(" ");
+            Serial.print("baisser crayon");
+            #endif
+
+            baisserCrayon();
+            break;
+          default :
+
+            break;
+        }
+        #endif // --------------------
+
+        #ifdef DEBUGG
+        //Serial.print(SerialRead[i+a]);
+        SerialRead[i+a] = 0;
+        #endif
         SerialRead[i+a] = 0;
       }
-      Serial.println(" ");
+      //Serial.println(" ");
     }
   }
   // ----- R O B O T  A U T O N O M E ------
   //#ifdef ROBOTAUTONOME
-    int noForme = 13;
+    /*
     if(ROBUS_IsBumper(3))
     {
       baisserCrayon();
@@ -168,10 +526,10 @@ void loop()
           polygone(3, 100);//Triangle
         break;
         case 2:
-          polygone(4, 300);//Carré
+          polygone(4, 100);//Carré
         break;
         case 3:
-          polygone(5, 200);//Pentagone
+          polygone(5, 100);//Pentagone
         break;
         case 4:
           polygone(6, 100);//Hexagone
@@ -201,7 +559,7 @@ void loop()
           parallelogramme(100, 60, 120);
         break;
         case 13:
-          polygoneEtoile(5,2,300);
+          emotion(SOURIRE, 50);
         break;
         case 14:
           leverCrayon();
@@ -209,12 +567,6 @@ void loop()
           tournerCentre(GAUCHE, 90);
           reculer(172);
           baisserCrayon();
-        break;
-        case 15:
-          avancer2(200); //Sans accel,mais un PID : valeur théorique de 2716 pulses 
-        break;
-        case 16:
-          avancer(200); //Avec accel et PID : valeur théorique de 2716 pulses 
         break;
         default:
           //polygone(2, 100);
@@ -237,6 +589,7 @@ void loop()
       leverCrayon();
     }
   //#endif
+  */
   // ----- R O B O T  M A N U E L -----
   #ifdef ROBOTMANUEL
 

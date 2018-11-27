@@ -12,6 +12,8 @@ import android.widget.VideoView;
 
 import com.ingenieriedavinci.leonardusui.R;
 
+import java.util.concurrent.TimeUnit;
+
 public class Main extends AppCompatActivity
 {
     //Statics
@@ -21,6 +23,7 @@ public class Main extends AppCompatActivity
     //Variables
     Button debut;
     VideoView couverture;
+    public static MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,12 +37,30 @@ public class Main extends AppCompatActivity
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
 
+        player = MediaPlayer.create(this, R.raw.droid_bishop_the_outlander);
+        player.setLooping(true); // Set looping
+        player.setVolume(60,60);
+        player.start();
+
         //Comportements
         debut.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
+                for(int volume = 60 ; volume >= 0 ; volume--)
+                {
+                    try
+                    {
+                        TimeUnit.MILLISECONDS.sleep(10);
+                    }catch(InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    float log1=(float)(Math.log(60 - volume)/Math.log(60));
+                    player.setVolume(1-log1, 1-log1);
+                }
+                player.stop();
                 startActivity(new Intent(Main.this, Formes.class));//Ouvrir l'activité des formes
             }
         });
@@ -68,5 +89,9 @@ public class Main extends AppCompatActivity
         super.onResume();
         couverture.start();
     }
-
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+    }
 }

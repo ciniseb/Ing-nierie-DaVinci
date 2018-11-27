@@ -32,5 +32,4 @@
             android:screenOrientation="landscape" />
         <activity android:name=".activity.ListeFormes" />
     </application>
-
 </manifest>
