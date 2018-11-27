@@ -28,7 +28,7 @@ Defines globales & robots
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
 //#define ROBOTAUTONOME
 #define ROBOTMANUEL
-//#define DEBUG
+#define DEBUG
 
 //Si 2 robots définis, dé-defini les deux codes
 #ifdef ROBOTAUTONOME
@@ -928,7 +928,8 @@ void tournerCentre(int direction, float angle)
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k = PICalcultournercentre(distgauche1,distdroite1);
+      k = 0;
+      //k = PICalcultournercentre(distgauche1,distdroite1);
       speed = 0.15+k;
       MOTOR_SetSpeed(GAUCHE,-speed);
       MOTOR_SetSpeed(DROITE,0.15);
@@ -941,7 +942,8 @@ void tournerCentre(int direction, float angle)
     {
       distgauche1 = ENCODER_Read(GAUCHE);
       distdroite1 = ENCODER_Read(DROITE);
-      k = PICalcultournercentre(distgauche1,distdroite1);
+      k = 0;
+      //k = PICalcultournercentre(distgauche1,distdroite1);
       speed = 0.15+k;
       MOTOR_SetSpeed(GAUCHE,0.15);
       MOTOR_SetSpeed(DROITE,-speed);

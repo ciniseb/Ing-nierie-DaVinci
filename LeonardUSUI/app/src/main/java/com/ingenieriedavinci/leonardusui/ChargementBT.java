@@ -52,14 +52,14 @@ public class ChargementBT extends AsyncTask<Void, Void, Void>
     {
 
         //Connexion BLUETOOTH
-        //addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
-        addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
+        addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
+        //addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
         connexionBT();
 
         envoieDonnees(messageBT);
 
-        //addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
-        addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
+        addresseMac = "20:16:09:26:40:23";//ROBOT AUTONOME
+        //addresseMac = "20:16:09:12:32:93";//ROBOT MANUEL
         connexionBT();
 
         return null;
