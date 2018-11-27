@@ -869,26 +869,42 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
-  double anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  float distgauche1;
+  float distdroite1;
+  float k;
+  float speed;
 
   if(direction == GAUCHE)
   {
-    while(ENCODER_Read(DROITE) <= anglePulse/2)
+    while(distdroite1 <= (anglePulse/2))
     {
-      MOTOR_SetSpeed(GAUCHE,-vitesseTourne);
-      MOTOR_SetSpeed(DROITE,vitesseTourne);
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = 0.15+k;
+      MOTOR_SetSpeed(GAUCHE,-speed);
+      MOTOR_SetSpeed(DROITE,0.15);
     }
   }
+
   else if(direction == DROITE)
   {
-    while(ENCODER_Read(GAUCHE) <= anglePulse/2)
+    while(distgauche1 <= anglePulse/2)
     {
-      MOTOR_SetSpeed(GAUCHE,vitesseTourne);
-      MOTOR_SetSpeed(DROITE,-vitesseTourne);
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = 0.15+k;
+      MOTOR_SetSpeed(GAUCHE,0.15);
+      MOTOR_SetSpeed(DROITE,-speed);
     }
   }
   MOTORS_reset();
 }
+
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
