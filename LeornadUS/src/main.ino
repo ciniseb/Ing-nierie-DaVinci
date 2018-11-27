@@ -26,8 +26,8 @@ Fichier:            main.ino
 Defines globales & robots
 ===========================================================================*/
 //DÉCOMMENTEZ le #define du robot que vous voulez utiliser SEULEMENT
-#define ROBOTAUTONOME
-//#define ROBOTMANUEL
+//#define ROBOTAUTONOME
+#define ROBOTMANUEL
 //#define DEBUG
 
 //Si 2 robots définis, dé-defini les deux codes
@@ -680,7 +680,9 @@ void acceleration(float *v, float vVoulue, float distance)
 }
 void MOTORS_reset()
 {
-  eteindreLumiere();
+  #ifdef ROBOTMANUEL
+    eteindreLumiere();
+  #endif
   MOTOR_SetSpeed(GAUCHE,speed0);
   MOTOR_SetSpeed(DROITE,speed0);
   ENCODER_Reset(GAUCHE);
