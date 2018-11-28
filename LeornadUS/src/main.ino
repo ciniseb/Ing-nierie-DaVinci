@@ -52,7 +52,7 @@ Defines globales & robots
 #define speed1 0.20
 #define vitesseTourne 0.15
 #define speed3 0.20
-#define speed4 0.20
+#define speed4 0.15
 #define speed5 0.15
 
 #define POSITIF 1
@@ -149,7 +149,7 @@ Boucle infinie
 void loop()
 {
   int typeForme = -1;
-  int noForme   = 4;
+  int noForme   = 0;
   
  
   // ----- R O B O T  A U T O N O M E ------
@@ -162,10 +162,10 @@ void loop()
       switch(noForme)
       {
         case 0:
-          polygone(2, 100);//Digone
+          arc(100,360);
         break;
         case 1:
-          polygoneEtoile(5,2,200);
+          polygoneEtoile(7,3,200);
         break;
         case 2:
           polygone(4, 100);//Carré
@@ -201,7 +201,7 @@ void loop()
           parallelogramme(100, 60, 120);
         break;
         case 13:
-          emotion(SOURIRE, 50);
+          parallelogramme(100,100,75);
         break;
         case 14:
           leverCrayon();
@@ -324,14 +324,14 @@ void MOTORS_reset()
 }
 double angle_degree_a_pulse(float angle)
 {
+  angle=angle-3.24;
   // déterminer la circonference d'une roue en mm et en pulse
   double diametre_roue_mm = 76;
   double circonference_roue_mm = 3.1416*diametre_roue_mm;
   double circonference_roue_pulse = 3200;
   // déterminer la circonference des 2 roues en mm et en pulse
-  double diametre_2_roues_mm  = 187;
-  double quart_circonference_2_roues_mm = (3.1416*2*diametre_2_roues_mm)/4;
-  double quart_circonference_2_roues_pulse = (quart_circonference_2_roues_mm/circonference_roue_mm)*circonference_roue_pulse;
+  double diametre_2_roues_mm  = 190;
+  double quart_circonference_2_roues_pulse = (((3.1416*2*diametre_2_roues_mm)/4)/(PI*diametre_roue_mm))*circonference_roue_pulse;
   // déterminer le rapport pulses par degré
   double pulses_par_degre_2_roues = quart_circonference_2_roues_pulse/90; 
   // déterminer le nombre de pulses requis pour arriver à l'angle demandé
@@ -520,7 +520,7 @@ void tourner(int direction, float angle, int sens)
   MOTORS_reset();
 }
 
-void tournerCentre(int direction, float angle)
+void tournerCentre2(int direction, float angle)
 {
   ENCODER_Reset(0);
   ENCODER_Reset(1);
@@ -547,7 +547,7 @@ void tournerCentre(int direction, float angle)
   }
   MOTORS_reset();
 }
-void tournerCentre2(int direction, float angle)
+void tournerCentre(int direction, float angle)
 {
   ENCODER_Reset(0);
   ENCODER_Reset(1);
@@ -588,8 +588,8 @@ void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
   avancer(168);
-  tournerCentre(direction, angle);
-  reculer(165);
+  tournerCentre2(direction, angle);
+  reculer(175);
   baisserCrayon();
 }
 void readSerialString()
@@ -645,9 +645,9 @@ void readSerialString()
       tournerCrayon(GAUCHE, angleExterne);
     }
     leverCrayon();
-    avancer(167);
+    avancer(162);
     tournerCentre(GAUCHE, 90);
-    reculer(192);
+    reculer(167);
   }
   void croix(int lngrArete)
   {
@@ -667,14 +667,24 @@ void readSerialString()
     float distanceG = 2*PI*(rayon+93)*angle/360;
     float vG = 2*PI*(rayon+93)/10000;
     float vD = 2*PI*(rayon-93)/10000;
-    avancer(125);
+    leverCrayon();
+    avancer(225);
+    baisserCrayon();
 
-    while(ENCODER_Read(GAUCHE) <= distanceG)
+    while(ENCODER_Read(GAUCHE) <= distance_mm_pulse(distanceG))
     {
       MOTOR_SetSpeed(GAUCHE, vG);
       MOTOR_SetSpeed(DROITE, vD);
     }
-    reculer(125);
+    if(ENCODER_Read(GAUCHE) > distance_mm_pulse(distanceG))
+    {
+    MOTOR_SetSpeed(GAUCHE, 0);
+    MOTOR_SetSpeed(DROITE, 0);
+    leverCrayon();
+    }
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+    reculer(225);
   }
   void spirale()
   {
