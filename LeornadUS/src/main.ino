@@ -77,6 +77,7 @@ int pinBlancheGauche = 42;
 Appel des fonctions
 ===========================================================================*/
 float PICalcul(float distanceGauche, float distanceDroite);
+float PICalcultournercentre(float distanceGauche, float distanceDroite);
 float distance_mm_pulse(float distance_mm);
 void acceleration(float v, float vMax, float distance);
 void MOTORS_reset();
@@ -122,10 +123,8 @@ void setup()
   Serial.begin(9600);
   Serial1.begin(57600);
   Serial1.setTimeout(25);
-  while (!Serial)
-    ;
-  while (!Serial1)
-    ;
+  while (!Serial);
+  while (!Serial1);
   Serial1.setTimeout(25);
 
   pinMode(A10, INPUT);
@@ -143,12 +142,14 @@ void setup()
   pinMode(pinRougeGauche, OUTPUT);
 
   pinMode(44, INPUT);
-
+  
+  delay(5000);
   #ifdef ROBOTMANUEL
   leverCrayon();
   #endif
-
-  delay(5000);
+  #ifdef ROBOTAUTONOME
+  baisserCrayon();
+  #endif
 }
 /*===========================================================================
 Boucle infinie
@@ -177,11 +178,10 @@ void loop()
 
       for (int a = 0; a <= 63; a++)
       {
-// ----- R O B O T  A U T O N O M E ------
+        // ----- R O B O T  A U T O N O M E ------
         #ifdef ROBOTAUTONOME
         // 0123
         // 1010
-
         #ifdef DEBUG
         Serial.println(" ");
         Serial.print("Lecture Trame: ");
@@ -406,7 +406,7 @@ void loop()
           break;
         case 2:
           //Spirale
-          spirale();
+          //spirale();
           break;
         case 3:
           //Parallelogramme
@@ -471,6 +471,7 @@ void loop()
             break;
           }
         }
+
         #endif
           // ----- R O B O T  M A N U E L -----
           #ifdef ROBOTMANUEL
@@ -487,6 +488,8 @@ void loop()
           //Serial.print(SerialRead[i+a+3]);
           //Serial.println(SerialRead[i+a+4]);
           #endif
+
+          eteindreLumiere();
 
           float vitLueConv = 0;
           int sensMoteur = 0;
@@ -700,6 +703,23 @@ float PICalcul(float distanceGauche, float distanceDroite)
   //Serial.println(PIresultant);
   return (PIresultant);
 }
+float PICalcultournercentre(float distanceGauche, float distanceDroite)
+{
+  float erreur = 0;
+  float proportionnel = 0;
+  float integral = 0;
+  float PIresultant = 0;
+
+  erreur = distanceGauche - distanceDroite;//Calcul de l'erreur
+  proportionnel = erreur * 0.01f;//P
+  integral = (integral + (erreur * 0.1f)) * 0.01f;//I
+
+  //P=20, I=20    //PI=40 -> 40 tick de plus a faire
+  PIresultant = (proportionnel+integral)/2500;//Calcul PI en pulse
+  //Serial.print("PIOUT: ");
+  //Serial.println(PIresultant);
+  return (PIresultant);
+}
 float distance_mm_pulse(float distance_mm)
 {
   // déterminer la circonference d'une roue en mm et en pulse
@@ -897,6 +917,43 @@ void tourner(int direction, float angle, int sens)
 }
 void tournerCentre(int direction, float angle)
 {
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
+  float distgauche1;
+  float distdroite1;
+  float k;
+  float speed;
+
+  if(direction == GAUCHE)
+  {
+    while(distdroite1 <= (anglePulse/2))
+    {
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = vitesseTourne+k;
+      MOTOR_SetSpeed(GAUCHE,-speed);
+      MOTOR_SetSpeed(DROITE,vitesseTourne);
+    }
+  }
+
+  else if(direction == DROITE)
+  {
+    while(distgauche1 <= anglePulse/2)
+    {
+      distgauche1 = ENCODER_Read(GAUCHE);
+      distdroite1 = ENCODER_Read(DROITE);
+      k = PICalcultournercentre(distgauche1,distdroite1);
+      speed = vitesseTourne+k;
+      MOTOR_SetSpeed(GAUCHE,vitesseTourne);
+      MOTOR_SetSpeed(DROITE,-speed);
+    }
+  }
+  MOTORS_reset();
+}
+/*void tournerCentre(int direction, float angle)
+{
   double anglePulse = angle_degree_a_pulse(angle); //Variable en pulse selon l'angle
 
   if (direction == GAUCHE)
@@ -916,13 +973,13 @@ void tournerCentre(int direction, float angle)
     }
   }
   MOTORS_reset();
-}
+}*/
 void tournerCrayon(int direction, float angle)
 {
   leverCrayon();
-  avancer(167);
+  avancer(168);
   tournerCentre(direction, angle);
-  reculer(162);
+  reculer(165);
   baisserCrayon();
 }
 void readSerialString()
@@ -993,7 +1050,7 @@ void polygone(int nbSommets, int lngrArete)
   for (int tournant = 0; tournant < nbSommets; tournant++)
   {
     avancer(lngrArete);
-    tournerCrayon(GAUCHE, angle);
+    tournerCrayon(DROITE, angle);
   }
 }
 void parallelogramme(int base, int hauteur, float angle)
@@ -1005,28 +1062,29 @@ void parallelogramme(int base, int hauteur, float angle)
     avancer(hauteur / cos(angle - 90));
     tournerCrayon(GAUCHE, angle);
   }
+  leverCrayon();
+  reculer(167);
 }
 void polygoneEtoile(int nbSommets, int diffSommets, int lngrArete)
 {
-
   float angle = 180 * (nbSommets - 2 * diffSommets) / nbSommets;
   float angleExterne = 180 - angle;
   float angleInterne = 360 * (diffSommets - 1) / nbSommets;
 
-  //tournerCrayon(DROITE, 90);
-  for (int i = 0; i < nbSommets; i++)
+  tournerCrayon(DROITE, 90);
+  for(int i = 0; i < nbSommets ; i++)
   {
-    avancer(lngrArete);
-    tournerCrayon(DROITE, angleInterne);
     avancer(lngrArete);
     tournerCrayon(GAUCHE, angleExterne);
   }
   leverCrayon();
+  avancer(167);
   tournerCentre(GAUCHE, 90);
-  reculer(18);
+  reculer(192);
 }
 void croix(int lngrArete)
 {
+  avancer(125);
   for (int i = 0; i < 4; i++)
   {
     avancer(lngrArete);
@@ -1034,10 +1092,24 @@ void croix(int lngrArete)
     avancer(lngrArete);
     tournerCrayon(GAUCHE, 90);
     avancer(lngrArete);
-    tournerCrayon(GAUCHE, 90);
+    tournerCrayon(DROITE, 90);
   }
 }
 void arc(int rayon, float angle)
+{
+  float distanceG = 2*PI*(rayon+93)*angle/360;
+  float vG = 2*PI*(rayon+93)/10000;
+  float vD = 2*PI*(rayon-93)/10000;
+  avancer(125);
+
+  while(ENCODER_Read(GAUCHE) <= distanceG)
+  {
+    MOTOR_SetSpeed(GAUCHE, vG);
+    MOTOR_SetSpeed(DROITE, vD);
+  }
+  reculer(125);
+}
+/*void arc(int rayon, float angle)
 {
   float anglePulse = angle_degree_a_pulse(angle); //Variable en pulse selon l'angle
 
@@ -1051,20 +1123,7 @@ void arc(int rayon, float angle)
     MOTOR_SetSpeed(GAUCHE, vG);
     MOTOR_SetSpeed(DROITE, vD);
   }
-}
-/*void arc(int rayon, float angle, int t)
-  {
-    float anglePulse = angle_degree_a_pulse(angle);//Variable en pulse selon l'angle
-
-    float vG = (2*PI*(rayon-((18.5f)/2)))/t;
-    float vD = (2*PI*(rayon+((18.5f)/2)))/t;
-
-    while(ENCODER_Read(DROITE) <= anglePulse)
-    {
-      MOTOR_SetSpeed(GAUCHE, vG);
-      MOTOR_SetSpeed(DROITE, vD);
-    }
-  }*/
+}*/
 void ellipse(int longeur, int largeur, int t)
 {
   float vG = 2 * PI * (largeur / 2) / t;
@@ -1110,7 +1169,7 @@ void spirale()
   delay(3000);
   MOTORS_reset();
 }
-void parallelogramme(float base, float hauteur, float angle)
+/*void parallelogramme(float base, float hauteur, float angle)
 {
   for (int diagonale = 0; diagonale < 2; diagonale++)
   {
@@ -1141,7 +1200,7 @@ void parallelogramme(float base, float hauteur, float angle)
     Serial.print("TOURNE de ");
     Serial.println(angle);
   }
-}
+}*/
 void emotion(int emotion, int rayon)
 {
   //Contour
