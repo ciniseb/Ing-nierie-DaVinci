@@ -129,7 +129,11 @@ public class ListeFormes extends AppCompatActivity
         {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                String messageBT = "#" + typeFormes + " " + position;
+                String messageBT;
+                if(position < 10)
+                    messageBT = "#0" + typeFormes + "0" + position;
+                else
+                    messageBT = "#0" + typeFormes + position;
                 telecommande.startActivity(formes[position].getImageDrawableString(), messageBT, getApplicationContext());
             }
         });
